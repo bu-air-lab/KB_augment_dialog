@@ -8,7 +8,7 @@ import policy_parser
 import numpy
 import random
 from scipy import stats
-sys.path.append('/home/shiqi/software/python_progress/progress-1.2')
+sys.path.append('/home/szhang/software/python_progress/progress-1.2')
 from progress.bar import Bar
 import subprocess
 
@@ -204,7 +204,7 @@ def main():
         auto_state = True, 
         auto_observations = True, 
         print_flag = False, 
-        policy_file = 'policy/323_345_new.pomdp', 
+        policy_file = 'policy/323_345_new.policy', 
         pomdp_file =  'models/323_345_new.pomdp',
         trials_num = 10000,
         num_item = 3, 
