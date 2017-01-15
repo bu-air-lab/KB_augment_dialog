@@ -1,0 +1,67 @@
+
+identity={alice,bob,carol}. 
+college={engineering,education,bussiness}.
+year={seventies,eighties,nineties}.
+table={t0,t1,t2,t3}. 
+mood={happy,sad}. 
+
+#domain identity(I;I1).
+#domain college(C;C1).
+#domain year(Y;Y1). 
+#domain mood(M). 
+
+interest_i: identity. 
+interest_c: college. 
+interest_y: year. 
+interest_m: mood. 
+interest_t: table. 
+
+[ri] random(interest_i). 
+[rc] random(interest_c). 
+[ry] random(interest_y). 
+[rm] random(interest_m).
+[rt] random(interest_t). 
+
+valid :- interest_i=alice, interest_c=engineering, interest_y=seventies. 
+valid :- interest_i=alice, interest_c=education, interest_y=eighties. 
+valid :- interest_i=bob, interest_c=education, interest_y=nineties. 
+valid :- interest_i=carol, interest_c=bussiness, interest_y=nineties. 
+
+interest_t=t0 :- interest_i=alice, interest_c=engineering, interest_y=seventies. 	% .2
+interest_t=t1 :- interest_i=alice, interest_c=education, interest_y=eighties. 		% .5
+interest_t=t2 :- interest_i=bob, interest_c=education, interest_y=nineties. 		% .1
+interest_t=t3 :- interest_i=carol, interest_c=bussiness, interest_y=nineties. 		% .2
+
+[rt] pr(interest_t=t0) = 2/10. 
+[rt] pr(interest_t=t1) = 5/10. 
+[rt] pr(interest_t=t2) = 1/10. 
+[rt] pr(interest_t=t3) = 2/10. 
+
+%invalid :- interest_i=I, interest_c=C, interest_y=Y, not table(I,C,Y). 
+%invalid :- curr_table(I,C,Y), not table(I,C,Y). 
+%invalid :- last_table(I,C,Y), not table(I,C,Y). 
+%invalid=false :- not invalid. 
+
+%curr_table(I,C,Y)=false :- not curr_table(I,C,Y). 
+%last_table(I,C,Y)=false :- not last_table(I,C,Y). 
+
+%curr_known :- curr_table(I,C,Y). 
+%curr_known=false :- not curr_known. 
+
+%[ri] pr(interest_i=I | curr_table(I,C,Y), interest_m=sad) = 2/10.
+%[rc] pr(interest_c=C | curr_table(I,C,Y), interest_m=sad) = 2/10.
+%[ry] pr(interest_y=Y | curr_table(I,C,Y), interest_m=sad) = 2/10.
+
+%interest_t=t0 :- best_t(alice,engineering,seventies). 
+%interest_t=t1 :- best_t(alice,education,eighties). 
+%interest_t=t2 :- best_t(bob,education,nineties). 
+%interest_t=t3 :- best_t(carol,bussiness,nineties). 
+
+%best_t(I,C,Y) :- interest_i=I, interest_c=C, interest_y=Y. 
+%best_t(I1,C1,Y1)=false :- best_t(I,C,Y), I<>I1. 
+%best_t(I1,C1,Y1)=false :- best_t(I,C,Y), C<>C1. 
+%best_t(I1,C1,Y1)=false :- best_t(I,C,Y), Y<>Y1. 
+
+% ?{interest_t=t1} | obs(valid), obs(interest_i=alice). 
+?{interest_t=t1} | obs(valid). 
+
