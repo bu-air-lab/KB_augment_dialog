@@ -151,8 +151,7 @@ class Pomdp(object):
     for i in range(len(self.actions)):
       for j in range(len(self.states)):
         if abs(self.obs_mat[i,j].sum() - 1.0) > 0.00001:
-          print('observation matrix, [' + i + ',' + j + ',:], does not sum to \
-                1')
+          print('observation matrix, [' + i + ',' + j + ',:], does not sum to 1')
 
     if self.print_flag:
       print('reading observation matrix successfully')

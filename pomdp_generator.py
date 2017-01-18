@@ -2,41 +2,42 @@
 
 import numpy as np
 import time
+import subprocess
 
 class State(object):
 
-    def __init__(self, num_item, num_person, num_room):
+    def __init__(self, num_identity, num_college, num_year):
         
-        self.num_item = num_item
-        self.num_person = num_person
-        self.num_room = num_room
+        self.num_identity = num_identity
+        self.num_college = num_college
+        self.num_year = num_year
 
 class StateRegular(State):
 
-    def __init__(self, item, person, room, num_item, num_person, num_room):
+    def __init__(self, identity, college, year, num_identity, num_college, num_year, index):
 
-        State.__init__(self, num_item, num_person, num_room)
+        State.__init__(self, num_identity, num_college, num_year)
 
-        self.item = item
-        self.person = person
-        self.room = room
-        self.index = (item * num_person * num_room) + (person * num_room) + room
+        self.identity = identity
+        self.college = college
+        self.year = year
+        self.index = index
 
     def getName(self):
-        return 'i' + str(self.item) + '_p' + str(self.person) + '_r' + \
-            str(self.room)
+        return 'i' + str(self.identity) + '_c' + str(self.college) + '_y' + \
+            str(self.year)
 
     def getIndex(self):
         return self.index
 
-    def getItemIndex(self):
-        return self.item
+    def getidentityIndex(self):
+        return self.identity
 
-    def getPersonIndex(self):
-        return self.person
+    def getcollegeIndex(self):
+        return self.college
 
-    def getRoomIndex(self):
-        return self.room
+    def getyearIndex(self):
+        return self.year
 
     def isTerminal(self):
         return False
@@ -44,10 +45,10 @@ class StateRegular(State):
 
 class StateTerminal(State):
 
-    def __init__(self, num_item, num_person, num_room):
+    def __init__(self, num_identity, num_college, num_year, index):
 
-        State.__init__(self, num_item, num_person, num_room)
-        self.index = num_item * num_person * num_room
+        State.__init__(self, num_identity, num_college, num_year)
+        self.index = index
 
     def getName(self):
         return 'terminal'
@@ -63,7 +64,7 @@ class Action(object):
     # qd_type: type of this action: ask or deliver? 
     def __init__(self, qd_type):
         
-        assert qd_type in ['ask', 'deliver']
+        assert qd_type in ['ask', 'guide']
         self.qd_type = qd_type
 
 
@@ -80,122 +81,121 @@ class ActionAskWh(ActionAsk):
 
     def __init__(self, var):
 
-        assert var in ['item', 'person', 'room']
+        assert var in ['identity', 'college', 'year']
         ActionAsk.__init__(self, 'wh')
         self.var = var
 
     def getName(self):
-        if self.var == 'item':
+        if self.var == 'identity':
             return 'ask_i'
-        elif self.var == 'person':
-            return 'ask_p'
-        elif self.var == 'room':
-            return 'ask_r'
+        elif self.var == 'college':
+            return 'ask_c'
+        elif self.var == 'year':
+            return 'ask_y'
 
     def getIndex(self):
         
-        if self.var == 'item':
+        if self.var == 'identity':
             return 0
-        elif self.var == 'person':
+        elif self.var == 'college':
             return 1
-        elif self.var == 'room':
+        elif self.var == 'year':
             return 2
 
 
 class ActionAskPolar(ActionAsk):
 
-    def __init__(self, var, num_item, num_person, num_room):
+    def __init__(self, var, num_identity, num_college, num_year):
 
         ActionAsk.__init__(self, 'polar')
-        self.num_item = num_item
-        self.num_person = num_person
-        self.num_room = num_room
-        assert var in ['item', 'person', 'room']
+        self.num_identity = num_identity
+        self.num_college = num_college
+        self.num_year = num_year
+        assert var in ['identity', 'college', 'year']
         self.var = var
 
-class ActionAskPolarItem(ActionAskPolar):
+class ActionAskPolaridentity(ActionAskPolar):
 
-    def __init__(self, item, num_item, num_person, num_room):
+    def __init__(self, identity, num_identity, num_college, num_year):
 
-        assert item < num_item
-        ActionAskPolar.__init__(self, 'item', num_item, num_person, num_room)
-        self.item = item
+        assert identity < num_identity
+        ActionAskPolar.__init__(self, 'identity', num_identity, num_college, num_year)
+        self.identity = identity
 
-    def getItemIndex(self):
-        return self.item
+    def getidentityIndex(self):
+        return self.identity
 
     def getIndex(self):
-        return 3 + self.item
+        return 3 + self.identity
 
     def getName(self):
-        return 'confirm_i' + str(self.item)
+        return 'confirm_i' + str(self.identity)
 
-class ActionAskPolarPerson(ActionAskPolar):
+class ActionAskPolarcollege(ActionAskPolar):
 
-    def __init__(self, person, num_item, num_person, num_room):
+    def __init__(self, college, num_identity, num_college, num_year):
         
-        assert person < num_person
-        ActionAskPolar.__init__(self, 'person', num_item, num_person, num_room)
-        self.person = person
+        assert college < num_college
+        ActionAskPolar.__init__(self, 'college', num_identity, num_college, num_year)
+        self.college = college
 
-    def getPersonIndex(self):
-        return self.person
+    def getcollegeIndex(self):
+        return self.college
 
     def getIndex(self):
-        return 3 + self.num_item + self.person
+        return 3 + self.num_identity + self.college
 
     def getName(self):
-        return 'confirm_p' + str(self.person)
+        return 'confirm_c' + str(self.college)
 
-class ActionAskPolarRoom(ActionAskPolar):
+class ActionAskPolaryear(ActionAskPolar):
 
-    def __init__(self, room, num_item, num_person, num_room):
+    def __init__(self, year, num_identity, num_college, num_year):
         
-        assert room < num_room
-        ActionAskPolar.__init__(self, 'room', num_item, num_person, num_room)
-        self.room = room
+        assert year < num_year
+        ActionAskPolar.__init__(self, 'year', num_identity, num_college, num_year)
+        self.year = year
 
-    def getRoomIndex(self):
-        return self.room
+    def getyearIndex(self):
+        return self.year
 
     def getIndex(self):
-        return 3 + self.num_item + self.num_person + self.room
+        return 3 + self.num_identity + self.num_college + self.year
 
     def getName(self):
-        return 'confirm_r' + str(self.room)
+        return 'confirm_y' + str(self.year)
 
 class ActionDeliver(Action):
 
-    def __init__(self, item, person, room, num_item, num_person, num_room):
+    def __init__(self, identity, college, year, num_identity, num_college, num_year, index):
 
-        assert item < num_item
-        assert person < num_person
-        assert room < num_room
-        Action.__init__(self, 'deliver')
-        self.item = item
-        self.person = person
-        self.room = room
-        self.num_item = num_item
-        self.num_person = num_person
-        self.num_room = num_room
+        assert identity < num_identity
+        assert college < num_college
+        assert year < num_year
+        Action.__init__(self, 'guide')
+        self.identity = identity
+        self.college = college
+        self.year = year
+        self.num_identity = num_identity
+        self.num_college = num_college
+        self.num_year = num_year
+        self.index = 3 + self.num_identity + self.num_college + self.num_year + index
 
-    def getItemIndex(self):
-        return self.item
+    def getidentityIndex(self):
+        return self.identity
 
-    def getPersonIndex(self):
-        return self.person
+    def getcollegeIndex(self):
+        return self.college
 
-    def getRoomIndex(self):
-        return self.room
+    def getyearIndex(self):
+        return self.year
 
     def getIndex(self):
-        return 3 + self.num_item + self.num_person + self.num_room + \
-            (self.item * self.num_person * self.num_room) + \
-            (self.person * self.num_room) + self.room
+        return self.index
 
     def getName(self):
-        return 'take_i' + str(self.item) + '_p' + str(self.person) + '_r' + \
-            str(self.room)
+        return 'go_i' + str(self.identity) + '_c' + str(self.college) + '_y' + \
+            str(self.year)
 
 class Observation(object):
 
@@ -208,81 +208,81 @@ class ObservationWh(Observation):
 
     def __init__(self, var):
 
-        assert var in ['item', 'person', 'room']
+        assert var in ['identity', 'college', 'year']
         Observation.__init__(self, 'wh')
         self.var = var
 
-class ObservationWhItem(ObservationWh):
+class ObservationWhidentity(ObservationWh):
 
-    def __init__(self, item, num_item, num_person, num_room):
+    def __init__(self, identity, num_identity, num_college, num_year):
 
-        assert item < num_item
-        ObservationWh.__init__(self, 'item')
-        self.item = item
-        self.num_item = num_item
-        self.num_person = num_person
-        self.num_room = num_room
+        assert identity < num_identity
+        ObservationWh.__init__(self, 'identity')
+        self.identity = identity
+        self.num_identity = num_identity
+        self.num_college = num_college
+        self.num_year = num_year
 
-    def getItemIndex(self):
-        return self.item
-
-    def getIndex(self):
-        return self.item
-
-    def getName(self):
-        return 'i' + str(self.item)
-
-
-class ObservationWhPerson(ObservationWh):
-
-    def __init__(self, person, num_item, num_person, num_room):
-
-        assert person < num_person
-        ObservationWh.__init__(self, 'person')
-        self.person = person
-        self.num_item = num_item
-        self.num_person = num_person
-        self.num_room = num_room
-
-    def getPersonIndex(self):
-        return self.person
+    def getidentityIndex(self):
+        return self.identity
 
     def getIndex(self):
-        return self.num_item + self.person
+        return self.identity
 
     def getName(self):
-        return 'p' + str(self.person)
+        return 'i' + str(self.identity)
 
-class ObservationWhRoom(ObservationWh):
 
-    def __init__(self, room, num_item, num_person, num_room):
+class ObservationWhcollege(ObservationWh):
 
-        assert room < num_room
-        ObservationWh.__init__(self, 'room')
-        self.room = room
-        self.num_item = num_item
-        self.num_person = num_person
-        self.num_room = num_room
+    def __init__(self, college, num_identity, num_college, num_year):
 
-    def getRoomIndex(self):
-        return self.room
+        assert college < num_college
+        ObservationWh.__init__(self, 'college')
+        self.college = college
+        self.num_identity = num_identity
+        self.num_college = num_college
+        self.num_year = num_year
+
+    def getcollegeIndex(self):
+        return self.college
 
     def getIndex(self):
-        return self.num_item + self.num_person + self.room
+        return self.num_identity + self.college
 
     def getName(self):
-        return 'r' + str(self.room)
+        return 'c' + str(self.college)
+
+class ObservationWhyear(ObservationWh):
+
+    def __init__(self, year, num_identity, num_college, num_year):
+
+        assert year < num_year
+        ObservationWh.__init__(self, 'year')
+        self.year = year
+        self.num_identity = num_identity
+        self.num_college = num_college
+        self.num_year = num_year
+
+    def getyearIndex(self):
+        return self.year
+
+    def getIndex(self):
+        return self.num_identity + self.num_college + self.year
+
+    def getName(self):
+        return 'y' + str(self.year)
 
 class ObservationPolar(Observation):
 
-    def __init__(self, polar, num_item, num_person, num_room):
+    def __init__(self, polar, num_identity, num_college, num_year):
 
         assert polar in ['yes', 'no']
         Observation.__init__(self, 'polar')
         self.polar = polar
-        self.num_item = num_item
-        self.num_person = num_person
-        self.num_room = num_room
+        self.num_identity = num_identity
+        self.num_college = num_college
+        self.num_year = num_year
 
     def getName(self):
         if self.polar == 'yes':
@@ -292,51 +292,53 @@ class ObservationPolar(Observation):
 
     def getIndex(self):
         if self.polar == 'yes':
-            return self.num_item + self.num_person + self.num_room
+            return self.num_identity + self.num_college + self.num_year
         elif self.polar == 'no':
-            return self.num_item + self.num_person + self.num_room + 1
+            return self.num_identity + self.num_college + self.num_year + 1
 
 
 class ObservationNone(Observation):
 
-    def __init__(self, num_item, num_person, num_room):
+    def __init__(self, num_identity, num_college, num_year):
 
         Observation.__init__(self, 'none')
-        self.num_item = num_item
-        self.num_person = num_person
-        self.num_room = num_room
+        self.num_identity = num_identity
+        self.num_college = num_college
+        self.num_year = num_year
 
     def getName(self):
         return 'none'
 
     def getIndex(self):
-        return self.num_item + self.num_person + self.num_room + 2
+        return self.num_identity + self.num_college + self.num_year + 2
 
 class PomdpGenerator(object):
 
-    def __init__(self, num_item, num_person, num_room, r_max, r_min, strategy, \
-        weight_i, weight_p, weight_r, wh_cost, yesno_cost):
+    def __init__(self, num_identity, num_college, num_year, r_max, r_min, strategy, \
+        weight_i, weight_c, weight_y, wh_cost, yesno_cost):
         
 
-        self.num_item = num_item
-        self.num_person = num_person
-        self.num_room = num_room
+        self.num_identity = num_identity
+        self.num_college = num_college
+        self.num_year = num_year
 
         self.r_max = r_max
         self.r_min = r_min
 
         self.weight_i = weight_i
-        self.weight_p = weight_p
-        self.weight_r = weight_r
+        self.weight_c = weight_c
+        self.weight_y = weight_y
 
         self.weight_i_bin = weight_i.astype(int)
-        self.weight_p_bin = weight_p.astype(int)
-        self.weight_r_bin = weight_r.astype(int)
+        self.weight_c_bin = weight_c.astype(int)
+        self.weight_y_bin = weight_y.astype(int)
 
         # the larger, the more unreliable for the wh-questions. 
         self.magic_number = 0.3
         self.polar_tp_rate = 0.7
         self.polar_tn_rate = 0.7
+
+        self.tablelist = [[0, 0, 0], [0, 1, 1], [1, 1, 2], [2, 2, 2]]
 
         self.state_set = []
         self.action_set = []
@@ -347,28 +349,28 @@ class PomdpGenerator(object):
         self.reward_mat = None
 
         # compute the sets of states, actions, observations
-        self.state_set = self.computeStateSet(self.num_item, self.num_person,
-            self.num_room)
-        self.action_set = self.computeActionSet(self.num_item, self.num_person,
-            self.num_room)
-        self.observation_set = self.computeObservationSet(self.num_item, 
-            self.num_person, self.num_room)
+        self.state_set = self.computeStateSet(self.num_identity, self.num_college,
+            self.num_year)
+        self.action_set = self.computeActionSet(self.num_identity, self.num_college,
+            self.num_year)
+        self.observation_set = self.computeObservationSet(self.num_identity, 
+            self.num_college, self.num_year)
 
         # compute the functions of transition, observation
-        self.trans_mat = self.computeTransFunction(self.num_item,
-            self.num_person, self.num_room)
+        self.trans_mat = self.computeTransFunction(self.num_identity,
+            self.num_college, self.num_year)
 
-        self.obs_mat = self.computeObsFunction(self.num_item, self.num_person,
-            self.num_room, self.magic_number, self.polar_tp_rate)
+        self.obs_mat = self.computeObsFunction(self.num_identity, self.num_college,
+            self.num_year, self.magic_number, self.polar_tp_rate)
 
         # compute two versions of reward function
-        reward_mat_float = self.computeRewardFunction(self.num_item,
-            self.num_person, self.num_room, self.r_max, self.r_min, \
-            self.weight_i, self.weight_p, self.weight_r, wh_cost, yesno_cost)
+        reward_mat_float = self.computeRewardFunction(self.num_identity,
+            self.num_college, self.num_year, self.r_max, self.r_min, \
+            self.weight_i, self.weight_c, self.weight_y, wh_cost, yesno_cost)
 
-        reward_mat_bin = self.computeRewardFunction(self.num_item,
-            self.num_person, self.num_room, self.r_max, self.r_min, \
-            self.weight_i_bin, self.weight_p_bin, self.weight_r_bin, wh_cost, yesno_cost)
+        reward_mat_bin = self.computeRewardFunction(self.num_identity,
+            self.num_college, self.num_year, self.r_max, self.r_min, \
+            self.weight_i_bin, self.weight_c_bin, self.weight_y_bin, wh_cost, yesno_cost)
 
         # the idea is to keep the reward of fully correct deliveries and
         # question-asking actions, while changing the other negative values
@@ -395,16 +397,22 @@ class PomdpGenerator(object):
             reward_mat_float_negative_deliveries * reweight_factor
 
         # writing to files
-        self.filename = 'models/' + strategy + '_old.pomdp'
+        self.filename = strategy + '_old.pomdp'
         self.reward_mat = reward_mat_bin
         self.writeToFile()
 
-        self.filename = 'models/' + strategy +'_new.pomdp'
+        self.filename = strategy +'_new.pomdp'
         self.reward_mat = reward_mat_float
         #self.reward_mat = reward_mat_float_negative_deliveries
         self.writeToFile()
 
-    def computeTransFunction(self, num_item, num_person, num_room):
+        print 'training for 60 seconds'
+
+        subprocess.check_output('/home/ludc/workspace/context_aware_icorpp/appl-0.96/src/pomdpsol --timeout 60 --output ' \
+                                    + strategy + '_new.policy ' + strategy + '_new.pomdp', shell = True)
+        print 'finish training'
+
+    def computeTransFunction(self, num_identity, num_college, num_year):
 
         num_state = len(self.state_set)
 
@@ -416,7 +424,7 @@ class PomdpGenerator(object):
 
             if action.qd_type == 'ask':
                 trans_mat[action.getIndex()] = np.eye(num_state, dtype=float)
-            elif action.qd_type == 'deliver':
+            elif action.qd_type == 'guide':
                 trans_mat[action.getIndex()] = np.zeros((num_state, num_state))
                 trans_mat[action.getIndex()][:, num_state-1] = 1.0
                 
@@ -424,7 +432,7 @@ class PomdpGenerator(object):
 
     # HERE WE INTRODUCE A NOVEL OBSERVATION MODEL
     # true-positive rate = 1/(n^0.1), where n is the variable's range
-    def computeObsFunction(self, num_item, num_person, num_room, magic_number,
+    def computeObsFunction(self, num_identity, num_college, num_year, magic_number,
         polar_tp_rate):
         
         num_action = len(self.action_set)
@@ -441,22 +449,22 @@ class PomdpGenerator(object):
                     obs_mat[action.getIndex()] = np.zeros((num_state, num_obs))
                     obs_mat[action.getIndex()][state.getIndex(), num_obs-1]=1.0
 
-            if action.qd_type == 'deliver':
+            if action.qd_type == 'guide':
                 obs_mat[action.getIndex()] = np.zeros((num_state, num_obs))
                 obs_mat[action.getIndex()][:, num_obs-1] = 1.0
                 
             elif action.qd_type == 'ask':
                 if action.q_type == 'wh':
-                    if action.var == 'item':
-                        tp_rate = 1.0 / pow(num_item, magic_number)
+                    if action.var == 'identity':
+                        tp_rate = 1.0 / pow(num_identity, magic_number)
                         for state in self.state_set:
                             if state.isTerminal() == True:
                                 continue
                             for observation in self.observation_set:
                                 if observation.qd_type == 'wh':
-                                    if observation.var == 'item':
-                                        if observation.getItemIndex() == \
-                                            state.getItemIndex():
+                                    if observation.var == 'identity':
+                                        if observation.getidentityIndex() == \
+                                            state.getidentityIndex():
                                             
                                             obs_mat[action.getIndex()]\
                                                 [state.getIndex()]\
@@ -466,18 +474,18 @@ class PomdpGenerator(object):
                                             obs_mat[action.getIndex()]\
                                                 [state.getIndex()]\
                                                 [observation.getIndex()] = \
-                                                (1.0-tp_rate) / (num_item-1)
+                                                (1.0-tp_rate) / (num_identity-1)
                                     
-                    elif action.var == 'person':
-                        tp_rate = 1.0 / pow(num_person, magic_number)
+                    elif action.var == 'college':
+                        tp_rate = 1.0 / pow(num_college, magic_number)
                         for state in self.state_set:
                             if state.isTerminal() == True:
                                 continue
                             for observation in self.observation_set:
                                 if observation.qd_type == 'wh':
-                                    if observation.var == 'person':
-                                        if observation.getPersonIndex() == \
-                                            state.getPersonIndex():
+                                    if observation.var == 'college':
+                                        if observation.getcollegeIndex() == \
+                                            state.getcollegeIndex():
                                             
                                             obs_mat[action.getIndex()]\
                                                 [state.getIndex()]\
@@ -487,18 +495,18 @@ class PomdpGenerator(object):
                                             obs_mat[action.getIndex()]\
                                                 [state.getIndex()]\
                                                 [observation.getIndex()]\
-                                                = (1.0-tp_rate) / (num_person-1)
+                                                = (1.0-tp_rate) / (num_college-1)
 
-                    elif action.var == 'room':
-                        tp_rate = 1.0 / pow(num_room, magic_number)
+                    elif action.var == 'year':
+                        tp_rate = 1.0 / pow(num_year, magic_number)
                         for state in self.state_set:
                             if state.isTerminal() == True:
                                 continue
                             for observation in self.observation_set:
                                 if observation.qd_type == 'wh':
-                                    if observation.var == 'room':
-                                        if observation.getRoomIndex() ==\
-                                            state.getRoomIndex():
+                                    if observation.var == 'year':
+                                        if observation.getyearIndex() ==\
+                                            state.getyearIndex():
                                             
                                             obs_mat[action.getIndex()]\
                                                 [state.getIndex()]\
@@ -508,17 +516,17 @@ class PomdpGenerator(object):
                                             obs_mat[action.getIndex()]\
                                                 [state.getIndex()]\
                                                 [observation.getIndex()]\
-                                                = (1.0-tp_rate) / (num_room-1)
+                                                = (1.0-tp_rate) / (num_year-1)
                     
                 elif action.q_type == 'polar':
-                    if action.var == 'item':
+                    if action.var == 'identity':
                         for state in self.state_set:
                             if state.isTerminal() == True:
                                 continue
                             for observation in self.observation_set:
                                 if observation.getName() == 'yes':
-                                    if state.getItemIndex() ==\
-                                        action.getItemIndex():
+                                    if state.getidentityIndex() ==\
+                                        action.getidentityIndex():
                                         obs_mat[action.getIndex()]\
                                             [state.getIndex()]\
                                             [observation.getIndex()]\
@@ -529,8 +537,8 @@ class PomdpGenerator(object):
                                             [observation.getIndex()] = \
                                             1.0 - self.polar_tp_rate
                                 elif observation.getName() == 'no':
-                                    if state.getItemIndex() ==\
-                                        action.getItemIndex():
+                                    if state.getidentityIndex() ==\
+                                        action.getidentityIndex():
                                         obs_mat[action.getIndex()]\
                                             [state.getIndex()]\
                                             [observation.getIndex()]= \
@@ -540,14 +548,14 @@ class PomdpGenerator(object):
                                             [state.getIndex()]\
                                             [observation.getIndex()] \
                                             = self.polar_tn_rate
-                    elif action.var == 'person':
+                    elif action.var == 'college':
                         for state in self.state_set:
                             if state.isTerminal() == True:
                                 continue
                             for observation in self.observation_set:
                                 if observation.getName() == 'yes':
-                                    if state.getPersonIndex() == \
-                                        action.getPersonIndex():
+                                    if state.getcollegeIndex() == \
+                                        action.getcollegeIndex():
                                         obs_mat[action.getIndex()]\
                                             [state.getIndex()]\
                                             [observation.getIndex()]\
@@ -558,8 +566,8 @@ class PomdpGenerator(object):
                                             [observation.getIndex()]=\
                                             1.0 - self.polar_tp_rate
                                 elif observation.getName() == 'no':
-                                    if state.getPersonIndex() == \
-                                        action.getPersonIndex():
+                                    if state.getcollegeIndex() == \
+                                        action.getcollegeIndex():
                                         obs_mat[action.getIndex()]\
                                             [state.getIndex()]\
                                             [observation.getIndex()]= \
@@ -569,14 +577,14 @@ class PomdpGenerator(object):
                                             [state.getIndex()]\
                                             [observation.getIndex()]=\
                                             self.polar_tn_rate
-                    elif action.var == 'room':
+                    elif action.var == 'year':
                         for state in self.state_set:
                             if state.isTerminal() == True:
                                 continue
                             for observation in self.observation_set:
                                 if observation.getName() == 'yes':
-                                    if state.getRoomIndex() ==\
-                                        action.getRoomIndex():
+                                    if state.getyearIndex() ==\
+                                        action.getyearIndex():
                                         obs_mat[action.getIndex()]\
                                             [state.getIndex()]\
                                             [observation.getIndex()]\
@@ -587,8 +595,8 @@ class PomdpGenerator(object):
                                             [observation.getIndex()]=\
                                             1.0 - self.polar_tp_rate
                                 elif observation.getName() == 'no':
-                                    if state.getRoomIndex() ==\
-                                        action.getRoomIndex():
+                                    if state.getyearIndex() ==\
+                                        action.getyearIndex():
                                         obs_mat[action.getIndex()]\
                                             [state.getIndex()]\
                                             [observation.getIndex()]= \
@@ -601,8 +609,8 @@ class PomdpGenerator(object):
 
         return obs_mat
 
-    def computeRewardFunction(self, num_item, num_person, num_room,
-        r_max, r_min, weight_i, weight_p, weight_r, wh_cost, yesno_cost):
+    def computeRewardFunction(self, num_identity, num_college, num_year,
+        r_max, r_min, weight_i, weight_c, weight_y, wh_cost, yesno_cost):
 
         reward_mat = np.zeros((len(self.action_set), len(self.state_set), ))
 
@@ -615,86 +623,90 @@ class PomdpGenerator(object):
                 elif action.q_type == 'polar':
                     reward_mat[action.getIndex()] = yesno_cost
 
-            elif action.qd_type == 'deliver':
+            elif action.qd_type == 'guide':
  
                 for state in self.state_set:
                     
                     if state.isTerminal() == False:
 
                         reward_mat[action.getIndex()][state.getIndex()] = \
-                            self.deliveryReward(r_max, r_min, 
-                            weight_i, weight_p, weight_r, action, state)
+                            self.guideReward(r_max, r_min, 
+                            weight_i, weight_c, weight_y, action, state)
 
-            num_state = num_item * num_person * num_room + 1
+            num_state = len(self.tablelist) + 1
             reward_mat[action.getIndex()][num_state - 1] = 0.0
 
         return reward_mat
 
-    def deliveryReward(self, r_max, r_min, weight_i, weight_p, weight_r,
+    def guideReward(self, r_max, r_min, weight_i, weight_c, weight_y,
         action, state):
 
-        if weight_i[action.getItemIndex()][state.getItemIndex()] == 1.0 and  \
-                weight_p[action.getPersonIndex()][state.getPersonIndex()] == 1.0 and  \
-                weight_r[action.getRoomIndex()][state.getRoomIndex()] == 1.0:
+        if weight_i[action.getidentityIndex()][state.getidentityIndex()] == 1.0 and  \
+                weight_c[action.getcollegeIndex()][state.getcollegeIndex()] == 1.0 and  \
+                weight_y[action.getyearIndex()][state.getyearIndex()] == 1.0:
             return r_max
         else:
             ret = r_min * (1.0 - \
-                weight_i[action.getItemIndex()][state.getItemIndex()] * \
-                weight_p[action.getPersonIndex()][state.getPersonIndex()] * \
-                weight_r[action.getRoomIndex()][state.getRoomIndex()])
+                weight_i[action.getidentityIndex()][state.getidentityIndex()] * \
+                weight_c[action.getcollegeIndex()][state.getcollegeIndex()] * \
+                weight_y[action.getyearIndex()][state.getyearIndex()])
             return ret
 
-    def computeStateSet(self, num_item, num_person, num_room):
+    def computeStateSet(self, num_identity, num_college, num_year):
 
         ret = []
-        for i in range(num_item):
-            for p in range(num_person):
-                for r in range(num_room):
-                    ret.append(StateRegular(i, p, r, num_item, num_person, num_room))
+        for i in range(num_identity):
+            for c in range(num_college):
+                for y in range(num_year):
+                    for table in self.tablelist:
+                        if i == table[0] and c == table[1] and y == table[2]:
+                            ret.append(StateRegular(i, c, y, num_identity, num_college, num_year,self.tablelist.index(table)))
 
-        ret.append(StateTerminal(num_item, num_person, num_room))
+        ret.append(StateTerminal(num_identity, num_college, num_year, len(self.tablelist)))
 
         return ret
 
-    def computeActionSet(self, num_item, num_person, num_room):
+    def computeActionSet(self, num_identity, num_college, num_year):
 
         ret = []
-        ret.append(ActionAskWh('item'))
-        ret.append(ActionAskWh('person'))
-        ret.append(ActionAskWh('room'))
+        ret.append(ActionAskWh('identity'))
+        ret.append(ActionAskWh('college'))
+        ret.append(ActionAskWh('year'))
         
-        for i in range(num_item):
-            ret.append(ActionAskPolarItem(i, num_item, num_person, num_room))
+        for i in range(num_identity):
+            ret.append(ActionAskPolaridentity(i, num_identity, num_college, num_year))
 
-        for p in range(num_person):
-            ret.append(ActionAskPolarPerson(p, num_item, num_person, num_room))
+        for c in range(num_college):
+            ret.append(ActionAskPolarcollege(c, num_identity, num_college, num_year))
 
-        for r in range(num_room):
-            ret.append(ActionAskPolarRoom(r, num_item, num_person, num_room))
+        for y in range(num_year):
+            ret.append(ActionAskPolaryear(y, num_identity, num_college, num_year))
 
-        for i in range(num_item):
-            for p in range(num_person):
-                for r in range(num_room):
-                    ret.append(ActionDeliver(i, p, r, num_item, num_person,
-                        num_room))
+        for i in range(num_identity):
+            for c in range(num_college):
+                for y in range(num_year):
+                    for table in self.tablelist:
+                        if i == table[0] and c == table[1] and y == table[2]:
+                            ret.append(ActionDeliver(i, c, y, num_identity, num_college,
+                                num_year, self.tablelist.index(table)))
 
         return ret
 
-    def computeObservationSet(self, num_item, num_person, num_room):
+    def computeObservationSet(self, num_identity, num_college, num_year):
 
         ret = []
-        for i in range(num_item):
-            ret.append(ObservationWhItem(i, num_item, num_person, num_room))
+        for i in range(num_identity):
+            ret.append(ObservationWhidentity(i, num_identity, num_college, num_year))
 
-        for p in range(num_person):
-            ret.append(ObservationWhPerson(p, num_item, num_person, num_room))
+        for p in range(num_college):
+            ret.append(ObservationWhcollege(p, num_identity, num_college, num_year))
 
-        for r in range(num_room):
-            ret.append(ObservationWhRoom(r, num_item, num_person, num_room))
+        for r in range(num_year):
+            ret.append(ObservationWhyear(r, num_identity, num_college, num_year))
 
-        ret.append(ObservationPolar('yes', num_item, num_person, num_room))
-        ret.append(ObservationPolar('no', num_item, num_person, num_room))
-        ret.append(ObservationNone(num_item, num_person, num_room))
+        ret.append(ObservationPolar('yes', num_identity, num_college, num_year))
+        ret.append(ObservationPolar('no', num_identity, num_college, num_year))
+        ret.append(ObservationNone(num_identity, num_college, num_year))
 
         return ret
 
@@ -764,57 +776,31 @@ def main():
     wh_cost = -1.5
     yesno_cost = -1.0
 
-    num_item = 3
-    num_person = 2
-    num_room = 3
+    num_identity = 3
+    num_college = 3
+    num_year = 3
 
     # row corresponds to action, column to underlying state
     # all
-    weight_i = np.array([[1.00, 0.75, 0.50, 0.50, 0.25, 0.25], 
-                         [0.75, 1.00, 0.50, 0.50, 0.25, 0.25], 
-                         [0.50, 0.50, 1.00, 0.75, 0.25, 0.25], 
-                         [0.50, 0.50, 0.75, 1.00, 0.25, 0.25], 
-                         [0.25, 0.25, 0.25, 0.25, 1.00, 0.67], 
-                         [0.25, 0.25, 0.25, 0.25, 0.67, 1.00]])
+    weight_i = np.array([[1.00, 0.00, 0.00], 
+                         [0.00, 1.00, 0.00], 
+                         [0.00, 0.00, 1.00]])
 
-    # entry = 5
-    # weight_i = np.delete(weight_i, entry, 0)
-    # weight_i = np.delete(weight_i, entry, 1)
+    weight_c = np.array([[1.0, 0.0, 0.0], 
+                         [0.0, 1.0, 0.0], 
+                         [0.0, 0.0, 1.0]])
 
-    # entry1 = 4
-    # entry2 = 5
-    # weight_i = np.delete(weight_i, entry2, 0)
-    # weight_i = np.delete(weight_i, entry2, 1)
-    # weight_i = np.delete(weight_i, entry1, 0)
-    # weight_i = np.delete(weight_i, entry1, 1)
-
-    entry1 = 3
-    entry2 = 4
-    entry3 = 5
-    weight_i = np.delete(weight_i, entry3, 0)
-    weight_i = np.delete(weight_i, entry3, 1)
-    weight_i = np.delete(weight_i, entry2, 0)
-    weight_i = np.delete(weight_i, entry2, 1)
-    weight_i = np.delete(weight_i, entry1, 0)
-    weight_i = np.delete(weight_i, entry1, 1)
-
-    weight_p = np.array([[1.0, 0.0, 0.0], 
-                         [0.0, 1.0, 0.5], 
-                         [0.0, 0.5, 1.0]])
-
-    weight_r = np.array([[1.0, 0.6, 0.67, 0.67, 0.33], 
-                         [0.14, 1.0, 0.4, 0.4, 0.14], 
-                         [0.11, 0.27, 1.0, 0.33, 0.11], 
-                         [0.11, 0.27, 0.33, 1.0, 0.11], 
-                         [0.33, 0.6, 0.67, 0.67, 1.0]])
+    weight_y = np.array([[1.0, 0.0, 0.0], 
+                         [0.0, 1.0, 0.0], 
+                         [0.0, 0.0, 1.0]])
     
-    # strategy = str(num_item) + str(num_person) + str(num_room) 
-    # strategy = str(num_item) + str(num_person) + str(num_room) + '_' + str(entry)
-    # strategy = str(num_item) + str(num_person) + str(num_room) + '_' + str(entry1) + str(entry2)
-    strategy = str(num_item) + str(num_person) + str(num_room) + '_' + str(entry1) + str(entry2) + str(entry3)
+    # strategy = str(num_identity) + str(num_college) + str(num_year) 
+    # strategy = str(num_identity) + str(num_college) + str(num_year) + '_' + str(entry)
+    # strategy = str(num_identity) + str(num_college) + str(num_year) + '_' + str(entry1) + str(entry2)
+    strategy = str(num_identity) + str(num_college) + str(num_year)
 
-    pg = PomdpGenerator(num_item, num_person, num_room, r_max, r_min, strategy, \
-        weight_i, weight_p, weight_r, wh_cost, yesno_cost)
+    pg = PomdpGenerator(num_identity, num_college, num_year, r_max, r_min, strategy, \
+        weight_i, weight_c, weight_y, wh_cost, yesno_cost)
 
 if __name__ == '__main__':
 

@@ -4,13 +4,15 @@ import sys
 import time
 import pomdp_parser
 import policy_parser
+import readline
 # import speech_recognizer
 import numpy
 import random
 from scipy import stats
-sys.path.append('/home/szhang/software/python_progress/progress-1.2')
+sys.path.append('/home/ludc/software/python_progress/progress-1.2')
 from progress.bar import Bar
 import subprocess
+import gen_dis_plog
 
 class Simulator(object):
 
@@ -19,6 +21,7 @@ class Simulator(object):
         auto_state = False, 
         uniform_init_belief =True,
         print_flag=True,
+        use_plog = True,
         policy_file='policy/default.policy', 
         pomdp_file='models/default.pomdp', 
         trials_num=1000,
@@ -33,17 +36,20 @@ class Simulator(object):
         self.auto_state = auto_state
         self.uniform_init_belief = uniform_init_belief
         self.print_flag = print_flag
+        self.use_plog = use_plog
         self.trials_num = trials_num
 
         self.num_item = num_item
         self.num_person = num_person
         self.num_room = num_room
+        self.tablelist = [[0, 0, 0], [0, 1, 1], [1, 1, 2], [2, 2, 2]]
 
         # to read the pomdp model
         model = pomdp_parser.Pomdp(filename=pomdp_file, parsing_print_flag=False)
         self.states = model.states
         self.actions = model.actions
         self.observations = model.observations
+        print self.observations
         self.trans_mat = model.trans_mat
         self.obs_mat = model.obs_mat
         self.reward_mat = model.reward_mat
@@ -52,9 +58,11 @@ class Simulator(object):
         self.policy = policy_parser.Policy(len(self.states), len(self.actions), 
             filename=policy_file)
 
-        self.b = None
+        self.b = None   
         self.a = None
         self.o = None
+
+        self.plog = gen_dis_plog.DistrGen()
 
         # to make the screen print simple 
         numpy.set_printoptions(precision=2)
@@ -64,9 +72,16 @@ class Simulator(object):
 
         if self.uniform_init_belief:
             self.b = numpy.ones(len(self.states)) / float(len(self.states))
+
+            # print self.b
         else:
+            belief = self.plog.cal_belief().split(',')
+            for i in range(len(belief)):
+                belief[i] = float(belief[i].strip())
+            self.b = numpy.array(belief)
+            # print self.b
             # here initial belief is sampled from a Dirichlet distribution
-            self.b = numpy.random.dirichlet( numpy.ones(len(self.states)) )
+            # self.b = numpy.random.dirichlet( numpy.ones(len(self.states)) )
 
         self.b = self.b.T
 
@@ -96,7 +111,18 @@ class Simulator(object):
 
         new_b = [new_b[i] * self.obs_mat[self.a, i, self.o] for i in range(len(self.states))]
 
+        # print 'sum of belief: ',sum(new_b)
+
         self.b = (new_b / sum(new_b)).T
+
+        if self.md == 'sad':
+            if self.b[4] == 1:
+                return
+            belief = self.plog.cal_belief(mood = 'sad', pdpDist = self.b, curr_table = self.ct).split(',')
+            for i in range(len(belief)):
+                belief[i] = float(belief[i].strip())
+            self.b = numpy.array(belief)
+            self.b = self.b/ sum(self.b)
 
     #######################################################################
     def run(self):
@@ -107,13 +133,19 @@ class Simulator(object):
         reward = 0.0
         overall_reward = 0.0
 
+        cycletime = 0
+
         while True:
+            cycletime += 1
+
+            # print self.b
 
             if self.print_flag:
                 print('\tstate:\t' + self.states[self.s] + ' ' + str(self.s))
                 print('\tcost so far:\t' + str(cost))
 
             self.a = int(self.policy.select_action(self.b))
+            
             if self.print_flag:
                 print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
 
@@ -130,13 +162,18 @@ class Simulator(object):
             # print('current cost: ' + str(self.reward_mat[self.a, self.s]))
             # print('overall cost: ' + str(overall_reward))
 
-            if 'take' in self.actions[self.a]:
+            if 'go' in self.actions[self.a]:
+                # print '--------------------',
                 if self.print_flag is True:
                     print('\treward: ' + str(self.reward_mat[self.a, self.s]))
                 reward += self.reward_mat[self.a, self.s]
                 break
             else:
                 cost += self.reward_mat[self.a, self.s]
+
+            if cycletime == 20:
+                cost += self.reward_mat[self.a, self.s]
+                break
 
         return reward, cost, overall_reward
 
@@ -160,6 +197,10 @@ class Simulator(object):
             if self.auto_state:
                 self.s = numpy.random.randint(low=0, high=len(self.states)-1,
                     size=(1))[0]
+                self.ct = numpy.random.randint(low=0, high=len(self.tablelist)-1,
+                    size=(1))[0]
+                self.md = 'sad' if (self.s <> self.ct and self.use_plog) else 'happy'
+
             else:
                 self.s = int(input("Please specify the index of state: "))
 
@@ -169,10 +210,10 @@ class Simulator(object):
             cost_list.append(cost)
             overall_reward_list.append(overall_reward)
 
-            deliver_index = int(self.a - (3 + self.num_item + self.num_person \
+            guide_index = int(self.a - (3 + self.num_item + self.num_person \
                 + self.num_room))
 
-            if deliver_index == int(self.s):
+            if guide_index == int(self.s):
                 success_list.append(1.0)
             else:
                 success_list.append(0.0)
@@ -204,11 +245,12 @@ def main():
         auto_state = True, 
         auto_observations = True, 
         print_flag = False, 
-        policy_file = 'policy/323_345_new.policy', 
-        pomdp_file =  'models/323_345_new.pomdp',
-        trials_num = 10000,
+        use_plog = True,
+        policy_file = '333_new.policy', 
+        pomdp_file =  '333_new.pomdp',
+        trials_num = 1000,
         num_item = 3, 
-        num_person = 2, 
+        num_person = 3, 
         num_room = 3)
  
     if not s.uniform_init_belief:   
