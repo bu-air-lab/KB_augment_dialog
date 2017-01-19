@@ -3,6 +3,7 @@
 import numpy as np
 import time
 import subprocess
+import os.path
 
 class State(object):
 
@@ -408,7 +409,18 @@ class PomdpGenerator(object):
 
         print 'training for 60 seconds'
 
-        subprocess.check_output('/home/ludc/workspace/context_aware_icorpp/appl-0.96/src/pomdpsol --timeout 60 --output ' \
+        pomdpsol_lu = '/home/ludc/workspace/context_aware_icorpp/appl-0.96/src/pomdpsol'
+        pomdpsol_zhang = '/home/szhang/software/appl/appl-0.95/src/pomdpsol'
+
+        if os.path.isfile(pomdpsol_lu):
+            pomdpsol = pomdpsol_lu
+        elif os.path.isfile(pomdpsol_zhang):
+            pomdpsol = pomdpsol_zhang
+        else:
+            print "pomdpsol not installed..."
+            exit(1)
+
+        subprocess.check_output(pomdpsol + ' --timeout 60 --output ' \
                                     + strategy + '_new.policy ' + strategy + '_new.pomdp', shell = True)
         print 'finish training'
 
