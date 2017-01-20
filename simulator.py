@@ -14,6 +14,7 @@ sys.path.append('/home/szhang/software/python_progress/progress-1.2')
 from progress.bar import Bar
 import subprocess
 import gen_dis_plog
+import conf
 
 class Simulator(object):
 
@@ -30,8 +31,8 @@ class Simulator(object):
         num_person=1,
         num_room=1):
 
-        print(pomdp_file)
-        print(policy_file)
+        # print(pomdp_file)
+        # print(policy_file)
 
         self.auto_observations = auto_observations
         self.auto_state = auto_state
@@ -43,14 +44,14 @@ class Simulator(object):
         self.num_item = num_item
         self.num_person = num_person
         self.num_room = num_room
-        self.tablelist = [[0, 0, 0], [0, 1, 1], [1, 1, 2], [2, 2, 2]]
+        self.tablelist = conf.tablelist
 
         # to read the pomdp model
         model = pomdp_parser.Pomdp(filename=pomdp_file, parsing_print_flag=False)
         self.states = model.states
         self.actions = model.actions
         self.observations = model.observations
-        print self.observations
+        # print self.observations
         self.trans_mat = model.trans_mat
         self.obs_mat = model.obs_mat
         self.reward_mat = model.reward_mat
@@ -67,12 +68,27 @@ class Simulator(object):
 
         # to make the screen print simple 
         numpy.set_printoptions(precision=2)
+        if self.use_plog:
+            print '------------ context-aware-icorpp -----------------'
+        else:
+            print '------------ previous icorpp -----------------'
 
     #######################################################################
     def init_belief(self):
 
         if self.uniform_init_belief:
             self.b = numpy.ones(len(self.states)) / float(len(self.states))
+
+            if self.md == 'sad' and self.use_plog:
+                if self.b[len(self.tablelist)] == 1:
+                    return
+                # print '\n',self.b
+                belief = self.plog.cal_belief(mood = 'sad', pdpDist = self.b, curr_table = self.ct).split(',')
+                for i in range(len(belief)):
+                    belief[i] = float(belief[i].strip())
+                self.b = numpy.array(belief)
+                self.b = self.b/ sum(self.b)
+                # print '\n',self.s, self.ct, self.b
 
             # print self.b
         else:
@@ -116,9 +132,11 @@ class Simulator(object):
 
         self.b = (new_b / sum(new_b)).T
 
-        if self.md == 'sad':
-            if self.b[4] == 1:
+        if self.md == 'sad' and self.use_plog:
+            self.md = 'happy' # mood changed only one time
+            if self.b[len(self.tablelist)] == 1:
                 return
+            # print '\n',self.b
             belief = self.plog.cal_belief(mood = 'sad', pdpDist = self.b, curr_table = self.ct).split(',')
             for i in range(len(belief)):
                 belief[i] = float(belief[i].strip())
@@ -162,6 +180,7 @@ class Simulator(object):
             overall_reward += self.reward_mat[self.a, self.s]
             # print('current cost: ' + str(self.reward_mat[self.a, self.s]))
             # print('overall cost: ' + str(overall_reward))
+            # print self.actions[self.a]
 
             if 'go' in self.actions[self.a]:
                 # print '--------------------',
@@ -198,10 +217,13 @@ class Simulator(object):
             if self.auto_state:
                 self.s = numpy.random.randint(low=0, high=len(self.states)-1,
                     size=(1))[0]
-                self.ct = numpy.random.randint(low=0, high=len(self.tablelist)-1,
-                    size=(1))[0]
-                self.md = 'sad' if (self.s <> self.ct and self.use_plog) else 'happy'
-
+                tuples = self.states[self.s].split('_')
+                ids = [int(tuples[0][1]),int(tuples[1][1]),int(tuples[2][1])]
+                self.ct = numpy.random.randint(low=0, high=len(self.tablelist),size=(1))[0]
+                self.md = 'happy'
+                # print self.tablelist[self.ct], ids
+                if self.tablelist[self.ct][0] != ids[0] and self.tablelist[self.ct][1] != ids[1] and self.tablelist[self.ct][2] != ids[2]:
+                     self.md = 'sad'
             else:
                 self.s = int(input("Please specify the index of state: "))
 
@@ -246,7 +268,7 @@ def main():
         auto_state = True, 
         auto_observations = True, 
         print_flag = False, 
-        use_plog = True,
+        use_plog = False,
         policy_file = '333_new.policy', 
         pomdp_file =  '333_new.pomdp',
         trials_num = 1000,

@@ -2,6 +2,7 @@
 
 import numpy as np
 import time
+import conf
 import subprocess
 import os.path
 
@@ -336,10 +337,10 @@ class PomdpGenerator(object):
 
         # the larger, the more unreliable for the wh-questions. 
         self.magic_number = 0.3
-        self.polar_tp_rate = 0.7
-        self.polar_tn_rate = 0.7
+        self.polar_tp_rate = 0.8
+        self.polar_tn_rate = 0.8
 
-        self.tablelist = [[0, 0, 0], [0, 1, 1], [1, 1, 2], [2, 2, 2]]
+        self.tablelist = conf.tablelist
 
         self.state_set = []
         self.action_set = []

@@ -2,7 +2,7 @@
 identity={alice,bob,carol}. 
 college={engineering,education,bussiness}.
 year={seventies,eighties,nineties}.
-table={t0,t1,t2,t3}. 
+table={t0,t1,t2,t3,t4,t5,t6,t7}. 
 boolean={true,false}.
 
 #domain identity(I;I1).
@@ -27,11 +27,19 @@ valid :- interest_i=alice, interest_c=engineering, interest_y=seventies.
 valid :- interest_i=alice, interest_c=education, interest_y=eighties. 
 valid :- interest_i=bob, interest_c=education, interest_y=nineties. 
 valid :- interest_i=carol, interest_c=bussiness, interest_y=nineties. 
+valid :- interest_i=alice, interest_c=bussiness, interest_y=nineties. 	
+valid :- interest_i=bob, interest_c=engineering, interest_y=eighties. 		
+valid :- interest_i=bob, interest_c=education, interest_y=seventies. 	
+valid :- interest_i=carol, interest_c=engineering, interest_y=eighties. 
 
 interest_t=t0 :- interest_i=alice, interest_c=engineering, interest_y=seventies. 	% .2
 interest_t=t1 :- interest_i=alice, interest_c=education, interest_y=eighties. 		% .5
-interest_t=t2 :- interest_i=bob, interest_c=education, interest_y=nineties. 		% .1
-interest_t=t3 :- interest_i=carol, interest_c=bussiness, interest_y=nineties. 		% .2
+interest_t=t2 :- interest_i=alice, interest_c=bussiness, interest_y=nineties. 	% .2
+interest_t=t3 :- interest_i=bob, interest_c=engineering, interest_y=eighties. 		% .5
+interest_t=t4 :- interest_i=bob, interest_c=education, interest_y=seventies. 		% .1
+interest_t=t5 :- interest_i=bob, interest_c=education, interest_y=nineties. 		% .1
+interest_t=t6 :- interest_i=carol, interest_c=engineering, interest_y=eighties. 		% .2
+interest_t=t7 :- interest_i=carol, interest_c=bussiness, interest_y=nineties. 		% .2
 
 % [rt] pr(interest_t=t0) = 5/20. 
 % [rt] pr(interest_t=t1) = 5/20. 
@@ -42,14 +50,14 @@ interest_t=t3 :- interest_i=carol, interest_c=bussiness, interest_y=nineties. 		
 % [rm] pr(obs_s=true | curr_table(I,C,Y), interest_c<>C) = 5/10. 
 % [rm] pr(obs_s=true | curr_table(I,C,Y), interest_y<>Y) = 5/10. 
 
-[rs] pr(obs_s=true | curr_table(I,C,Y), interest_i<>I, interest_c<>C, interest_y<>Y) = 8/10. 
+[rs] pr(obs_s=true | curr_table(I,C,Y), interest_i<>I, interest_c<>C, interest_y<>Y) = 9/10. 	
 [rs] pr(obs_s=true | curr_table(I,C,Y), interest_i=I, interest_c<>C, interest_y<>Y) = 6/10. 
 [rs] pr(obs_s=true | curr_table(I,C,Y), interest_i<>I, interest_c=C, interest_y<>Y) = 6/10. 
 [rs] pr(obs_s=true | curr_table(I,C,Y), interest_i<>I, interest_c<>C, interest_y=Y) = 6/10. 
 [rs] pr(obs_s=true | curr_table(I,C,Y), interest_i=I, interest_c=C, interest_y<>Y) = 4/10. 
 [rs] pr(obs_s=true | curr_table(I,C,Y), interest_i=I, interest_c<>C, interest_y=Y) = 4/10. 
 [rs] pr(obs_s=true | curr_table(I,C,Y), interest_i<>I, interest_c=C, interest_y=Y) = 4/10. 
-[rs] pr(obs_s=true | curr_table(I,C,Y), interest_i=I, interest_c=C, interest_y=Y) = 2/10. 
+[rs] pr(obs_s=true | curr_table(I,C,Y), interest_i=I, interest_c=C, interest_y=Y) = 1/10. 
 
 %curr_table(I,C,Y)=false :- not curr_table(I,C,Y). 
 %last_table(I,C,Y)=false :- not last_table(I,C,Y). 

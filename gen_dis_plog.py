@@ -4,14 +4,15 @@ import sys
 import shutil
 import os
 import subprocess
+import conf
 
 class DistrGen(object):
 
   def __init__(self):
-  	self.tablelist = [[0, 0, 0], [0, 1, 1], [1, 1, 2], [2, 2, 2]]
-  	self.identity=['alice','bob','carol'] 
-	self.college=['engineering','education','bussiness']
-	self.year=['seventies','eighties','nineties']
+    self.tablelist = conf.tablelist
+    self.identity=['alice','bob','carol'] 
+    self.college=['engineering','education','bussiness']
+    self.year=['seventies','eighties','nineties']
 
   def __initpast__(self, plog_file = 'program_0.plog'):
     if os.path.isfile(plog_file) is False:
@@ -49,19 +50,7 @@ class DistrGen(object):
               with open(tmp_name, 'a') as ff:
                 ff.write(query)
 
-              plog_lu = '/home/ludc/workspace/context_aware_icorpp/plog/src/plog'
-              plog_zhang = '/home/szhang/software/plog/plog/src/plog'
-
-              if os.path.isfile(plog_lu):
-                plog = plog_lu
-              elif os.path.isfile(plog_zhang):
-                plog = plog_zhang
-              else:
-                print "plog not installed on this machine"
-                exit(1)
-
-
-              out = subprocess.check_output(plog + ' -t ' + tmp_name, shell = True)
+              out = subprocess.check_output('/home/ludc/workspace/context_aware_icorpp/plog/src/plog -t ' + tmp_name, shell = True)
               # print out
               out = out.split('\n')
               out = out[3]
@@ -94,15 +83,16 @@ class DistrGen(object):
     output = ''
     # print( mood+'......' + fl + '......')
     for i in range(len(self.tablelist)):
-      query = '[rt] pr(interest_t=t0) = '+ str(int(pdpDist[0]*100))+'/100.\n' + \
-      		  '[rt] pr(interest_t=t1) = '+ str(int(pdpDist[1]*100)) +'/100.\n' + \
-      		  '[rt] pr(interest_t=t2) = '+ str(int(pdpDist[2]*100)) +'/100.\n' + \
-      		  '[rt] pr(interest_t=t3) = '+ str(int(pdpDist[3]*100)) +'/100.\n'
+      query = ''
+      for j in range(len(self.tablelist)):
+        query += '[rt] pr(interest_t=t' +  str(j) + ') = '+ str(int(pdpDist[j]*100))+'/100.\n'
       query += '?{interest_t=t' + str(i) + '}'
       if mood is 'sad':
         if curr_table is not '':
-          query += '|do(curr_table('+self.identity[self.tablelist[curr_table][0]] + ',' \
+          cur_str = '|do(curr_table('+self.identity[self.tablelist[curr_table][0]] + ',' \
           			+ self.college[self.tablelist[curr_table][1]] + ',' + self.year[self.tablelist[curr_table][2]]+'))'
+          query += cur_str
+          # print '\n',cur_str
           # if last_table is not '':
           #   query += ',do(' + last_table + ')'
         # else:
@@ -155,5 +145,5 @@ def main():
 
 if __name__ == '__main__':
   d = DistrGen()
-  d.cal_belief(mood = 'happy', curr_table = 1, pdpDist = [0.25,0.25,0.25,0.25])
+  d.cal_belief(mood = 'sad', curr_table = 4, pdpDist = [0.11,0.11,0.11,0.11,0.11,0.11,0.11,0.11,0.11])
   # main()
