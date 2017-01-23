@@ -100,13 +100,17 @@ interest_t=t3 :- interest_i=carol, interest_c=bussiness, interest_y=nineties. 		
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% defaults: by default, visitor is not sad; visitor is following; 
-% 			being able to sense human mood implies visitor following
+% defaults
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% by default, visitor is not sad
 obs_s=false :- not obs_s. 
+
+% by default, visitor is following
 obs_f :- not obs_f=false. 
-obs_f :- obs_s, not obs_f=false. 
+
+% it's invalid to sense the mood of a visitor who's not following
+valid=false :- obs_s, obs_f=false. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
