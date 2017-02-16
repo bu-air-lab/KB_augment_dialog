@@ -66,7 +66,9 @@ class DistrGen(object):
 
   def cal_belief(self, plog_file = 'guide.plog',\
                   mood= 'sad', \
-                  curr_table=0, \
+                  foll= True, \
+                  curr_table=-1, \
+                  prev_table=-1, \
                   pdpDist = []):
     if os.path.isfile(plog_file) is False:
       print('p-log file does not exist: ' + plog_file)
@@ -88,10 +90,16 @@ class DistrGen(object):
         query += '[rt] pr(interest_t=t' +  str(j) + ') = '+ str(int(pdpDist[j]*100))+'/100.\n'
       query += '?{interest_t=t' + str(i) + '}'
       if mood is 'sad':
-        if curr_table is not '':
+        if curr_table != -1:
           cur_str = '|do(curr_table('+self.identity[self.tablelist[curr_table][0]] + ',' \
           			+ self.college[self.tablelist[curr_table][1]] + ',' + self.year[self.tablelist[curr_table][2]]+'))'
           query += cur_str
+        if prev_table != -1:
+          cur_str = ',do(prev_table('+self.identity[self.tablelist[prev_table][0]] + ',' \
+                + self.college[self.tablelist[prev_table][1]] + ',' + self.year[self.tablelist[prev_table][2]]+'))'
+          query += cur_str
+        if not foll:
+          query += ', obs(obs_f=false)'
           # print '\n',cur_str
           # if last_table is not '':
           #   query += ',do(' + last_table + ')'
@@ -100,9 +108,16 @@ class DistrGen(object):
         #     query += '|do(' + last_table + ')'
         query += ', obs(valid), obs(obs_s=true).'
       else:
-        if curr_table is not '':
+        if curr_table != -1:
           query += '|do(curr_table('+self.identity[self.tablelist[curr_table][0]] + ',' \
           			+ self.college[self.tablelist[curr_table][1]] + ',' + self.year[self.tablelist[curr_table][2]]+'))'
+        if prev_table != -1:
+          cur_str = ',do(prev_table('+self.identity[self.tablelist[prev_table][0]] + ',' \
+                + self.college[self.tablelist[prev_table][1]] + ',' + self.year[self.tablelist[prev_table][2]]+'))'
+          query += cur_str
+        if not foll:
+          query += ', obs(obs_f=false)'
+          
         query += ',obs(valid).'
       # print query
       tmp_name = '/tmp/' + plog_file + '.tmp'

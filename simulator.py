@@ -64,6 +64,11 @@ class Simulator(object):
         self.a = None
         self.o = None
 
+        self.md = 'happy'
+        self.fl = True
+        self.trigger= 1 ###triggle of event in which dialog turn
+        # self.dialog_turn = 0
+
         self.plog = gen_dis_plog.DistrGen()
 
         # to make the screen print simple 
@@ -79,26 +84,19 @@ class Simulator(object):
         if self.uniform_init_belief:
             self.b = numpy.ones(len(self.states)) / float(len(self.states))
 
-            if self.md == 'sad' and self.use_plog:
+            if self.use_plog and (self.md == 'sad' or self.fl == False):
                 if self.b[len(self.tablelist)] == 1:
                     return
                 # print '\n',self.b
-                belief = self.plog.cal_belief(mood = 'sad', pdpDist = self.b, curr_table = self.ct).split(',')
+                belief = self.plog.cal_belief(mood = self.md, foll = self.fl, pdpDist = self.b, curr_table = self.ct, prev_table = self.pt).split(',')
                 for i in range(len(belief)):
                     belief[i] = float(belief[i].strip())
                 self.b = numpy.array(belief)
                 self.b = self.b/ sum(self.b)
                 # print '\n',self.s, self.ct, self.b
-
-            # print self.b
         else:
-            belief = self.plog.cal_belief().split(',')
-            for i in range(len(belief)):
-                belief[i] = float(belief[i].strip())
-            self.b = numpy.array(belief)
-            # print self.b
             # here initial belief is sampled from a Dirichlet distribution
-            # self.b = numpy.random.dirichlet( numpy.ones(len(self.states)) )
+            self.b = numpy.random.dirichlet( numpy.ones(len(self.states)) )
 
         self.b = self.b.T
 
@@ -122,7 +120,7 @@ class Simulator(object):
 
 
     #######################################################################
-    def update(self):
+    def update(self,cycletime):
 
         new_b = numpy.dot(self.b, self.trans_mat[self.a, :])
 
@@ -132,12 +130,13 @@ class Simulator(object):
 
         self.b = (new_b / sum(new_b)).T
 
-        if self.md == 'sad' and self.use_plog:
-            self.md = 'happy' # mood changed only one time
+        if cycletime == self.trigger and self.use_plog and (self.md == 'sad' or self.fl == False):
+
             if self.b[len(self.tablelist)] == 1:
                 return
             # print '\n',self.b
-            belief = self.plog.cal_belief(mood = 'sad', pdpDist = self.b, curr_table = self.ct).split(',')
+            belief = self.plog.cal_belief(mood = self.md, foll = self.fl, pdpDist = self.b, curr_table = self.ct, prev_table = self.pt).split(',')
+            # belief = self.plog.cal_belief(mood = 'sad', pdpDist = self.b, curr_table = self.ct).split(',')
             for i in range(len(belief)):
                 belief[i] = float(belief[i].strip())
             self.b = numpy.array(belief)
@@ -172,7 +171,7 @@ class Simulator(object):
             if self.print_flag:
                 print('\tobserve:\t'+self.observations[self.o]+' '+str(self.o))
 
-            self.update()
+            self.update(cycletime)
             if self.print_flag:
                 print('\nbelief:\t' + str(self.b))
 
@@ -219,11 +218,15 @@ class Simulator(object):
                     size=(1))[0]
                 tuples = self.states[self.s].split('_')
                 ids = [int(tuples[0][1]),int(tuples[1][1]),int(tuples[2][1])]
-                self.ct = numpy.random.randint(low=0, high=len(self.tablelist),size=(1))[0]
+                self.ct = numpy.random.randint(low=0, high=len(self.tablelist),size=(1))[0] ###curr table
+                self.pt = self.ct - 1 if self.ct != 0 else len(self.tablelist)-1
                 self.md = 'happy'
+                self.fl = True
                 # print self.tablelist[self.ct], ids
                 if self.tablelist[self.ct][0] != ids[0] and self.tablelist[self.ct][1] != ids[1] and self.tablelist[self.ct][2] != ids[2]:
                      self.md = 'sad'
+                if self.tablelist[self.pt][0] == ids[0] and self.tablelist[self.pt][1] == ids[1] and self.tablelist[self.pt][2] == ids[2]:
+                     self.fl = False
             else:
                 self.s = int(input("Please specify the index of state: "))
 
@@ -268,7 +271,7 @@ def main():
         auto_state = True, 
         auto_observations = True, 
         print_flag = False, 
-        use_plog = False,
+        use_plog = True,
         policy_file = '333_new.policy', 
         pomdp_file =  '333_new.pomdp',
         trials_num = 1000,
