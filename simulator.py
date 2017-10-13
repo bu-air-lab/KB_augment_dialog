@@ -9,8 +9,8 @@ import readline
 import numpy
 import random
 from scipy import stats
-sys.path.append('/home/ludc/software/python_progress/progress-1.2')
-sys.path.append('/home/szhang/software/python_progress/progress-1.2')
+#sys.path.append('/home/ludc/software/python_progress/progress-1.2')
+#sys.path.append('/home/szhang/software/python_progress/progress-1.2')
 from progress.bar import Bar
 import subprocess
 import gen_dis_plog

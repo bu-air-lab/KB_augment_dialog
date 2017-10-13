@@ -8,38 +8,38 @@ import os.path
 
 class State(object):
 
-    def __init__(self, num_identity, num_college, num_year):
+    def __init__(self, num_task, num_patient, num_recipient):
         
-        self.num_identity = num_identity
-        self.num_college = num_college
-        self.num_year = num_year
+        self.num_task = num_task
+        self.num_patient = num_patient
+        self.num_recipient = num_recipient
 
 class StateRegular(State):
 
-    def __init__(self, identity, college, year, num_identity, num_college, num_year, index):
+    def __init__(self, task, patient, recipient, num_task, num_patient, num_recipient, index):
 
-        State.__init__(self, num_identity, num_college, num_year)
+        State.__init__(self, num_task, num_patient, num_recipient)
 
-        self.identity = identity
-        self.college = college
-        self.year = year
+        self.task = task
+        self.patient = patient
+        self.recipient = recipient
         self.index = index
 
     def getName(self):
-        return 'i' + str(self.identity) + '_c' + str(self.college) + '_y' + \
-            str(self.year)
+        return 'i' + str(self.task) + '_c' + str(self.patient) + '_y' + \
+            str(self.recipient)
 
     def getIndex(self):
         return self.index
 
-    def getidentityIndex(self):
-        return self.identity
+    def gettaskIndex(self):
+        return self.task
 
-    def getcollegeIndex(self):
-        return self.college
+    def getpatientIndex(self):
+        return self.patient
 
-    def getyearIndex(self):
-        return self.year
+    def getrecipientIndex(self):
+        return self.recipient
 
     def isTerminal(self):
         return False
@@ -47,9 +47,9 @@ class StateRegular(State):
 
 class StateTerminal(State):
 
-    def __init__(self, num_identity, num_college, num_year, index):
+    def __init__(self, num_task, num_patient, num_recipient, index):
 
-        State.__init__(self, num_identity, num_college, num_year)
+        State.__init__(self, num_task, num_patient, num_recipient)
         self.index = index
 
     def getName(self):
@@ -83,121 +83,121 @@ class ActionAskWh(ActionAsk):
 
     def __init__(self, var):
 
-        assert var in ['identity', 'college', 'year']
+        assert var in ['task', 'patient', 'recipient']
         ActionAsk.__init__(self, 'wh')
         self.var = var
 
     def getName(self):
-        if self.var == 'identity':
+        if self.var == 'task':
             return 'ask_i'
-        elif self.var == 'college':
+        elif self.var == 'patient':
             return 'ask_c'
-        elif self.var == 'year':
+        elif self.var == 'recipient':
             return 'ask_y'
 
     def getIndex(self):
         
-        if self.var == 'identity':
+        if self.var == 'task':
             return 0
-        elif self.var == 'college':
+        elif self.var == 'patient':
             return 1
-        elif self.var == 'year':
+        elif self.var == 'recipient':
             return 2
 
 
 class ActionAskPolar(ActionAsk):
 
-    def __init__(self, var, num_identity, num_college, num_year):
+    def __init__(self, var, num_task, num_patient, num_recipient):
 
         ActionAsk.__init__(self, 'polar')
-        self.num_identity = num_identity
-        self.num_college = num_college
-        self.num_year = num_year
-        assert var in ['identity', 'college', 'year']
+        self.num_task = num_task
+        self.num_patient = num_patient
+        self.num_recipient = num_recipient
+        assert var in ['task', 'patient', 'recipient']
         self.var = var
 
-class ActionAskPolaridentity(ActionAskPolar):
+class ActionAskPolartask(ActionAskPolar):
 
-    def __init__(self, identity, num_identity, num_college, num_year):
+    def __init__(self, task, num_task, num_patient, num_recipient):
 
-        assert identity < num_identity
-        ActionAskPolar.__init__(self, 'identity', num_identity, num_college, num_year)
-        self.identity = identity
+        assert task < num_task
+        ActionAskPolar.__init__(self, 'task', num_task, num_patient, num_recipient)
+        self.task = task
 
-    def getidentityIndex(self):
-        return self.identity
+    def gettaskIndex(self):
+        return self.task
 
     def getIndex(self):
-        return 3 + self.identity
+        return 3 + self.task
 
     def getName(self):
-        return 'confirm_i' + str(self.identity)
+        return 'confirm_i' + str(self.task)
 
-class ActionAskPolarcollege(ActionAskPolar):
+class ActionAskPolarpatient(ActionAskPolar):
 
-    def __init__(self, college, num_identity, num_college, num_year):
+    def __init__(self, patient, num_task, num_patient, num_recipient):
         
-        assert college < num_college
-        ActionAskPolar.__init__(self, 'college', num_identity, num_college, num_year)
-        self.college = college
+        assert patient < num_patient
+        ActionAskPolar.__init__(self, 'patient', num_task, num_patient, num_recipient)
+        self.patient = patient
 
-    def getcollegeIndex(self):
-        return self.college
+    def getpatientIndex(self):
+        return self.patient
 
     def getIndex(self):
-        return 3 + self.num_identity + self.college
+        return 3 + self.num_task + self.patient
 
     def getName(self):
-        return 'confirm_c' + str(self.college)
+        return 'confirm_c' + str(self.patient)
 
-class ActionAskPolaryear(ActionAskPolar):
+class ActionAskPolarrecipient(ActionAskPolar):
 
-    def __init__(self, year, num_identity, num_college, num_year):
+    def __init__(self, recipient, num_task, num_patient, num_recipient):
         
-        assert year < num_year
-        ActionAskPolar.__init__(self, 'year', num_identity, num_college, num_year)
-        self.year = year
+        assert recipient < num_recipient
+        ActionAskPolar.__init__(self, 'recipient', num_task, num_patient, num_recipient)
+        self.recipient = recipient
 
-    def getyearIndex(self):
-        return self.year
+    def getrecipientIndex(self):
+        return self.recipient
 
     def getIndex(self):
-        return 3 + self.num_identity + self.num_college + self.year
+        return 3 + self.num_task + self.num_patient + self.recipient
 
     def getName(self):
-        return 'confirm_y' + str(self.year)
+        return 'confirm_y' + str(self.recipient)
 
 class ActionDeliver(Action):
 
-    def __init__(self, identity, college, year, num_identity, num_college, num_year, index):
+    def __init__(self, task, patient, recipient, num_task, num_patient, num_recipient, index):
 
-        assert identity < num_identity
-        assert college < num_college
-        assert year < num_year
+        assert task < num_task
+        assert patient < num_patient
+        assert recipient < num_recipient
         Action.__init__(self, 'guide')
-        self.identity = identity
-        self.college = college
-        self.year = year
-        self.num_identity = num_identity
-        self.num_college = num_college
-        self.num_year = num_year
-        self.index = 3 + self.num_identity + self.num_college + self.num_year + index
+        self.task = task
+        self.patient = patient
+        self.recipient = recipient
+        self.num_task = num_task
+        self.num_patient = num_patient
+        self.num_recipient = num_recipient
+        self.index = 3 + self.num_task + self.num_patient + self.num_recipient + index
 
-    def getidentityIndex(self):
-        return self.identity
+    def gettaskIndex(self):
+        return self.task
 
-    def getcollegeIndex(self):
-        return self.college
+    def getpatientIndex(self):
+        return self.patient
 
-    def getyearIndex(self):
-        return self.year
+    def getrecipientIndex(self):
+        return self.recipient
 
     def getIndex(self):
         return self.index
 
     def getName(self):
-        return 'go_i' + str(self.identity) + '_c' + str(self.college) + '_y' + \
-            str(self.year)
+        return 'go_i' + str(self.task) + '_c' + str(self.patient) + '_y' + \
+            str(self.recipient)
 
 class Observation(object):
 
@@ -210,81 +210,81 @@ class ObservationWh(Observation):
 
     def __init__(self, var):
 
-        assert var in ['identity', 'college', 'year']
+        assert var in ['task', 'patient', 'recipient']
         Observation.__init__(self, 'wh')
         self.var = var
 
-class ObservationWhidentity(ObservationWh):
+class ObservationWhtask(ObservationWh):
 
-    def __init__(self, identity, num_identity, num_college, num_year):
+    def __init__(self, task, num_task, num_patient, num_recipient):
 
-        assert identity < num_identity
-        ObservationWh.__init__(self, 'identity')
-        self.identity = identity
-        self.num_identity = num_identity
-        self.num_college = num_college
-        self.num_year = num_year
+        assert task < num_task
+        ObservationWh.__init__(self, 'task')
+        self.task = task
+        self.num_task = num_task
+        self.num_patient = num_patient
+        self.num_recipient = num_recipient
 
-    def getidentityIndex(self):
-        return self.identity
-
-    def getIndex(self):
-        return self.identity
-
-    def getName(self):
-        return 'i' + str(self.identity)
-
-
-class ObservationWhcollege(ObservationWh):
-
-    def __init__(self, college, num_identity, num_college, num_year):
-
-        assert college < num_college
-        ObservationWh.__init__(self, 'college')
-        self.college = college
-        self.num_identity = num_identity
-        self.num_college = num_college
-        self.num_year = num_year
-
-    def getcollegeIndex(self):
-        return self.college
+    def gettaskIndex(self):
+        return self.task
 
     def getIndex(self):
-        return self.num_identity + self.college
+        return self.task
 
     def getName(self):
-        return 'c' + str(self.college)
+        return 'i' + str(self.task)
 
-class ObservationWhyear(ObservationWh):
 
-    def __init__(self, year, num_identity, num_college, num_year):
+class ObservationWhpatient(ObservationWh):
 
-        assert year < num_year
-        ObservationWh.__init__(self, 'year')
-        self.year = year
-        self.num_identity = num_identity
-        self.num_college = num_college
-        self.num_year = num_year
+    def __init__(self, patient, num_task, num_patient, num_recipient):
 
-    def getyearIndex(self):
-        return self.year
+        assert patient < num_patient
+        ObservationWh.__init__(self, 'patient')
+        self.patient = patient
+        self.num_task = num_task
+        self.num_patient = num_patient
+        self.num_recipient = num_recipient
+
+    def getpatientIndex(self):
+        return self.patient
 
     def getIndex(self):
-        return self.num_identity + self.num_college + self.year
+        return self.num_task + self.patient
 
     def getName(self):
-        return 'y' + str(self.year)
+        return 'c' + str(self.patient)
+
+class ObservationWhrecipient(ObservationWh):
+
+    def __init__(self, recipient, num_task, num_patient, num_recipient):
+
+        assert recipient < num_recipient
+        ObservationWh.__init__(self, 'recipient')
+        self.recipient = recipient
+        self.num_task = num_task
+        self.num_patient = num_patient
+        self.num_recipient = num_recipient
+
+    def getrecipientIndex(self):
+        return self.recipient
+
+    def getIndex(self):
+        return self.num_task + self.num_patient + self.recipient
+
+    def getName(self):
+        return 'y' + str(self.recipient)
 
 class ObservationPolar(Observation):
 
-    def __init__(self, polar, num_identity, num_college, num_year):
+    def __init__(self, polar, num_task, num_patient, num_recipient):
 
         assert polar in ['yes', 'no']
         Observation.__init__(self, 'polar')
         self.polar = polar
-        self.num_identity = num_identity
-        self.num_college = num_college
-        self.num_year = num_year
+        self.num_task = num_task
+        self.num_patient = num_patient
+        self.num_recipient = num_recipient
 
     def getName(self):
         if self.polar == 'yes':
@@ -294,35 +294,35 @@ class ObservationPolar(Observation):
 
     def getIndex(self):
         if self.polar == 'yes':
-            return self.num_identity + self.num_college + self.num_year
+            return self.num_task + self.num_patient + self.num_recipient
         elif self.polar == 'no':
-            return self.num_identity + self.num_college + self.num_year + 1
+            return self.num_task + self.num_patient + self.num_recipient + 1
 
 
 class ObservationNone(Observation):
 
-    def __init__(self, num_identity, num_college, num_year):
+    def __init__(self, num_task, num_patient, num_recipient):
 
         Observation.__init__(self, 'none')
-        self.num_identity = num_identity
-        self.num_college = num_college
-        self.num_year = num_year
+        self.num_task = num_task
+        self.num_patient = num_patient
+        self.num_recipient = num_recipient
 
     def getName(self):
         return 'none'
 
     def getIndex(self):
-        return self.num_identity + self.num_college + self.num_year + 2
+        return self.num_task + self.num_patient + self.num_recipient + 2
 
 class PomdpGenerator(object):
 
-    def __init__(self, num_identity, num_college, num_year, r_max, r_min, strategy, \
-        weight_i, weight_c, weight_y, wh_cost, yesno_cost):
+    def __init__(self, num_task, num_patient, num_recipient, r_max, r_min, strategy, \
+        weight_t, weight_p, weight_r, wh_cost, yesno_cost):
         
 
-        self.num_identity = num_identity
-        self.num_college = num_college
-        self.num_year = num_year
+        self.num_task = num_task
+        self.num_patient = num_patient
+        self.num_recipient = num_recipient
 
         self.r_max = r_max
         self.r_min = r_min
@@ -351,27 +351,27 @@ class PomdpGenerator(object):
         self.reward_mat = None
 
         # compute the sets of states, actions, observations
-        self.state_set = self.computeStateSet(self.num_identity, self.num_college,
-            self.num_year)
-        self.action_set = self.computeActionSet(self.num_identity, self.num_college,
-            self.num_year)
-        self.observation_set = self.computeObservationSet(self.num_identity, 
-            self.num_college, self.num_year)
+        self.state_set = self.computeStateSet(self.num_task, self.num_patient,
+            self.num_recipient)
+        self.action_set = self.computeActionSet(self.num_task, self.num_patient,
+            self.num_recipient)
+        self.observation_set = self.computeObservationSet(self.num_task, 
+            self.num_patient, self.num_recipient)
 
         # compute the functions of transition, observation
-        self.trans_mat = self.computeTransFunction(self.num_identity,
-            self.num_college, self.num_year)
+        self.trans_mat = self.computeTransFunction(self.num_task,
+            self.num_patient, self.num_recipient)
 
-        self.obs_mat = self.computeObsFunction(self.num_identity, self.num_college,
-            self.num_year, self.magic_number, self.polar_tp_rate)
+        self.obs_mat = self.computeObsFunction(self.num_task, self.num_patient,
+            self.num_recipient, self.magic_number, self.polar_tp_rate)
 
         # compute two versions of reward function
-        reward_mat_float = self.computeRewardFunction(self.num_identity,
-            self.num_college, self.num_year, self.r_max, self.r_min, \
+        reward_mat_float = self.computeRewardFunction(self.num_task,
+            self.num_patient, self.num_recipient, self.r_max, self.r_min, \
             self.weight_i, self.weight_c, self.weight_y, wh_cost, yesno_cost)
 
-        reward_mat_bin = self.computeRewardFunction(self.num_identity,
-            self.num_college, self.num_year, self.r_max, self.r_min, \
+        reward_mat_bin = self.computeRewardFunction(self.num_task,
+            self.num_patient, self.num_recipient, self.r_max, self.r_min, \
             self.weight_i_bin, self.weight_c_bin, self.weight_y_bin, wh_cost, yesno_cost)
 
         # the idea is to keep the reward of fully correct deliveries and
@@ -412,11 +412,14 @@ class PomdpGenerator(object):
 
         pomdpsol_lu = '/home/ludc/workspace/context_aware_icorpp/appl-0.96/src/pomdpsol'
         pomdpsol_zhang = '/home/szhang/software/appl/appl-0.95/src/pomdpsol'
+        pomdpsol_sujay = '/home/sujay/context_aware_icorpp/sarsop/src/pomdpsol'
 
         if os.path.isfile(pomdpsol_lu):
             pomdpsol = pomdpsol_lu
         elif os.path.isfile(pomdpsol_zhang):
             pomdpsol = pomdpsol_zhang
+        elif os.path.isfile(pomdpsol_sujay):
+        	pomdpsol = pomdpsol_sujay
         else:
             print "pomdpsol not installed..."
             exit(1)
@@ -425,7 +428,7 @@ class PomdpGenerator(object):
                                     + strategy + '_new.policy ' + strategy + '_new.pomdp', shell = True)
         print 'finish training'
 
-    def computeTransFunction(self, num_identity, num_college, num_year):
+    def computeTransFunction(self, num_task, num_patient, num_recipient):
 
         num_state = len(self.state_set)
 
@@ -445,7 +448,7 @@ class PomdpGenerator(object):
 
     # HERE WE INTRODUCE A NOVEL OBSERVATION MODEL
     # true-positive rate = 1/(n^0.1), where n is the variable's range
-    def computeObsFunction(self, num_identity, num_college, num_year, magic_number,
+    def computeObsFunction(self, num_task, num_patient, num_recipient, magic_number,
         polar_tp_rate):
         
         num_action = len(self.action_set)
@@ -468,16 +471,16 @@ class PomdpGenerator(object):
                 
             elif action.qd_type == 'ask':
                 if action.q_type == 'wh':
-                    if action.var == 'identity':
-                        tp_rate = 1.0 / pow(num_identity, magic_number)
+                    if action.var == 'task':
+                        tp_rate = 1.0 / pow(num_task, magic_number)
                         for state in self.state_set:
                             if state.isTerminal() == True:
                                 continue
                             for observation in self.observation_set:
                                 if observation.qd_type == 'wh':
-                                    if observation.var == 'identity':
-                                        if observation.getidentityIndex() == \
-                                            state.getidentityIndex():
+                                    if observation.var == 'task':
+                                        if observation.gettaskIndex() == \
+                                            state.gettaskIndex():
                                             
                                             obs_mat[action.getIndex()]\
                                                 [state.getIndex()]\
@@ -487,18 +490,18 @@ class PomdpGenerator(object):
                                             obs_mat[action.getIndex()]\
                                                 [state.getIndex()]\
                                                 [observation.getIndex()] = \
-                                                (1.0-tp_rate) / (num_identity-1)
+                                                (1.0-tp_rate) / (num_task-1)
                                     
-                    elif action.var == 'college':
-                        tp_rate = 1.0 / pow(num_college, magic_number)
+                    elif action.var == 'patient':
+                        tp_rate = 1.0 / pow(num_patient, magic_number)
                         for state in self.state_set:
                             if state.isTerminal() == True:
                                 continue
                             for observation in self.observation_set:
                                 if observation.qd_type == 'wh':
-                                    if observation.var == 'college':
-                                        if observation.getcollegeIndex() == \
-                                            state.getcollegeIndex():
+                                    if observation.var == 'patient':
+                                        if observation.getpatientIndex() == \
+                                            state.getpatientIndex():
                                             
                                             obs_mat[action.getIndex()]\
                                                 [state.getIndex()]\
@@ -508,18 +511,18 @@ class PomdpGenerator(object):
                                             obs_mat[action.getIndex()]\
                                                 [state.getIndex()]\
                                                 [observation.getIndex()]\
-                                                = (1.0-tp_rate) / (num_college-1)
+                                                = (1.0-tp_rate) / (num_patient-1)
 
-                    elif action.var == 'year':
-                        tp_rate = 1.0 / pow(num_year, magic_number)
+                    elif action.var == 'recipient':
+                        tp_rate = 1.0 / pow(num_recipient, magic_number)
                         for state in self.state_set:
                             if state.isTerminal() == True:
                                 continue
                             for observation in self.observation_set:
                                 if observation.qd_type == 'wh':
-                                    if observation.var == 'year':
-                                        if observation.getyearIndex() ==\
-                                            state.getyearIndex():
+                                    if observation.var == 'recipient':
+                                        if observation.getrecipientIndex() ==\
+                                            state.getrecipientIndex():
                                             
                                             obs_mat[action.getIndex()]\
                                                 [state.getIndex()]\
@@ -529,17 +532,17 @@ class PomdpGenerator(object):
                                             obs_mat[action.getIndex()]\
                                                 [state.getIndex()]\
                                                 [observation.getIndex()]\
-                                                = (1.0-tp_rate) / (num_year-1)
+                                                = (1.0-tp_rate) / (num_recipient-1)
                     
                 elif action.q_type == 'polar':
-                    if action.var == 'identity':
+                    if action.var == 'task':
                         for state in self.state_set:
                             if state.isTerminal() == True:
                                 continue
                             for observation in self.observation_set:
                                 if observation.getName() == 'yes':
-                                    if state.getidentityIndex() ==\
-                                        action.getidentityIndex():
+                                    if state.gettaskIndex() ==\
+                                        action.gettaskIndex():
                                         obs_mat[action.getIndex()]\
                                             [state.getIndex()]\
                                             [observation.getIndex()]\
@@ -550,8 +553,8 @@ class PomdpGenerator(object):
                                             [observation.getIndex()] = \
                                             1.0 - self.polar_tp_rate
                                 elif observation.getName() == 'no':
-                                    if state.getidentityIndex() ==\
-                                        action.getidentityIndex():
+                                    if state.gettaskIndex() ==\
+                                        action.gettaskIndex():
                                         obs_mat[action.getIndex()]\
                                             [state.getIndex()]\
                                             [observation.getIndex()]= \
@@ -561,14 +564,14 @@ class PomdpGenerator(object):
                                             [state.getIndex()]\
                                             [observation.getIndex()] \
                                             = self.polar_tn_rate
-                    elif action.var == 'college':
+                    elif action.var == 'patient':
                         for state in self.state_set:
                             if state.isTerminal() == True:
                                 continue
                             for observation in self.observation_set:
                                 if observation.getName() == 'yes':
-                                    if state.getcollegeIndex() == \
-                                        action.getcollegeIndex():
+                                    if state.getpatientIndex() == \
+                                        action.getpatientIndex():
                                         obs_mat[action.getIndex()]\
                                             [state.getIndex()]\
                                             [observation.getIndex()]\
@@ -579,8 +582,8 @@ class PomdpGenerator(object):
                                             [observation.getIndex()]=\
                                             1.0 - self.polar_tp_rate
                                 elif observation.getName() == 'no':
-                                    if state.getcollegeIndex() == \
-                                        action.getcollegeIndex():
+                                    if state.getpatientIndex() == \
+                                        action.getpatientIndex():
                                         obs_mat[action.getIndex()]\
                                             [state.getIndex()]\
                                             [observation.getIndex()]= \
@@ -590,14 +593,14 @@ class PomdpGenerator(object):
                                             [state.getIndex()]\
                                             [observation.getIndex()]=\
                                             self.polar_tn_rate
-                    elif action.var == 'year':
+                    elif action.var == 'recipient':
                         for state in self.state_set:
                             if state.isTerminal() == True:
                                 continue
                             for observation in self.observation_set:
                                 if observation.getName() == 'yes':
-                                    if state.getyearIndex() ==\
-                                        action.getyearIndex():
+                                    if state.getrecipientIndex() ==\
+                                        action.getrecipientIndex():
                                         obs_mat[action.getIndex()]\
                                             [state.getIndex()]\
                                             [observation.getIndex()]\
@@ -608,8 +611,8 @@ class PomdpGenerator(object):
                                             [observation.getIndex()]=\
                                             1.0 - self.polar_tp_rate
                                 elif observation.getName() == 'no':
-                                    if state.getyearIndex() ==\
-                                        action.getyearIndex():
+                                    if state.getrecipientIndex() ==\
+                                        action.getrecipientIndex():
                                         obs_mat[action.getIndex()]\
                                             [state.getIndex()]\
                                             [observation.getIndex()]= \
@@ -622,7 +625,7 @@ class PomdpGenerator(object):
 
         return obs_mat
 
-    def computeRewardFunction(self, num_identity, num_college, num_year,
+    def computeRewardFunction(self, num_task, num_patient, num_recipient,
         r_max, r_min, weight_i, weight_c, weight_y, wh_cost, yesno_cost):
 
         reward_mat = np.zeros((len(self.action_set), len(self.state_set), ))
@@ -654,72 +657,72 @@ class PomdpGenerator(object):
     def guideReward(self, r_max, r_min, weight_i, weight_c, weight_y,
         action, state):
 
-        if weight_i[action.getidentityIndex()][state.getidentityIndex()] == 1.0 and  \
-                weight_c[action.getcollegeIndex()][state.getcollegeIndex()] == 1.0 and  \
-                weight_y[action.getyearIndex()][state.getyearIndex()] == 1.0:
+        if weight_i[action.gettaskIndex()][state.gettaskIndex()] == 1.0 and  \
+                weight_c[action.getpatientIndex()][state.getpatientIndex()] == 1.0 and  \
+                weight_y[action.getrecipientIndex()][state.getrecipientIndex()] == 1.0:
             return r_max
         else:
             ret = r_min * (1.0 - \
-                weight_i[action.getidentityIndex()][state.getidentityIndex()] * \
-                weight_c[action.getcollegeIndex()][state.getcollegeIndex()] * \
-                weight_y[action.getyearIndex()][state.getyearIndex()])
+                weight_i[action.gettaskIndex()][state.gettaskIndex()] * \
+                weight_c[action.getpatientIndex()][state.getpatientIndex()] * \
+                weight_y[action.getrecipientIndex()][state.getrecipientIndex()])
             return ret
 
-    def computeStateSet(self, num_identity, num_college, num_year):
+    def computeStateSet(self, num_task, num_patient, num_recipient):
 
         ret = []
-        for i in range(num_identity):
-            for c in range(num_college):
-                for y in range(num_year):
+        for i in range(num_task):
+            for c in range(num_patient):
+                for y in range(num_recipient):
                     for table in self.tablelist:
                         if i == table[0] and c == table[1] and y == table[2]:
-                            ret.append(StateRegular(i, c, y, num_identity, num_college, num_year,self.tablelist.index(table)))
+                            ret.append(StateRegular(i, c, y, num_task, num_patient, num_recipient,self.tablelist.index(table)))
 
-        ret.append(StateTerminal(num_identity, num_college, num_year, len(self.tablelist)))
+        ret.append(StateTerminal(num_task, num_patient, num_recipient, len(self.tablelist)))
 
         return ret
 
-    def computeActionSet(self, num_identity, num_college, num_year):
+    def computeActionSet(self, num_task, num_patient, num_recipient):
 
         ret = []
-        ret.append(ActionAskWh('identity'))
-        ret.append(ActionAskWh('college'))
-        ret.append(ActionAskWh('year'))
+        ret.append(ActionAskWh('task'))
+        ret.append(ActionAskWh('patient'))
+        ret.append(ActionAskWh('recipient'))
         
-        for i in range(num_identity):
-            ret.append(ActionAskPolaridentity(i, num_identity, num_college, num_year))
+        for i in range(num_task):
+            ret.append(ActionAskPolartask(i, num_task, num_patient, num_recipient))
 
-        for c in range(num_college):
-            ret.append(ActionAskPolarcollege(c, num_identity, num_college, num_year))
+        for c in range(num_patient):
+            ret.append(ActionAskPolarpatient(c, num_task, num_patient, num_recipient))
 
-        for y in range(num_year):
-            ret.append(ActionAskPolaryear(y, num_identity, num_college, num_year))
+        for y in range(num_recipient):
+            ret.append(ActionAskPolarrecipient(y, num_task, num_patient, num_recipient))
 
-        for i in range(num_identity):
-            for c in range(num_college):
-                for y in range(num_year):
+        for i in range(num_task):
+            for c in range(num_patient):
+                for y in range(num_recipient):
                     for table in self.tablelist:
                         if i == table[0] and c == table[1] and y == table[2]:
-                            ret.append(ActionDeliver(i, c, y, num_identity, num_college,
-                                num_year, self.tablelist.index(table)))
+                            ret.append(ActionDeliver(i, c, y, num_task, num_patient,
+                                num_recipient, self.tablelist.index(table)))
 
         return ret
 
-    def computeObservationSet(self, num_identity, num_college, num_year):
+    def computeObservationSet(self, num_task, num_patient, num_recipient):
 
         ret = []
-        for i in range(num_identity):
-            ret.append(ObservationWhidentity(i, num_identity, num_college, num_year))
+        for i in range(num_task):
+            ret.append(ObservationWhtask(i, num_task, num_patient, num_recipient))
 
-        for p in range(num_college):
-            ret.append(ObservationWhcollege(p, num_identity, num_college, num_year))
+        for p in range(num_patient):
+            ret.append(ObservationWhpatient(p, num_task, num_patient, num_recipient))
 
-        for r in range(num_year):
-            ret.append(ObservationWhyear(r, num_identity, num_college, num_year))
+        for r in range(num_recipient):
+            ret.append(ObservationWhrecipient(r, num_task, num_patient, num_recipient))
 
-        ret.append(ObservationPolar('yes', num_identity, num_college, num_year))
-        ret.append(ObservationPolar('no', num_identity, num_college, num_year))
-        ret.append(ObservationNone(num_identity, num_college, num_year))
+        ret.append(ObservationPolar('yes', num_task, num_patient, num_recipient))
+        ret.append(ObservationPolar('no', num_task, num_patient, num_recipient))
+        ret.append(ObservationNone(num_task, num_patient, num_recipient))
 
         return ret
 
@@ -789,9 +792,9 @@ def main():
     wh_cost = -1.5
     yesno_cost = -1.0
 
-    num_identity = 3
-    num_college = 3
-    num_year = 3
+    num_task = 3
+    num_patient = 3
+    num_recipient = 3
 
     # row corresponds to action, column to underlying state
     # all
@@ -807,12 +810,12 @@ def main():
                          [0.0, 1.0, 0.0], 
                          [0.0, 0.0, 1.0]])
     
-    # strategy = str(num_identity) + str(num_college) + str(num_year) 
-    # strategy = str(num_identity) + str(num_college) + str(num_year) + '_' + str(entry)
-    # strategy = str(num_identity) + str(num_college) + str(num_year) + '_' + str(entry1) + str(entry2)
-    strategy = str(num_identity) + str(num_college) + str(num_year)
+    # strategy = str(num_task) + str(num_patient) + str(num_recipient) 
+    # strategy = str(num_task) + str(num_patient) + str(num_recipient) + '_' + str(entry)
+    # strategy = str(num_task) + str(num_patient) + str(num_recipient) + '_' + str(entry1) + str(entry2)
+    strategy = str(num_task) + str(num_patient) + str(num_recipient)
 
-    pg = PomdpGenerator(num_identity, num_college, num_year, r_max, r_min, strategy, \
+    pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
         weight_i, weight_c, weight_y, wh_cost, yesno_cost)
 
 if __name__ == '__main__':

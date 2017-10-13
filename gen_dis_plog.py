@@ -50,7 +50,7 @@ class DistrGen(object):
               with open(tmp_name, 'a') as ff:
                 ff.write(query)
 
-              out = subprocess.check_output('/home/ludc/workspace/context_aware_icorpp/plog/src/plog -t ' + tmp_name, shell = True)
+              out = subprocess.check_output('/home/sujay/context_aware_icorpp/plog/src/plog -t ' + tmp_name, shell = True)
               # print out
               out = out.split('\n')
               out = out[3]
@@ -130,11 +130,14 @@ class DistrGen(object):
 
       plog_lu = '/home/ludc/workspace/context_aware_icorpp/plog/src/plog'
       plog_zhang = '/home/szhang/software/plog/plog/src/plog'
+      plog_sujay = '/home/sujay/context_aware_icorpp/plog/src/plog'
 
       if os.path.isfile(plog_lu):
         plog = plog_lu
       elif os.path.isfile(plog_zhang):
         plog = plog_zhang
+      elif os.path.isfile(plog_sujay):
+        plog = plog_sujay
       else:
         print "plog not installed on this machine"
         exit(1)
