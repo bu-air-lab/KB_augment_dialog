@@ -26,7 +26,7 @@ class StateRegular(State):
         self.index = index
 
     def getName(self):
-        return 'i' + str(self.task) + '_c' + str(self.patient) + '_y' + \
+        return 't' + str(self.task) + '_p' + str(self.patient) + '_r' + \
             str(self.recipient)
 
     def getIndex(self):
@@ -66,7 +66,7 @@ class Action(object):
     # qd_type: type of this action: ask or deliver? 
     def __init__(self, qd_type):
         
-        assert qd_type in ['ask', 'guide']
+        assert qd_type in ['ask', 'executeTask']
         self.qd_type = qd_type
 
 
@@ -89,11 +89,11 @@ class ActionAskWh(ActionAsk):
 
     def getName(self):
         if self.var == 'task':
-            return 'ask_i'
+            return 'ask_t'
         elif self.var == 'patient':
-            return 'ask_c'
+            return 'ask_p'
         elif self.var == 'recipient':
-            return 'ask_y'
+            return 'ask_r'
 
     def getIndex(self):
         
@@ -131,7 +131,7 @@ class ActionAskPolartask(ActionAskPolar):
         return 3 + self.task
 
     def getName(self):
-        return 'confirm_i' + str(self.task)
+        return 'confirm_t' + str(self.task)
 
 class ActionAskPolarpatient(ActionAskPolar):
 
@@ -148,7 +148,7 @@ class ActionAskPolarpatient(ActionAskPolar):
         return 3 + self.num_task + self.patient
 
     def getName(self):
-        return 'confirm_c' + str(self.patient)
+        return 'confirm_p' + str(self.patient)
 
 class ActionAskPolarrecipient(ActionAskPolar):
 
@@ -165,7 +165,7 @@ class ActionAskPolarrecipient(ActionAskPolar):
         return 3 + self.num_task + self.num_patient + self.recipient
 
     def getName(self):
-        return 'confirm_y' + str(self.recipient)
+        return 'confirm_r' + str(self.recipient)
 
 class ActionDeliver(Action):
 
@@ -174,7 +174,7 @@ class ActionDeliver(Action):
         assert task < num_task
         assert patient < num_patient
         assert recipient < num_recipient
-        Action.__init__(self, 'guide')
+        Action.__init__(self, 'executeTask')
         self.task = task
         self.patient = patient
         self.recipient = recipient
@@ -196,7 +196,7 @@ class ActionDeliver(Action):
         return self.index
 
     def getName(self):
-        return 'go_i' + str(self.task) + '_c' + str(self.patient) + '_y' + \
+        return 'go_t' + str(self.task) + '_p' + str(self.patient) + '_r' + \
             str(self.recipient)
 
 class Observation(object):
@@ -232,7 +232,7 @@ class ObservationWhtask(ObservationWh):
         return self.task
 
     def getName(self):
-        return 'i' + str(self.task)
+        return 't' + str(self.task)
 
 
 class ObservationWhpatient(ObservationWh):
@@ -253,7 +253,7 @@ class ObservationWhpatient(ObservationWh):
         return self.num_task + self.patient
 
     def getName(self):
-        return 'c' + str(self.patient)
+        return 'p' + str(self.patient)
 
 class ObservationWhrecipient(ObservationWh):
 
@@ -273,7 +273,7 @@ class ObservationWhrecipient(ObservationWh):
         return self.num_task + self.num_patient + self.recipient
 
     def getName(self):
-        return 'y' + str(self.recipient)
+        return 'r' + str(self.recipient)
 
 class ObservationPolar(Observation):
 
@@ -327,13 +327,13 @@ class PomdpGenerator(object):
         self.r_max = r_max
         self.r_min = r_min
 
-        self.weight_i = weight_i
-        self.weight_c = weight_c
-        self.weight_y = weight_y
+        self.weight_t = weight_t
+        self.weight_p = weight_p
+        self.weight_r = weight_r
 
-        self.weight_i_bin = weight_i.astype(int)
-        self.weight_c_bin = weight_c.astype(int)
-        self.weight_y_bin = weight_y.astype(int)
+        self.weight_t_bin = weight_t.astype(int)
+        self.weight_p_bin = weight_p.astype(int)
+        self.weight_r_bin = weight_r.astype(int)
 
         # the larger, the more unreliable for the wh-questions. 
         self.magic_number = 0.3
@@ -368,11 +368,11 @@ class PomdpGenerator(object):
         # compute two versions of reward function
         reward_mat_float = self.computeRewardFunction(self.num_task,
             self.num_patient, self.num_recipient, self.r_max, self.r_min, \
-            self.weight_i, self.weight_c, self.weight_y, wh_cost, yesno_cost)
+            self.weight_t, self.weight_p, self.weight_r, wh_cost, yesno_cost)
 
         reward_mat_bin = self.computeRewardFunction(self.num_task,
             self.num_patient, self.num_recipient, self.r_max, self.r_min, \
-            self.weight_i_bin, self.weight_c_bin, self.weight_y_bin, wh_cost, yesno_cost)
+            self.weight_t_bin, self.weight_p_bin, self.weight_r_bin, wh_cost, yesno_cost)
 
         # the idea is to keep the reward of fully correct deliveries and
         # question-asking actions, while changing the other negative values
@@ -440,7 +440,7 @@ class PomdpGenerator(object):
 
             if action.qd_type == 'ask':
                 trans_mat[action.getIndex()] = np.eye(num_state, dtype=float)
-            elif action.qd_type == 'guide':
+            elif action.qd_type == 'executeTask':
                 trans_mat[action.getIndex()] = np.zeros((num_state, num_state))
                 trans_mat[action.getIndex()][:, num_state-1] = 1.0
                 
@@ -465,7 +465,7 @@ class PomdpGenerator(object):
                     obs_mat[action.getIndex()] = np.zeros((num_state, num_obs))
                     obs_mat[action.getIndex()][state.getIndex(), num_obs-1]=1.0
 
-            if action.qd_type == 'guide':
+            if action.qd_type == 'executeTask':
                 obs_mat[action.getIndex()] = np.zeros((num_state, num_obs))
                 obs_mat[action.getIndex()][:, num_obs-1] = 1.0
                 
@@ -626,7 +626,7 @@ class PomdpGenerator(object):
         return obs_mat
 
     def computeRewardFunction(self, num_task, num_patient, num_recipient,
-        r_max, r_min, weight_i, weight_c, weight_y, wh_cost, yesno_cost):
+        r_max, r_min, weight_t, weight_p, weight_r, wh_cost, yesno_cost):
 
         reward_mat = np.zeros((len(self.action_set), len(self.state_set), ))
 
@@ -639,44 +639,44 @@ class PomdpGenerator(object):
                 elif action.q_type == 'polar':
                     reward_mat[action.getIndex()] = yesno_cost
 
-            elif action.qd_type == 'guide':
+            elif action.qd_type == 'executeTask':
  
                 for state in self.state_set:
                     
                     if state.isTerminal() == False:
 
                         reward_mat[action.getIndex()][state.getIndex()] = \
-                            self.guideReward(r_max, r_min, 
-                            weight_i, weight_c, weight_y, action, state)
+                            self.executeTaskReward(r_max, r_min, 
+                            weight_t, weight_p, weight_r, action, state)
 
             num_state = len(self.tablelist) + 1
             reward_mat[action.getIndex()][num_state - 1] = 0.0
 
         return reward_mat
 
-    def guideReward(self, r_max, r_min, weight_i, weight_c, weight_y,
+    def executeTaskReward(self, r_max, r_min, weight_t, weight_p, weight_r,
         action, state):
 
-        if weight_i[action.gettaskIndex()][state.gettaskIndex()] == 1.0 and  \
-                weight_c[action.getpatientIndex()][state.getpatientIndex()] == 1.0 and  \
-                weight_y[action.getrecipientIndex()][state.getrecipientIndex()] == 1.0:
+        if weight_t[action.gettaskIndex()][state.gettaskIndex()] == 1.0 and  \
+                weight_p[action.getpatientIndex()][state.getpatientIndex()] == 1.0 and  \
+                weight_r[action.getrecipientIndex()][state.getrecipientIndex()] == 1.0:
             return r_max
         else:
             ret = r_min * (1.0 - \
-                weight_i[action.gettaskIndex()][state.gettaskIndex()] * \
-                weight_c[action.getpatientIndex()][state.getpatientIndex()] * \
-                weight_y[action.getrecipientIndex()][state.getrecipientIndex()])
+                weight_t[action.gettaskIndex()][state.gettaskIndex()] * \
+                weight_p[action.getpatientIndex()][state.getpatientIndex()] * \
+                weight_r[action.getrecipientIndex()][state.getrecipientIndex()])
             return ret
 
     def computeStateSet(self, num_task, num_patient, num_recipient):
 
         ret = []
-        for i in range(num_task):
-            for c in range(num_patient):
-                for y in range(num_recipient):
+        for t in range(num_task):
+            for p in range(num_patient):
+                for r in range(num_recipient):
                     for table in self.tablelist:
-                        if i == table[0] and c == table[1] and y == table[2]:
-                            ret.append(StateRegular(i, c, y, num_task, num_patient, num_recipient,self.tablelist.index(table)))
+                        if t == table[0] and p == table[1] and r == table[2]:
+                            ret.append(StateRegular(t, p, r, num_task, num_patient, num_recipient,self.tablelist.index(table)))
 
         ret.append(StateTerminal(num_task, num_patient, num_recipient, len(self.tablelist)))
 
@@ -798,15 +798,15 @@ def main():
 
     # row corresponds to action, column to underlying state
     # all
-    weight_i = np.array([[1.00, 0.00, 0.00], 
+    weight_t = np.array([[1.00, 0.00, 0.00], 
                          [0.00, 1.00, 0.00], 
                          [0.00, 0.00, 1.00]])
 
-    weight_c = np.array([[1.0, 0.0, 0.0], 
+    weight_p = np.array([[1.0, 0.0, 0.0], 
                          [0.0, 1.0, 0.0], 
                          [0.0, 0.0, 1.0]])
 
-    weight_y = np.array([[1.0, 0.0, 0.0], 
+    weight_r = np.array([[1.0, 0.0, 0.0], 
                          [0.0, 1.0, 0.0], 
                          [0.0, 0.0, 1.0]])
     
@@ -816,7 +816,7 @@ def main():
     strategy = str(num_task) + str(num_patient) + str(num_recipient)
 
     pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        weight_i, weight_c, weight_y, wh_cost, yesno_cost)
+        weight_t, weight_p, weight_r, wh_cost, yesno_cost)
 
 if __name__ == '__main__':
 

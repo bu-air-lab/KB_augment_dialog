@@ -23,13 +23,13 @@ class Simulator(object):
         auto_state = False, 
         uniform_init_belief =True,
         print_flag=True,
-        use_plog = True,
+        use_plog = False,       # was True
         policy_file='policy/default.policy', 
         pomdp_file='models/default.pomdp', 
         trials_num=1000,
-        num_item=1, 
-        num_person=1,
-        num_room=1):
+        num_task=1, 
+        num_patient=1,
+        num_recipient=1):
 
         # print(pomdp_file)
         # print(policy_file)
@@ -41,9 +41,9 @@ class Simulator(object):
         self.use_plog = use_plog
         self.trials_num = trials_num
 
-        self.num_item = num_item
-        self.num_person = num_person
-        self.num_room = num_room
+        self.num_task = num_task
+        self.num_patient = num_patient
+        self.num_recipient = num_recipient
         self.tablelist = conf.tablelist
 
         # to read the pomdp model
@@ -236,8 +236,8 @@ class Simulator(object):
             cost_list.append(cost)
             overall_reward_list.append(overall_reward)
 
-            guide_index = int(self.a - (3 + self.num_item + self.num_person \
-                + self.num_room))
+            guide_index = int(self.a - (3 + self.num_task + self.num_patient \
+                + self.num_recipient))
 
             if guide_index == int(self.s):
                 success_list.append(1.0)
@@ -270,14 +270,14 @@ def main():
     s = Simulator(uniform_init_belief = True, 
         auto_state = True, 
         auto_observations = True, 
-        print_flag = False, 
+        print_flag = True, 
         use_plog = True,
         policy_file = '333_new.policy', 
         pomdp_file =  '333_new.pomdp',
-        trials_num = 1000,
-        num_item = 3, 
-        num_person = 3, 
-        num_room = 3)
+        trials_num = 10,
+        num_task = 3, 
+        num_patient = 3, 
+        num_recipient = 3)
  
     if not s.uniform_init_belief:   
         print('note that initial belief is not uniform\n')
