@@ -1,9 +1,10 @@
 # context_aware_icorpp
 
-Needs (make, install etc. reqd.):
-plog
-	- smodels
-	- lparse
-sarsop (pomdp solver)
+##Dependencies (make, install etc. reqd.):
 
-paths are currently hard-coded (from master branch).  Needs to be edited
+* plog
+	* smodels
+	* lparse
+* sarsop (pomdp solver)
+
+*Note:* Paths are currently hard-coded (from master branch).  Needs to be edited.
