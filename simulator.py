@@ -16,10 +16,13 @@ import subprocess
 import gen_dis_plog
 import conf
 
+import os
+import string
+
 class Simulator(object):
 
     def __init__(self, 
-        auto_observations=True,
+        auto_observations=True, 
         auto_state = False, 
         uniform_init_belief =True,
         print_flag=True,
@@ -71,6 +74,16 @@ class Simulator(object):
 
         self.plog = gen_dis_plog.DistrGen()
 
+        # for semantic parser
+        # hard coded for now
+        self.path_to_main = os.path.dirname(os.path.abspath(__file__))
+        self.log_filename = os.path.join(self.path_to_main,'data','log','log.txt')
+
+        #path to SPF jar
+        self.path_to_spf = os.path.join(self.path_to_main,'spf','dist','spf-1.5.5.jar')
+        #path to write-able experiment directory
+        self.path_to_experiment = os.path.join(self.path_to_main,'spf','geoquery','experiments','template','dialog_writeable')
+
         # to make the screen print simple 
         numpy.set_printoptions(precision=2)
         if self.use_plog:
@@ -101,8 +114,76 @@ class Simulator(object):
         self.b = self.b.T
 
     #######################################################################
+    #! this is an experimental method !#
+    #invoke SPF parser and get the semantic parse(s) of the sentence, as well as any new unmapped words in the utterance
+    def parse_utterance(self, user_utterance_text):
+
+        f = open(os.path.join(self.path_to_experiment,'data','test.ccg'),'w')
+        f.write(user_utterance_text+"\n(lambda $0:e $0)\n")
+        f.close()
+
+        #run parser and read output
+        os.system('java -jar '+self.path_to_spf+' '+os.path.join(self.path_to_experiment,'test.exp'))
+        f = open(os.path.join(self.path_to_experiment,'logs','load_and_test.log'),'r')
+        lines = f.read().split("\n")
+        parses = []
+        current_unmapped_sequence = None #[sequence, last_index]
+        unmapped_words_in_utterance = {}
+        for i in range(0,len(lines)):
+            if (' WRONG: ' in lines[i] or 'too many parses' in lines[i]): #found parses
+                if (' WRONG: ' in lines[i] and len(lines[i].split('WRONG: ')[1]) > 0 and 'parses' not in lines[i].split('WRONG: ')[1]): #one parse
+                    parses.append((lines[i].split('WRONG: ')[1],0))
+                else: #multiple parses
+                    j = 1 if ' WRONG: ' in lines[i] else 2
+                    while (' Had correct parses: ' not in lines[i+j]):
+                        if ('[S' not in lines[i+j]):
+                            p = lines[i+j][lines[i+j].index('[')+2:]
+                        else:
+                            p = lines[i+j].split(']')[2][1:]
+                        s = float(lines[i+j+1].split()[3])
+                        print s #DEBUG
+                        parses.append((p,s))
+                        j += 3
+            elif ('EMPTY' in lines[i] and len(lines[i].split()) >= 4 and lines[i].split()[3] == "EMPTY"): #found unmapped word
+                empty_token = lines[i].split()[1]
+                if (current_unmapped_sequence == None):
+                    current_unmapped_sequence = [empty_token,i]
+                elif (i-1 == current_unmapped_sequence[1]):
+                    current_unmapped_sequence[0] += " "+empty_token
+                    current_unmapped_sequence[1] = i
+                else:
+                    if (current_unmapped_sequence[0] not in self.known_words):
+                        unmapped_words_in_utterance[current_unmapped_sequence[0]] = {}
+                    current_unmapped_sequence = [empty_token,i]
+        if (current_unmapped_sequence != None and current_unmapped_sequence[0] not in self.known_words):
+            unmapped_words_in_utterance[current_unmapped_sequence[0]] = {}
+        f.close()
+
+        return parses,unmapped_words_in_utterance    
+
+    #######################################################################
+    def get_user_input(self, useFile=False):
+        if useFile:
+            user_input = "Test string"
+        else:
+            user_input = raw_input("Enter text: ")
+
+        print("here...")
+        user_input = user_input.strip().lower()
+        user_input = user_input.replace("'s"," s")
+        user_input = user_input.translate(string.maketrans("",""), string.punctuation)
+
+        #log
+        f = open(self.log_filename,'a')
+        f.write("\t".join(["USER",user_input])+"\n")
+        f.close()
+
+        return [[user_input,0]] #full confidence value (log-probability) returned with text
+
+    #######################################################################
     def observe(self):
         self.o = None
+
         if self.auto_observations:
             rand = numpy.random.random_sample()
             acc = 0.0
@@ -114,7 +195,15 @@ class Simulator(object):
             if self.o == None:
                 sys.exit('Error: observation is not properly sampled')
         else:
-            ind = input("Please input the name of observation: ")
+            print self.observations # debug
+            user_utterances = self.get_user_input()
+
+            for utterance,score in user_utterances:
+                parses,unmapped = self.parse_utterance(utterance)
+                print parses,unmapped
+
+
+            ind = raw_input("Please input the name of observation: ")
             self.o = next(i for i in range(len(self.observations)) \
                 if self.observations[i] == ind)
 
@@ -269,7 +358,7 @@ def main():
 
     s = Simulator(uniform_init_belief = True, 
         auto_state = True, 
-        auto_observations = True, 
+        auto_observations = False, # was true
         print_flag = True, 
         use_plog = True,
         policy_file = '333_new.policy', 

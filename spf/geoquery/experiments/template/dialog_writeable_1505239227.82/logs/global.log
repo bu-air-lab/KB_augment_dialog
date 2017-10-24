@@ -1,0 +1,62 @@
+Parameters:
+outputDir=logs
+gBeam=50
+globalLog=logs/global.log
+ont=resources/geo.consts.ont:resources/geo.preds.ont
+lexbeam=100
+nplist=resources/np-list.lex
+wordSkippingCost=-1.0
+trainingMaxSentenceLength=50
+seedlex=resources/seed.lex
+types=resources/geo.types
+gIter=20
+Init :: AbstractCategoryServices:  restrictiveCompositionDirection=true
+Init :: LogicalExpressionCategoryServices: doTypeChecking=true, validateLogExp=true
+Created resources ruleComp of type rule.composition
+Created resources ruleApp of type rule.application
+Created resources shiftPP of type rule.shifting.pp
+Created resources ruleSkipping of type rule.skipping
+Created resources ruleRaiseComp of type rule.typeraise.composition.forward
+Created resources ruleThatless of type rule.thatless
+Created resources rulePluralExists of type rule.shift.pluralexists
+Created resources parseFilter of type parsefilter.lambda.simple
+Pre-chart pruning creates instability for gradient-based learners.
+Init :: AbstractCKYParser: binary rules=[CKYBinaryParsingRule[>comp], CKYBinaryParsingRule[<comp], CKYBinaryParsingRule[>apply], CKYBinaryParsingRule[<apply], CKYBinaryParsingRule[>skip], CKYBinaryParsingRule[<skip], CKYBinaryParsingRule[>trcomp], CKYBinaryParsingRule[>thatless], CKYBinaryParsingRule[>plural_exists]]
+Init :: AbstractCKYParser: unary rules=[CKYBinaryParsingRule[shift_pp]]
+Created resources parser of type parser.cky.multi
+Created resources uniform0Scorer of type scorer.uniform
+Created resources skippingScorer of type scorer.lex.skipping
+Created resources featLogexpCoordination of type feat.logexp.coordination
+Created resources featLex of type feat.lex
+Created resources featLexeme of type feat.lexeme
+Created resources featLextemplate of type feat.lextemplate
+Created resources featRules of type feat.rules.count
+Created resources lexicon of type lexicon.factored
+Init Model :: lexicalFeatures=[LexicalFeatureSet:
+	{}, edu.uw.cs.lil.tiny.parser.ccg.factoredlex.features.LexicalTemplateFeatureSet@b08f1ce, edu.uw.cs.lil.tiny.parser.ccg.factoredlex.features.LexemeFeatureSet@783b110a]
+.... Model :: parseFeatures=[edu.uw.cs.lil.tiny.parser.ccg.features.lambda.LogicalExpressionCoordinationFeatureSet@6ddbe530, edu.uw.cs.lil.tiny.parser.ccg.features.basic.RuleUsageFeatureSet@7fa3eaa8]
+.... Model :: lexiconClass=FactoredLexicon
+Created resources model of type model
+Created resources loggerModel of type logger.model
+Created resources validator of type validator.labeled
+Init TemplateSupervisedGenlex: #templates=111
+Created resources genlex of type genlex.template.supervised
+Created resources train of type data.single
+Created resources learningFilter of type filter.sentence.length
+Init ValidationPerceptron: numIterations=20, margin=1.000000, trainingData.size()=16, trainingDataDebug.size()=0  ...
+Init ValidationPerceptron: ... lexiconGenerationBeamSize=100
+Init ValidationPerceptron: ... conflateParses=true, errorDriven=true
+Created resources perceptron of type learner.validation.perceptron
+Init ValidationPerceptron: numIterations=20, trainingData.size()=16, trainingDataDebug.size()=0, maxSentenceLength=2147483647 ...
+Init ValidationPerceptron: ... lexiconGenerationBeamSize=100
+Init ValidationPerceptron: ... conflateParses=false, erroDriven=true
+Init ValidationPerceptron: ... c=0.000100, alpha0=1.000000
+Created resources stocgrad of type learner.validation.stocgrad
+Created resources initSeedLex of type init.lex
+Created resources initNPs of type init.lex
+Created resources expScorer of type scorer.lenexp
+Created resources initSeedLexWeights of type init.lex.weights
+Created resources initSeedXemeWeights of type init.lex.weights
+Created resources initNPsLexWeights of type init.lex.weights
+Created resources initNPsXemeWeights of type init.lex.weights
+Ordered to train model: model
