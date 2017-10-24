@@ -1,6 +1,6 @@
 # context_aware_icorpp
 
-##Dependencies (make, install etc. reqd.):
+## Dependencies (make, install etc. reqd.):
 
 * plog
 	* smodels
