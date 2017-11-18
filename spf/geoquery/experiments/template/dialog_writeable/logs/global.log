@@ -33,8 +33,8 @@ Created resources featLextemplate of type feat.lextemplate
 Created resources featRules of type feat.rules.count
 Created resources lexicon of type lexicon.factored
 Init Model :: lexicalFeatures=[LexicalFeatureSet:
-	{}, edu.uw.cs.lil.tiny.parser.ccg.factoredlex.features.LexicalTemplateFeatureSet@b08f1ce, edu.uw.cs.lil.tiny.parser.ccg.factoredlex.features.LexemeFeatureSet@783b110a]
-.... Model :: parseFeatures=[edu.uw.cs.lil.tiny.parser.ccg.features.lambda.LogicalExpressionCoordinationFeatureSet@6ddbe530, edu.uw.cs.lil.tiny.parser.ccg.features.basic.RuleUsageFeatureSet@7fa3eaa8]
+	{}, edu.uw.cs.lil.tiny.parser.ccg.factoredlex.features.LexicalTemplateFeatureSet@783b110a, edu.uw.cs.lil.tiny.parser.ccg.factoredlex.features.LexemeFeatureSet@6ddbe530]
+.... Model :: parseFeatures=[edu.uw.cs.lil.tiny.parser.ccg.features.lambda.LogicalExpressionCoordinationFeatureSet@7fa3eaa8, edu.uw.cs.lil.tiny.parser.ccg.features.basic.RuleUsageFeatureSet@6282fd0f]
 .... Model :: lexiconClass=FactoredLexicon
 Created resources model of type model
 Created resources loggerModel of type logger.model
@@ -42,7 +42,7 @@ Created resources validator of type validator.labeled
 Init TemplateSupervisedGenlex: #templates=111
 Created resources genlex of type genlex.template.supervised
 Created resources test of type data.single
-Init Tester:  size(testData)=1
+Init Tester:  size(testData)=0
 Created resources tester of type tester
 Created resources learningFilter of type filter.sentence.length
 Loading model (id=null) from: /home/sujay/context_aware_icorpp/spf/geoquery/experiments/template/dialog_writeable/rlg.model

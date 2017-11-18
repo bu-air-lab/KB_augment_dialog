@@ -4,3 +4,27 @@ USER	bring coffee to shiqi
 USER	yes
 USER	af
 USER	deliver java to sujay
+USER	bring coffee to shiqi
+USER	shiqi
+USER	bring coffee to shiqi
+USER	bring coffee to sujay
+USER	bring coffee to shiqi
+USER	bring cat to shiqi
+USER	bring cat to shiqi
+USER	r0
+USER	
+USER	
+USER	
+USER	bring cat to shiqi
+USER	bring coke to shiqi
+USER	shiqi
+USER	shiqi zhang
+USER	
+USER	
+USER	
+USER	
+USER	
+USER	
+USER	
+USER	
+USER	
