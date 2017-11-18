@@ -83,6 +83,13 @@ class Simulator(object):
         self.path_to_spf = os.path.join(self.path_to_main,'spf','dist','spf-1.5.5.jar')
         #path to write-able experiment directory
         self.path_to_experiment = os.path.join(self.path_to_main,'spf','geoquery','experiments','template','dialog_writeable')
+        # known words and
+        given_words,word_to_ontology_map = self.get_known_words_from_seed_files()
+        self.known_words = given_words
+
+        # temporary testing hard coded
+        #print self.known_words
+        self.known_words_to_number = {'coffee':'p0', 'bring':'t0', 'shiqi':'r0'}
 
         # to make the screen print simple 
         numpy.set_printoptions(precision=2)
@@ -114,6 +121,23 @@ class Simulator(object):
         self.b = self.b.T
 
     #######################################################################
+    def get_known_words_from_seed_files(self):
+
+	seed_words = {}
+	word_to_ontology_map = {}
+	for filename in ['np-list.lex','seed.lex']:
+		f = open(os.path.join(self.path_to_experiment,'resources',filename))
+		for line in f:
+			if (len(line) <= 1 or line[:2] == "//"):
+				continue
+			[token_sequence,tag_and_grounding] = line.split(" :- ")
+			to_add = tag_and_grounding.strip().split(" : ")
+			if (filename == 'np-list.lex'): #only add to seed words those words which are already grounded (ie, no CCG tags)
+				seed_words[token_sequence] = to_add
+			word_to_ontology_map[to_add[1].split(":")[0].strip()] =to_add[1].split(":")[1].strip()
+	return seed_words,word_to_ontology_map
+	###########################################################################
+
     #! this is an experimental method !#
     #invoke SPF parser and get the semantic parse(s) of the sentence, as well as any new unmapped words in the utterance
     def parse_utterance(self, user_utterance_text):
@@ -197,13 +221,20 @@ class Simulator(object):
         else:
             print self.observations # debug
             user_utterances = self.get_user_input()
+            parses_list = []
+            unmapped_list = []
 
             for utterance,score in user_utterances:
                 parses,unmapped = self.parse_utterance(utterance)
-                print parses,unmapped
+                parses_list.append(parses)
+                unmapped_list.append(unmapped)
+            
+            print parses_list,unmapped_list
 
-
+            # get observation from parse
+            
             ind = raw_input("Please input the name of observation: ")
+
             self.o = next(i for i in range(len(self.observations)) \
                 if self.observations[i] == ind)
 
@@ -251,6 +282,7 @@ class Simulator(object):
                 print('\tstate:\t' + self.states[self.s] + ' ' + str(self.s))
                 print('\tcost so far:\t' + str(cost))
 
+            # select action
             self.a = int(self.policy.select_action(self.b))
             
             if self.print_flag:
