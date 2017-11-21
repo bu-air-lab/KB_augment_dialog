@@ -204,6 +204,28 @@ class Simulator(object):
 
         return [[user_input,0]] #full confidence value (log-probability) returned with text
 
+    ######################################################################
+    ## TODO: complete this function.
+    ## make it regex to find the right stuff
+    def generalObserve(self):
+        print self.observations # debug
+        user_utterances = self.get_user_input()
+        parses_list = []
+        unmapped_list = []
+
+        for utterance,score in user_utterances:
+            parses,unmapped = self.parse_utterance(utterance)
+            parses_list.append(parses)
+            unmapped_list.append(unmapped)
+        
+        print parses_list,unmapped_list
+        #print "action list: ", self.actions
+        #print "selected: " + self.actions[self.a]
+        if 'ask_p' in self.actions[self.a]:
+            print ""
+
+
+
     #######################################################################
     def observe(self):
         self.o = None
@@ -219,21 +241,12 @@ class Simulator(object):
             if self.o == None:
                 sys.exit('Error: observation is not properly sampled')
         else:
-            print self.observations # debug
-            user_utterances = self.get_user_input()
-            parses_list = []
-            unmapped_list = []
-
-            for utterance,score in user_utterances:
-                parses,unmapped = self.parse_utterance(utterance)
-                parses_list.append(parses)
-                unmapped_list.append(unmapped)
-            
-            print parses_list,unmapped_list
-
-            # get observation from parse
-            
-            ind = raw_input("Please input the name of observation: ")
+            S = stats.entropy(self.b)
+            print S
+            if(S > 2.3):
+                ind = self.generalObserve()
+            else:
+                ind = raw_input("Please input the name of observation: ")
 
             self.o = next(i for i in range(len(self.observations)) \
                 if self.observations[i] == ind)
