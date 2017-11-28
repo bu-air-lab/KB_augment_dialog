@@ -1,10 +1,26 @@
 [P1T2] ============ (Job load_and_test started)
+[P1T2] 1 : ==================
+[P1T2] bring apple to shiqi
+(lambda $0:e $0)
+[P1T2] Test parsing time 0.05
+[P1T2] EXACT stats -- recording wrong parse: (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> walk:a shiqi:pe))
+[P1T2] [EXACT stats]  Record incorrect.
+[P1T2] WRONG: (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> walk:a shiqi:pe))
+[P1T2] [LexEntries and scores:
+[0.0] bring :- S/S : (lambda $0:t $0) [{LEX#529=0.0(1.0),XEME#163=0.0(1.0),XTMP#11=0.0(0.1)}]
+[2.6343533065545115] apple :- S/PP : (lambda $0:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($0 walk:a))) [{LEX#533=2.110835441871875(1.0),XEME#168=0.5207103660234331(1.0),XTMP#4=0.028074986592032808(0.1)}]
+[2.6343533065545115] apple :- S/PP : (lambda $0:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($0 walk:a))) [{LEX#533=2.110835441871875(1.0),XEME#164=0.5207103660234331(1.0),XTMP#103=0.028074986592032808(0.1)}]
+[20.0] to :- PP/NP : (lambda $0:e (lambda $1:a (actionrecipient:<a,<e,t>> $1 $0))) [{LEX#256=10.0(1.0),XEME#73=10.0(1.0),XTMP#26=0.0(0.1)}]
+[0.0] shiqi :- NP : shiqi:pe [{LEX#500=0.0(1.0),XEME#159=0.0(1.0),XTMP#25=0.0(0.1)}]
+]
+[P1T2] Had correct parses: false
+[P1T2] Feats: {LEX#256=10.0(1.0),LEX#500=0.0(1.0),LEX#529=0.0(1.0),LEX#533=2.110835441871875(1.0),RULE#>apply=0.40064301873619257(0.30000000000000004),RULE#lex=0.2667002946992041(0.4),XEME#159=0.0(1.0),XEME#163=0.0(1.0),XEME#164=0.5207103660234331(0.5),XEME#168=0.5207103660234331(0.5),XEME#73=10.0(1.0),XTMP#103=0.028074986592032808(0.05),XTMP#11=0.0(0.1),XTMP#25=0.0(0.1),XTMP#26=0.0(0.1),XTMP#4=0.028074986592032808(0.05)}
 [P1T2] === EXACT statistics:
-Recall: 0.0/0.0 = 0.0
-Precision: 0.0/0.0 = 0.0
+Recall: 0.0/1.0 = 0.0
+Precision: 0.0/1.0 = 0.0
 F1: 0.0
-SKIP Recall: 0.0/0.0 = 0.0
-SKIP Precision: 0.0/0.0 = 0.0
+SKIP Recall: 0.0/1.0 = 0.0
+SKIP Precision: 0.0/1.0 = 0.0
 SKIP F1: 0.0
-[P1T2] Total run time 0.0000 seconds
+[P1T2] Total run time 0.0600 seconds
 [P1T2] ============ (Job load_and_test completed)
