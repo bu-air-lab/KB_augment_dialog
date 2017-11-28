@@ -207,7 +207,10 @@ class Simulator(object):
     ######################################################################
     ## TODO: complete this function.
     ## make it regex to find the right stuff
-    def generalObserve(self):
+    ## hard code transform matrix for this
+    ## look in notebook
+    ## calculate the beliefs using baye's rule and normalization
+    def get_full_request(self):
         print self.observations # debug
         user_utterances = self.get_user_input()
         parses_list = []
@@ -241,12 +244,7 @@ class Simulator(object):
             if self.o == None:
                 sys.exit('Error: observation is not properly sampled')
         else:
-            S = stats.entropy(self.b)
-            print S
-            if(S > 2.3):
-                ind = self.generalObserve()
-            else:
-                ind = raw_input("Please input the name of observation: ")
+            ind = raw_input("Please input the name of observation: ")
 
             self.o = next(i for i in range(len(self.observations)) \
                 if self.observations[i] == ind)
@@ -296,7 +294,13 @@ class Simulator(object):
                 print('\tcost so far:\t' + str(cost))
 
             # select action
-            self.a = int(self.policy.select_action(self.b))
+            # entropy
+            S = stats.entropy(self.b)
+            print S
+            if(S > 2.3):
+                get_full_request(self)
+            else:
+                self.a = int(self.policy.select_action(self.b))
             
             if self.print_flag:
                 print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
