@@ -15,6 +15,7 @@ from progress.bar import Bar
 import subprocess
 import gen_dis_plog
 import conf
+import re
 
 import os
 import string
@@ -204,13 +205,21 @@ class Simulator(object):
 
         return [[user_input,0]] #full confidence value (log-probability) returned with text
 
+    #####################################################################
+    def get_action(self, string):
+        i = 0
+        for action in self.actions:
+            if action == string:
+                return i
+            i += 1
+
     ######################################################################
     ## TODO: complete this function.
     ## make it regex to find the right stuff
     ## hard code transform matrix for this
     ## look in notebook
     ## calculate the beliefs using baye's rule and normalization
-    def get_full_request(self):
+    def get_full_request(self, cycletime):
         print self.observations # debug
         user_utterances = self.get_user_input()
         parses_list = []
@@ -224,8 +233,46 @@ class Simulator(object):
         print parses_list,unmapped_list
         #print "action list: ", self.actions
         #print "selected: " + self.actions[self.a]
-        if 'ask_p' in self.actions[self.a]:
-            print ""
+        patient = None
+        recipient = None
+        for parses in parses_list:
+            for parse,score in parses:
+                for word in str(parse).split():
+                    match = None
+                    print word
+                    match = re.search('\w*(?=:it.*)', word)
+                    if match:
+                        patient = match.group(0)
+                        print "Patient: " + patient
+                    match = None
+                    match = re.search('\w*(?=:pe.*)', word)
+                    if match:
+                        recipient = match.group(0)
+                        print "Recipient: " + recipient
+
+        if patient:
+            # get action from key
+            self.a = self.get_action('ask_p')
+
+            # get observation from patient
+            ind = self.known_words_to_number[patient]
+            self.o = next(i for i in range(len(self.observations)) \
+                if self.observations[i] == ind)
+
+            # update for patient observation
+            self.update(cycletime)
+
+        if recipient:
+            # get action from key
+            self.a = self.get_action('ask_r')
+
+            # get observation from patient
+            ind = self.known_words_to_number[recipient]
+            self.o = next(i for i in range(len(self.observations)) \
+                if self.observations[i] == ind)
+
+            # update for recipient observation
+            self.update(cycletime)
 
 
 
@@ -298,20 +345,20 @@ class Simulator(object):
             S = stats.entropy(self.b)
             print S
             if(S > 2.3):
-                get_full_request(self)
+                self.get_full_request(cycletime)
             else:
                 self.a = int(self.policy.select_action(self.b))
             
-            if self.print_flag:
-                print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
+                if self.print_flag:
+                    print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
 
-            self.observe()
-            if self.print_flag:
-                print('\tobserve:\t'+self.observations[self.o]+' '+str(self.o))
+                self.observe()
+                if self.print_flag:
+                    print('\tobserve:\t'+self.observations[self.o]+' '+str(self.o))
 
-            self.update(cycletime)
-            if self.print_flag:
-                print('\nbelief:\t' + str(self.b))
+                self.update(cycletime)
+                if self.print_flag:
+                    print('\nbelief:\t' + str(self.b))
 
 
             overall_reward += self.reward_mat[self.a, self.s]
