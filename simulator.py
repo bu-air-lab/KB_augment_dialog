@@ -274,7 +274,7 @@ class Simulator(object):
             # update for recipient observation
             self.update(cycletime)
 
-
+        print "unmapped: ",unmapped_list
 
     #######################################################################
     def observe(self):
