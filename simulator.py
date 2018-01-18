@@ -90,7 +90,7 @@ class Simulator(object):
 
         # temporary testing hard coded
         #print self.known_words
-        self.known_words_to_number = {'coffee':'p0', 'bring':'t0', 'shiqi':'r0'}
+        self.known_words_to_number = {'no':'no', 'yes':'yes', 'coffee':'p0', 'bring':'t0', 'shiqi':'r0'}
 
         # to make the screen print simple 
         numpy.set_printoptions(precision=2)
@@ -205,6 +205,13 @@ class Simulator(object):
 
         return [[user_input,0]] #full confidence value (log-probability) returned with text
 
+    ######################################################################
+    def get_observation_from_name(self, string):
+        if string in self.known_words_to_number.keys():
+            return self.known_words_to_number[string]
+        else:
+            return None
+
     #####################################################################
     def get_action(self, string):
         i = 0
@@ -239,7 +246,7 @@ class Simulator(object):
             for parse,score in parses:
                 for word in str(parse).split():
                     match = None
-                    print word
+                    #print word
                     match = re.search('\w*(?=:it.*)', word)
                     if match:
                         patient = match.group(0)
@@ -281,20 +288,27 @@ class Simulator(object):
         self.o = None
 
         if self.auto_observations:
-            rand = numpy.random.random_sample()
-            acc = 0.0
-            for i in range(len(self.observations)):
-                acc += self.obs_mat[self.a, self.s, i]
-                if acc > rand:
-                    self.o = i
-                    break
-            if self.o == None:
-                sys.exit('Error: observation is not properly sampled')
+            # not functional right now
+            sys.exit("Error: Auto observation not implemented")
         else:
-            ind = raw_input("Please input the name of observation: ")
+            # main part
+            ind = raw_input("Input observation: ")
+            ind = self.get_observation_from_name(ind)
 
-            self.o = next(i for i in range(len(self.observations)) \
-                if self.observations[i] == ind)
+            if ind == None:
+                print "Not found in list of observations"
+                rand = numpy.random.random_sample()
+                acc = 0.0
+                for i in range(len(self.observations)):
+                    acc += self.obs_mat[self.a, self.s, i]
+                    if acc > rand:
+                        self.o = i
+                        break
+                if self.o == None:
+                    sys.exit('Error: observation is not properly sampled')
+            else:
+                self.o = next(i for i in range(len(self.observations)) \
+                    if self.observations[i] == ind)
 
 
     #######################################################################
