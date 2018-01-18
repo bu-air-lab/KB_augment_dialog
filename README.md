@@ -6,6 +6,7 @@
 	* smodels
 	* lparse
 * sarsop (pomdp solver)
+	* https://github.com/AdaCompNUS/sarsop
 * progress
 	* run: sudo pip install progress
 
