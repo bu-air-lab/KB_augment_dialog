@@ -211,6 +211,11 @@ class Simulator(object):
         else:
             return None
 
+    def get_name_from_observation(self, string):
+        for key,value in self.known_words_to_number.items():
+            if value == string:
+                return key
+
     #####################################################################
     def get_action(self, string):
         i = 0
@@ -218,6 +223,18 @@ class Simulator(object):
             if action == string:
                 return i
             i += 1
+
+    def action_to_text(self, string):
+        if string == 'ask_p':
+            return "What item should I bring?"
+        elif string == 'ask_r':
+            return "Who should I bring the item to?"
+        
+        match = None
+        match = re.search('(?<=confirm_)\w*', string)
+        if match:
+            obsname = match.group(0)
+            return "confirm " + self.get_name_from_observation(obsname)
 
     ######################################################################
     def get_full_request(self, cycletime):
@@ -373,6 +390,8 @@ class Simulator(object):
             
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
+                    # uncomment this later
+                    #print('QUESTION: ' + self.action_to_text(self.actions[self.a]))
 
                 self.observe()
                 if self.print_flag:
