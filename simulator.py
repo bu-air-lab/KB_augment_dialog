@@ -220,11 +220,6 @@ class Simulator(object):
             i += 1
 
     ######################################################################
-    ## TODO: complete this function.
-    ## make it regex to find the right stuff
-    ## hard code transform matrix for this
-    ## look in notebook
-    ## calculate the beliefs using baye's rule and normalization
     def get_full_request(self, cycletime):
         print self.observations # debug
         user_utterances = self.get_user_input()
