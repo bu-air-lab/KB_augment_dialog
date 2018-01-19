@@ -90,7 +90,7 @@ class Simulator(object):
 
         # temporary testing hard coded
         #print self.known_words
-        self.known_words_to_number = {'no':'no', 'yes':'yes', 'coffee':'p0', 'bring':'t0', 'shiqi':'r0'}
+        self.known_words_to_number = {'no':'no', 'yes':'yes', 'coffee':'p0', 'bring':'t0', 'shiqi':'r0', 'hamburger':'p1', 'cell phone':'p2'}
 
         # to make the screen print simple 
         numpy.set_printoptions(precision=2)
@@ -391,7 +391,7 @@ class Simulator(object):
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
                     # uncomment this later
-                    #print('QUESTION: ' + self.action_to_text(self.actions[self.a]))
+                    print('QUESTION: ' + self.action_to_text(self.actions[self.a]))
 
                 self.observe()
                 if self.print_flag:
