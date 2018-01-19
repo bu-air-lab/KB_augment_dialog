@@ -193,7 +193,6 @@ class Simulator(object):
         else:
             user_input = raw_input("Enter text: ")
 
-        print("here...")
         user_input = user_input.strip().lower()
         user_input = user_input.replace("'s"," s")
         user_input = user_input.translate(string.maketrans("",""), string.punctuation)
@@ -237,7 +236,7 @@ class Simulator(object):
             parses_list.append(parses)
             unmapped_list.append(unmapped)
         
-        print parses_list,unmapped_list
+        #print parses_list,unmapped_list
         #print "action list: ", self.actions
         #print "selected: " + self.actions[self.a]
         patient = None
@@ -345,6 +344,10 @@ class Simulator(object):
 
         cycletime = 0
 
+        current_entropy = float("inf")
+        old_entropy = float("inf")
+        inc_count = 0
+
         while True:
             cycletime += 1
 
@@ -356,9 +359,19 @@ class Simulator(object):
 
             # select action
             # entropy
-            S = stats.entropy(self.b)
-            print S
-            if(S > 2.3):
+            old_entropy = current_entropy
+            current_entropy = stats.entropy(self.b)
+            print "Entropy = ",current_entropy
+            # check if entropy increased
+            if (old_entropy < current_entropy):
+                inc_count += 1
+                print "entropy increased"
+
+            # check entropy increases arbitrary no of times for now
+            if (inc_count > 2):
+                print "--- new item/person ---"
+
+            if(current_entropy > 2.3):
                 self.get_full_request(cycletime)
             else:
                 self.a = int(self.policy.select_action(self.b))
