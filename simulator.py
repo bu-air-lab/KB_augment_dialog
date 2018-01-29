@@ -27,7 +27,7 @@ class Simulator(object):
         auto_state = False, 
         uniform_init_belief =True,
         print_flag=True,
-        use_plog = False,       # was True
+        use_plog = False,
         policy_file='policy/default.policy', 
         pomdp_file='models/default.pomdp', 
         trials_num=1000,
@@ -94,26 +94,12 @@ class Simulator(object):
 
         # to make the screen print simple 
         numpy.set_printoptions(precision=2)
-        if self.use_plog:
-            print '------------ context-aware-icorpp -----------------'
-        else:
-            print '------------ previous icorpp -----------------'
 
     #######################################################################
     def init_belief(self):
 
         if self.uniform_init_belief:
             self.b = numpy.ones(len(self.states)) / float(len(self.states))
-
-            if self.use_plog and (self.md == 'sad' or self.fl == False):
-                if self.b[len(self.tablelist)] == 1:
-                    return
-                # print '\n',self.b
-                belief = self.plog.cal_belief(mood = self.md, foll = self.fl, pdpDist = self.b, curr_table = self.ct, prev_table = self.pt).split(',')
-                for i in range(len(belief)):
-                    belief[i] = float(belief[i].strip())
-                self.b = numpy.array(belief)
-                self.b = self.b/ sum(self.b)
                 # print '\n',self.s, self.ct, self.b
         else:
             # here initial belief is sampled from a Dirichlet distribution
@@ -350,7 +336,7 @@ class Simulator(object):
             if self.b[len(self.tablelist)] == 1:
                 return
             # print '\n',self.b
-            belief = self.plog.cal_belief(mood = self.md, foll = self.fl, pdpDist = self.b, curr_table = self.ct, prev_table = self.pt).split(',')
+            #belief = self.plog.cal_belief(mood = self.md, foll = self.fl, pdpDist = self.b, curr_table = self.ct, prev_table = self.pt).split(',')
             # belief = self.plog.cal_belief(mood = 'sad', pdpDist = self.b, curr_table = self.ct).split(',')
             for i in range(len(belief)):
                 belief[i] = float(belief[i].strip())
@@ -359,6 +345,7 @@ class Simulator(object):
 
     #######################################################################
     def run(self):
+        self.retrain_parser()
 
         cost = 0.0
         self.init_belief()
@@ -509,7 +496,7 @@ def main():
         auto_state = True, 
         auto_observations = False, # was true
         print_flag = True, 
-        use_plog = True,
+        use_plog = False,
         policy_file = '333_new.policy', 
         pomdp_file =  '333_new.pomdp',
         trials_num = 10,
