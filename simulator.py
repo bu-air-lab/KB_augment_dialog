@@ -121,6 +121,8 @@ class Simulator(object):
 
         self.b = self.b.T
 
+    ######################################################################
+
     #######################################################################
     def get_known_words_from_seed_files(self):
 
@@ -184,7 +186,13 @@ class Simulator(object):
             unmapped_words_in_utterance[current_unmapped_sequence[0]] = {}
         f.close()
 
-        return parses,unmapped_words_in_utterance    
+        return parses,unmapped_words_in_utterance
+
+    ######################################################################
+    # EXPERIMENTAL: Retrain parser:
+    def retrain_parser(self):
+        print "PARSER: retraining parser..."
+        os.system('java -jar '+self.path_to_spf+' '+os.path.join(self.path_to_experiment,'train.exp'))
 
     #######################################################################
     def get_user_input(self, useFile=False):
@@ -243,6 +251,9 @@ class Simulator(object):
         parses_list = []
         unmapped_list = []
 
+        # test
+        #self.retrain_parser()
+
         for utterance,score in user_utterances:
             parses,unmapped = self.parse_utterance(utterance)
             parses_list.append(parses)
@@ -253,6 +264,7 @@ class Simulator(object):
         #print "selected: " + self.actions[self.a]
         patient = None
         recipient = None
+        print "PARSES LIST: ",parses_list
         for parses in parses_list:
             for parse,score in parses:
                 for word in str(parse).split():
