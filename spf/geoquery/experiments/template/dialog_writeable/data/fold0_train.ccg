@@ -1,18 +1,3 @@
 
 bring apple to shiqi zhang
-(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> walk:a shiqi:pe))
-
-apple
-(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> walk:a shiqi:pe))
-
-apple
-(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> walk:a shiqi:pe))
-
-apple to shiqi zhang
-(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> walk:a shiqi:pe))
-
-apple to shiqi zhang
-(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> walk:a shiqi:pe))
-
-bring apple to shiqi zhang
-(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> walk:a shiqi:pe))
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a shiqi:pe) (actionpatient:<a,<e,t>> bring:a apple:it))
