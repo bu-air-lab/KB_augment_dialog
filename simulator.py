@@ -88,6 +88,9 @@ class Simulator(object):
         given_words,word_to_ontology_map = self.get_known_words_from_seed_files()
         self.known_words = given_words
 
+        # full request string
+        self.full_request = ''
+
         # temporary testing hard coded
         #print self.known_words
         self.known_words_to_number = {'no':'no', 'yes':'yes', 'coffee':'p0', 'bring':'t0', 'shiqi':'r0', 'hamburger':'p1', 'cell phone':'p2'}
@@ -112,19 +115,19 @@ class Simulator(object):
     #######################################################################
     def get_known_words_from_seed_files(self):
 
-	seed_words = {}
-	word_to_ontology_map = {}
-	for filename in ['np-list.lex','seed.lex']:
-		f = open(os.path.join(self.path_to_experiment,'resources',filename))
-		for line in f:
-			if (len(line) <= 1 or line[:2] == "//"):
-				continue
-			[token_sequence,tag_and_grounding] = line.split(" :- ")
-			to_add = tag_and_grounding.strip().split(" : ")
-			if (filename == 'np-list.lex'): #only add to seed words those words which are already grounded (ie, no CCG tags)
-				seed_words[token_sequence] = to_add
-			word_to_ontology_map[to_add[1].split(":")[0].strip()] =to_add[1].split(":")[1].strip()
-	return seed_words,word_to_ontology_map
+    	seed_words = {}
+    	word_to_ontology_map = {}
+    	for filename in ['np-list.lex','seed.lex']:
+    		f = open(os.path.join(self.path_to_experiment,'resources',filename))
+    		for line in f:
+    			if (len(line) <= 1 or line[:2] == "//"):
+    				continue
+    			[token_sequence,tag_and_grounding] = line.split(" :- ")
+    			to_add = tag_and_grounding.strip().split(" : ")
+    			if (filename == 'np-list.lex'): #only add to seed words those words which are already grounded (ie, no CCG tags)
+    				seed_words[token_sequence] = to_add
+    			word_to_ontology_map[to_add[1].split(":")[0].strip()] =to_add[1].split(":")[1].strip()
+    	return seed_words,word_to_ontology_map
 	###########################################################################
 
     #! this is an experimental method !#
@@ -178,7 +181,7 @@ class Simulator(object):
     # EXPERIMENTAL: Retrain parser:
     def retrain_parser(self):
         print "PARSER: retraining parser..."
-        os.system('java -jar '+self.path_to_spf+' '+os.path.join(self.path_to_experiment,'train.exp'))
+        os.system('java -jar '+self.path_to_spf+' '+os.path.join(self.path_to_experiment,'init_train.exp'))
 
     #######################################################################
     def get_user_input(self, useFile=False):
@@ -191,6 +194,7 @@ class Simulator(object):
         user_input = user_input.replace("'s"," s")
         user_input = user_input.translate(string.maketrans("",""), string.punctuation)
 
+        self.full_request = user_input
         #log
         f = open(self.log_filename,'a')
         f.write("\t".join(["USER",user_input])+"\n")
@@ -236,9 +240,6 @@ class Simulator(object):
         user_utterances = self.get_user_input()
         parses_list = []
         unmapped_list = []
-
-        # test
-        #self.retrain_parser()
 
         for utterance,score in user_utterances:
             parses,unmapped = self.parse_utterance(utterance)
@@ -291,6 +292,9 @@ class Simulator(object):
             self.update(cycletime)
 
         print "unmapped: ",unmapped_list
+
+    def add_new(self):
+        print "adding new"
 
     #######################################################################
     def observe(self):
@@ -381,6 +385,7 @@ class Simulator(object):
             # check entropy increases arbitrary no of times for now
             if (inc_count > 2):
                 print "--- new item/person ---"
+                self.add_new()
 
             if(current_entropy > 2.3):
                 self.get_full_request(cycletime)
