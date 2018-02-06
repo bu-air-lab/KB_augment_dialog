@@ -36,3 +36,13 @@ USER	bring coffee to shiqi
 USER	shiqi zhang
 USER	coffee
 USER	bring apple to shiqi
+USER	bring coffee to shiqi
+USER	bring apple to shiqi
+USER	bring apple to shiqi
+USER	bring apple to shiqi
+USER	bring apple to shiqi
+USER	bring apple to shiqi
+USER	bring apple to shiqi
+USER	bring apple to shiqi
+USER	bring shiqi apple
+USER	bring cup to shiqi
