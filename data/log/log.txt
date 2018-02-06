@@ -46,3 +46,9 @@ USER	bring apple to shiqi
 USER	bring apple to shiqi
 USER	bring shiqi apple
 USER	bring cup to shiqi
+USER	bring apple to shiqi
+USER	bring apple to shiqi
+USER	bring apple to shiqi
+USER	bring apple to shiqi
+USER	bring apple to shiqi
+USER	bring apple to shiqi

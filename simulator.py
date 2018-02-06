@@ -20,6 +20,8 @@ import re
 import os
 import string
 
+import ast
+
 class Simulator(object):
 
     def __init__(self, 
@@ -76,7 +78,6 @@ class Simulator(object):
         self.plog = gen_dis_plog.DistrGen()
 
         # for semantic parser
-        # hard coded for now
         self.path_to_main = os.path.dirname(os.path.abspath(__file__))
         self.log_filename = os.path.join(self.path_to_main,'data','log','log.txt')
 
@@ -90,11 +91,9 @@ class Simulator(object):
 
         # full request string
         self.full_request = ''
-
-        # temporary testing hard coded
-        #print self.known_words
-        self.known_words_to_number = {'no':'no', 'yes':'yes', 'coffee':'p0', 'bring':'t0', 'shiqi':'r0', 'hamburger':'p1', 'cell phone':'p2'}
-
+        
+        self.known_words_to_number = {}
+        self.get_known_words_to_number()
         # to make the screen print simple 
         numpy.set_printoptions(precision=2)
 
@@ -111,6 +110,20 @@ class Simulator(object):
         self.b = self.b.T
 
     ######################################################################
+
+    def get_known_words_to_number(self):
+        "DEBUG: getting known words to observation map"
+        file_known = open(os.path.join(self.path_to_main,'data','known_words_to_obs.txt'), 'r')
+        s = file_known.read()
+        self.known_words_to_number = ast.literal_eval(s)
+        print(str(self.known_words_to_number))
+        file_known.close()
+
+    def write_known_words_to_number(self):
+        "DEBUG: saving known words to observations to file"
+        file_known = open(os.path.join(self.path_to_main,'data','known_words_to_obs.txt'), 'w+')
+        file_known.write(str(self.known_words_to_number))
+        file_known.close()
 
     #######################################################################
     def get_known_words_from_seed_files(self):
@@ -291,10 +304,39 @@ class Simulator(object):
             # update for recipient observation
             self.update(cycletime)
 
-        print "unmapped: ",unmapped_list
+        print "Unmapped: ",unmapped_list
 
-    def add_new(self):
-        print "adding new"
+    def add_new(self, raw_str):
+        print "DEBUG: adding new"
+        #file_init_train = open(os.path.join(self.path_to_experiment,'data','fold0_init_train.ccg'),'a')
+        file_seed = open(os.path.join(self.path_to_experiment,'resources','seed.lex'),'a')
+        file_nplist = open(os.path.join(self.path_to_experiment,'resources','np-list.lex'),'a')
+        file_geo_consts = open(os.path.join(self.path_to_experiment,'resources','geo.consts.ont'),'r')
+        lines = file_geo_consts.readlines()
+        file_geo_consts.close()
+        file_geo_consts_write = open(os.path.join(self.path_to_experiment,'resources','geo.consts.ont'),'w')
+        file_geo_consts_write.writelines([item for item in lines[:-1]])
+
+        if self.actions[self.a] == 'ask_p':
+            self.num_patient += 1
+            self.known_words_to_number[raw_str] = 'p'+str(self.num_patient - 1)
+            file_seed.write(raw_str + " :- NP : " + raw_str + ":it\n")
+            file_nplist.write(raw_str + " :- NP : " + raw_str + ":it\n")            
+            file_geo_consts_write.write(raw_str + ":it\n")
+
+        elif self.actions[self.a] == 'ask_r':
+            self.num_recipient += 1
+            self.known_words_to_number[raw_str] = 'r'+str(self.num_recipient - 1)
+            file_seed.write(raw_str + " :- NP : " + raw_str + ":pe\n")
+            file_nplist.write(raw_str + " :- NP : " + raw_str + ":pe\n")
+            file_geo_consts_write.write(raw_str + ":pe\n")
+
+        file_geo_consts_write.write(")\n")
+        self.write_known_words_to_number()
+        file_geo_consts_write.close()
+        file_nplist.close()
+        file_seed.close()
+        self.retrain_parser()
 
     #######################################################################
     def observe(self, ind):
@@ -308,7 +350,7 @@ class Simulator(object):
             ind = self.get_observation_from_name(ind)
 
             if ind == None:
-                print "Not found in list of observations"
+                print "DEBUG: Not found in list of observations"
                 rand = numpy.random.random_sample()
                 acc = 0.0
                 for i in range(len(self.observations)):
@@ -375,29 +417,30 @@ class Simulator(object):
             # entropy
             old_entropy = current_entropy
             current_entropy = stats.entropy(self.b)
-            print "Entropy = ",current_entropy
+            print "DEBUG: Entropy = ",current_entropy
             # check if entropy increased
             if (old_entropy < current_entropy):
                 inc_count += 1
-                print "entropy increased"
+                print "DEBUG: entropy increased"
 
             if(current_entropy > 2.3):
                 self.get_full_request(cycletime)
             else:
                 self.a = int(self.policy.select_action(self.b))
-                ind = raw_input("Input observation: ")
-
-                # check entropy increases arbitrary no of times for now
-                if (inc_count > 2):
-                    print "--- new item/person ---"
-                    self.add_new()
             
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
                     # uncomment this later
                     print('QUESTION: ' + self.action_to_text(self.actions[self.a]))
 
-                self.observe(ind)
+                raw_str = raw_input("Input observation: ")
+
+                # check entropy increases arbitrary no of times for now
+                if (inc_count > 2):
+                    print "--- new item/person ---"
+                    self.add_new(raw_str)
+
+                self.observe(raw_str)
                 if self.print_flag:
                     print('\tobserve:\t'+self.observations[self.o]+' '+str(self.o))
 
