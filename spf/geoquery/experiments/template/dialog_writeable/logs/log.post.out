@@ -176,7 +176,7 @@ Lexical entries [721]:
 [10.4089] s :- N : (lambda $0:e (person:<pe,t> $0)) {LEX#438=0.0(1.0),XEME#110=10.408934808418502(1.0),XTMP#74=0.0(0.1)} (factoring)
 [7.4901] s :- PP/NP : (lambda $0:e (lambda $1:e (not:<t,t> (possesses:<pe,<e,t>> $1 $0)))) {LEX#26=0.0(1.0),XEME#23=7.490105506917947(1.0),XTMP#20=0.0(0.1)} (factoring)
 [7.4901] s :- NP\N/NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#68=0.0(1.0),XEME#23=7.490105506917947(1.0),XTMP#17=0.0(0.1)} (factoring)
-[4.7391] s :- S\NP/NP : (lambda $0:e (lambda $1:e (possesses:<pe,<e,t>> $1 $0))) {LEX#247=-2.7243789631058166(1.0),XEME#23=7.490105506917947(1.0),XTMP#22=-0.2667520913951212(0.1)} (factoring)
+[4.7391] s :- S\NP/NP : (lambda $0:e (lambda $1:e (possesses:<pe,<e,t>> $1 $0))) {LEX#247=-2.7243789631058175(1.0),XEME#23=7.490105506917947(1.0),XTMP#22=-0.2667520913951212(0.1)} (factoring)
 [20.0000] room :- N : (lambda $0:e (room:<ro,t> $0)) {LEX#401=10.0(1.0),XEME#145=10.0(1.0),XTMP#74=0.0(0.1)} (factoring)
 [20.0000] walk :- S/PP : (lambda $0:<a,t> (and:<t*,t> (action:<a,t> walk:a) ($0 walk:a))) {LEX#25=10.0(1.0),XEME#22=10.0(1.0),XTMP#14=0.0(0.1)} (factoring)
 [20.0000] walk :- S/PP : (lambda $0:<a,t> (and:<t*,t> (action:<a,t> walk:a) ($0 walk:a))) {LEX#25=10.0(1.0),XEME#9=10.0(1.0),XTMP#30=0.0(0.1)} (factoring)
@@ -668,7 +668,7 @@ Lexical entries [721]:
 [20.0000] 3402 :- NP : l3_402:ro {LEX#352=10.0(1.0),XEME#132=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] 3420 :- NP : l3_420:ro {LEX#351=10.0(1.0),XEME#131=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [31.4355] dana ballard :- NP : dana:pe {LEX#34=21.435469250725863(1.0),XEME#27=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
-[5.4489] stone :- NP : peter:pe {LEX#499=2.7244330338774336(1.0),XEME#158=2.7244330338774336(1.0),XTMP#25=0.0(0.1)} (factoring)
+[5.4489] stone :- NP : peter:pe {LEX#499=2.72443303387742(1.0),XEME#158=2.72443303387742(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] who :- N : (lambda $0:e (person:<pe,t> $0)) {LEX#300=10.0(1.0),XEME#118=10.0(1.0),XTMP#74=0.0(0.1)} (factoring)
 [10.0041] who :- NP/N\NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#303=0.0(1.0),XEME#118=10.0(1.0),XTMP#102=0.04089348084185031(0.1)} (factoring)
 [10.0000] who :- NP\N/NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#445=0.0(1.0),XEME#118=10.0(1.0),XTMP#37=0.0(0.1)} (factoring)
@@ -886,7 +886,7 @@ LEX#243=0.0
 LEX#244=0.0
 LEX#245=0.0
 LEX#246=0.0
-LEX#247=-2.7243789631058166
+LEX#247=-2.7243789631058175
 LEX#248=0.0
 LEX#249=0.0
 LEX#25=10.0
@@ -1165,7 +1165,7 @@ LEX#495=0.0
 LEX#496=0.0
 LEX#497=0.0
 LEX#498=0.0
-LEX#499=2.7244330338774336
+LEX#499=2.72443303387742
 LEX#5=10.0
 LEX#50=10.0
 LEX#500=0.0
@@ -1225,7 +1225,7 @@ LEX#99=10.0
 RULE#>apply=0.4007208983726771
 RULE#>comp=0.1327940990257618
 RULE#>plural_exists=-0.2667520913951207
-RULE#lex=0.2667520913257126
+RULE#lex=0.26675209132570765
 XEME#0=10.0
 XEME#1=10.0
 XEME#10=10.0
@@ -1292,7 +1292,7 @@ XEME#154=10.0
 XEME#155=10.0
 XEME#156=10.0
 XEME#157=2.724433033877429
-XEME#158=2.7244330338774336
+XEME#158=2.72443303387742
 XEME#159=0.0
 XEME#16=10.0
 XEME#17=10.0
