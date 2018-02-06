@@ -297,7 +297,7 @@ class Simulator(object):
         print "adding new"
 
     #######################################################################
-    def observe(self):
+    def observe(self, ind):
         self.o = None
 
         if self.auto_observations:
@@ -305,7 +305,6 @@ class Simulator(object):
             sys.exit("Error: Auto observation not implemented")
         else:
             # main part
-            ind = raw_input("Input observation: ")
             ind = self.get_observation_from_name(ind)
 
             if ind == None:
@@ -382,22 +381,23 @@ class Simulator(object):
                 inc_count += 1
                 print "entropy increased"
 
-            # check entropy increases arbitrary no of times for now
-            if (inc_count > 2):
-                print "--- new item/person ---"
-                self.add_new()
-
             if(current_entropy > 2.3):
                 self.get_full_request(cycletime)
             else:
                 self.a = int(self.policy.select_action(self.b))
+                ind = raw_input("Input observation: ")
+
+                # check entropy increases arbitrary no of times for now
+                if (inc_count > 2):
+                    print "--- new item/person ---"
+                    self.add_new()
             
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
                     # uncomment this later
                     print('QUESTION: ' + self.action_to_text(self.actions[self.a]))
 
-                self.observe()
+                self.observe(ind)
                 if self.print_flag:
                     print('\tobserve:\t'+self.observations[self.o]+' '+str(self.o))
 
