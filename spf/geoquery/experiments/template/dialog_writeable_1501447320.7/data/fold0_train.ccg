@@ -1,6 +1,0 @@
-
-bring cup of jo to shiqi
-(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a shiqi:pe) (actionpatient:<a,<e,t>> bring:a coffee:it))
-
-bring java to shiqi
-(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a shiqi:pe) (actionpatient:<a,<e,t>> bring:a coffee:it))

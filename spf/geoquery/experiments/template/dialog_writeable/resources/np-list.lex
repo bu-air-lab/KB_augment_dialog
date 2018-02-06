@@ -38,4 +38,3 @@ hamburger :- NP : hamburger:it
 cell phone :- NP : phone:it
 trashcan :- NP : trashcan:it
 calendar :- NP : calendar:it
-apple :- NP : apple:it
