@@ -2,6 +2,7 @@
 
 import sys
 import time
+import pomdp_generator
 import pomdp_parser
 import policy_parser
 import readline
@@ -191,6 +192,54 @@ class Simulator(object):
         return parses,unmapped_words_in_utterance
 
     ######################################################################
+    # EXPERIMENTAL: Generate model
+    def generate_new_model(self):
+        r_max = 20.0
+        r_min = -20.0
+
+        wh_cost = -1.5
+        yesno_cost = -1.0
+
+        num_task = self.num_task
+        num_patient = self.num_patient
+        num_recipient = self.num_recipient
+
+        ''' 
+        #this needs to be replaced (Saeid)
+        weight_t = np.array([[1.00, 0.00, 0.00], 
+                            [0.00, 1.00, 0.00], 
+                            [0.00, 0.00, 1.00]])
+
+        weight_p = np.array([[1.0, 0.0, 0.0], 
+                             [0.0, 1.0, 0.0], 
+                             [0.0, 0.0, 1.0]])
+
+        weight_r = np.array([[1.0, 0.0, 0.0], 
+                             [0.0, 1.0, 0.0], 
+                             [0.0, 0.0, 1.0]])
+        '''
+        strategy = str(num_task) + str(num_patient) + str(num_recipient)
+
+        pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
+            weight_t, weight_p, weight_r, wh_cost, yesno_cost)
+
+        # once its generated:
+        # to read the pomdp model
+        model = pomdp_parser.Pomdp(filename=pomdp_file, parsing_print_flag=False)
+        self.states = model.states
+        self.actions = model.actions
+        self.observations = model.observations
+        # print self.observations
+        self.trans_mat = model.trans_mat
+        self.obs_mat = model.obs_mat
+        self.reward_mat = model.reward_mat
+
+        # to read the learned policy
+        self.policy = policy_parser.Policy(len(self.states), len(self.actions), 
+            filename=policy_file)
+        # self.reinit_belief()
+
+    ######################################################################
     # EXPERIMENTAL: Retrain parser:
     def retrain_parser(self):
         print "PARSER: retraining parser..."
@@ -333,10 +382,16 @@ class Simulator(object):
 
         file_geo_consts_write.write(")\n")
         self.write_known_words_to_number()
+
+        file_num_config = open(os.path.join(self.path_to_main,'data','num_config.txt'), 'w+')
+        file_num_config.write(str(self.num_task) + " " + str(self.num_patient) + " " + str(self.num_recipient))
+        file_num_config.close()
         file_geo_consts_write.close()
         file_nplist.close()
         file_seed.close()
         self.retrain_parser()
+
+        #self.generate_new_model()
 
     #######################################################################
     def observe(self, ind):
@@ -539,6 +594,10 @@ class Simulator(object):
             numpy.mean(reward_arr))
 
 def main():
+    # the number of variables are stored in this file for now
+    f = open("./data/num_config.txt")
+    num = f.readline().split()
+    print num
 
     s = Simulator(uniform_init_belief = True, 
         auto_state = True, 
@@ -548,9 +607,9 @@ def main():
         policy_file = '333_new.policy', 
         pomdp_file =  '333_new.pomdp',
         trials_num = 10,
-        num_task = 3, 
-        num_patient = 3, 
-        num_recipient = 3)
+        num_task = int(num[0]), 
+        num_patient = int(num[1]), 
+        num_recipient = int(num[2]))
  
     if not s.uniform_init_belief:   
         print('note that initial belief is not uniform\n')
