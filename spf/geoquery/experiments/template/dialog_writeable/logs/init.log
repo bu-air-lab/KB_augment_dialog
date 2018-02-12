@@ -208,6 +208,7 @@
 [P1T2] Adding entry: excluding :- PP/NP : (lambda $0:e (lambda $1:e (not:<t,t> (equals:<e,<e,t>> $1 $0))))
 [P1T2] Adding entry: take :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1))))
 [P1T2] Adding entry: take :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a))))
+[P1T2] Adding entry: apple :- NP : apple:it
 [P1T2] Adding entry: walk :- S/PP : (lambda $0:<a,t> (and:<t*,t> (action:<a,t> walk:a) ($0 walk:a)))
 [P1T2] Adding entry: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1))))
 [P1T2] Adding entry: are :- NP\N/(NP/N) : (lambda $0:<<e,t>,e> (lambda $1:<e,t> ($0 (lambda $2:e ($1 $2)))))
@@ -243,6 +244,7 @@
 [P1T2] Adding entry: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1))))
 [P1T2] Adding entry: bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a))))
 [P1T2] Adding entry: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1))))
+[P1T2] Adding entry: apple :- NP : apple:it
 [P1T2] Adding entry: 3414 :- NP : l3_414:ro
 [P1T2] Adding entry: daniel urieli :- NP : daniel:pe
 [P1T2] Adding entry: 3426 :- NP : l3_426:ro
@@ -270,8 +272,8 @@
 [P1T2] Adding entry: 3516 :- NP : l3_516:ro
 [P1T2] Adding entry: 3502 :- NP : l3_502:ro
 [P1T2] Adding entry: you :- NP : self:self
-[P1T2] Adding entry: dana ballard :- NP : dana:pe
 [P1T2] Adding entry: cell phone :- NP : phone:it
+[P1T2] Adding entry: dana ballard :- NP : dana:pe
 [P1T2] Adding entry: yourself :- NP : self:self
 [P1T2] Adding entry: hamburger :- NP : hamburger:it
 [P1T2] Adding entry: 3432 :- NP : l3_432:ro
@@ -493,9 +495,10 @@
 [P1T2] Init LEX: excluding :- PP/NP : (lambda $0:e (lambda $1:e (not:<t,t> (equals:<e,<e,t>> $1 $0)))) -> {LEX#65=10.0(1.0),XEME#67=0.0(1.0),XTMP#95=0.0(0.1)}
 [P1T2] Init LEX: take :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#5=10.0(1.0),XEME#92=0.0(1.0),XTMP#15=0.0(0.1)}
 [P1T2] Init LEX: take :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a)))) -> {LEX#59=10.0(1.0),XEME#10=0.0(1.0),XTMP#97=0.0(0.1)}
+[P1T2] Init LEX: apple :- NP : apple:it -> {LEX#456=10.0(1.0),XEME#154=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: walk :- S/PP : (lambda $0:<a,t> (and:<t*,t> (action:<a,t> walk:a) ($0 walk:a))) -> {LEX#25=10.0(1.0),XEME#70=0.0(1.0),XTMP#73=0.0(0.1)}
 [P1T2] Init LEX: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#106=0.0(1.0),XTMP#83=0.0(0.1)}
-[P1T2] Init LEX: are :- NP\N/(NP/N) : (lambda $0:<<e,t>,e> (lambda $1:<e,t> ($0 (lambda $2:e ($1 $2))))) -> {LEX#459=10.0(1.0),XEME#20=0.0(1.0),XTMP#49=0.0(0.1)}
+[P1T2] Init LEX: are :- NP\N/(NP/N) : (lambda $0:<<e,t>,e> (lambda $1:<e,t> ($0 (lambda $2:e ($1 $2))))) -> {LEX#460=10.0(1.0),XEME#20=0.0(1.0),XTMP#49=0.0(0.1)}
 [P1T2] Init LEX: bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a)))) -> {LEX#86=10.0(1.0),XEME#97=0.0(1.0),XTMP#71=0.0(0.1)}
 [P1T2] Init LEX: take :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#5=10.0(1.0),XEME#69=0.0(1.0),XTMP#81=0.0(0.1)}
 [P1T2] Init LEX: take :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#5=10.0(1.0),XEME#139=0.0(1.0),XTMP#50=0.0(0.1)}
@@ -504,9 +507,9 @@
 [P1T2] Init LEX: take :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#5=10.0(1.0),XEME#90=0.0(1.0),XTMP#108=0.0(0.1)}
 [P1T2] Init LEX: bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a)))) -> {LEX#86=10.0(1.0),XEME#107=0.0(1.0),XTMP#97=0.0(0.1)}
 [P1T2] Init LEX: 3428 :- NP : l3_428:ro -> {LEX#242=10.0(1.0),XEME#108=0.0(1.0),XTMP#25=0.0(0.1)}
-[P1T2] Init LEX: coffee :- NP : coffee:it -> {LEX#470=10.0(1.0),XEME#154=0.0(1.0),XTMP#25=0.0(0.1)}
+[P1T2] Init LEX: coffee :- NP : coffee:it -> {LEX#471=10.0(1.0),XEME#155=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: take :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#5=10.0(1.0),XEME#92=0.0(1.0),XTMP#106=0.0(0.1)}
-[P1T2] Init LEX: what :- S/(S\NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2))))) -> {LEX#472=10.0(1.0),XEME#18=0.0(1.0),XTMP#92=0.0(0.1)}
+[P1T2] Init LEX: what :- S/(S\NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2))))) -> {LEX#473=10.0(1.0),XEME#18=0.0(1.0),XTMP#92=0.0(0.1)}
 [P1T2] Init LEX: s :- NP/N\NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> (person:<pe,t> $0) ($1 $2) (possesses:<pe,<e,t>> $0 $2)))))) -> {LEX#100=10.0(1.0),XEME#23=0.0(1.0),XTMP#46=0.0(0.1)}
 [P1T2] Init LEX: take :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#5=10.0(1.0),XEME#28=0.0(1.0),XTMP#98=0.0(0.1)}
 [P1T2] Init LEX: walk :- S/PP : (lambda $0:<a,t> (and:<t*,t> (action:<a,t> walk:a) ($0 walk:a))) -> {LEX#25=10.0(1.0),XEME#41=0.0(1.0),XTMP#43=0.0(0.1)}
@@ -514,20 +517,21 @@
 [P1T2] Init LEX: office :- N : (lambda $0:e (office:<of,t> $0)) -> {LEX#253=10.0(1.0),XEME#111=0.0(1.0),XTMP#74=0.0(0.1)}
 [P1T2] Init LEX: take :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a)))) -> {LEX#59=10.0(1.0),XEME#42=0.0(1.0),XTMP#82=0.0(0.1)}
 [P1T2] Init LEX: to :- PP/NP : (lambda $0:e (lambda $1:a (actionrecipient:<a,<e,t>> $1 $0))) -> {LEX#256=10.0(1.0),XEME#73=0.0(1.0),XTMP#26=0.0(0.1)}
-[P1T2] Init LEX: are there :- S\NP : (lambda $0:e true:t) -> {LEX#477=21.435469250725863(1.0),XEME#155=0.0(1.0),XTMP#110=0.0(0.1)}
+[P1T2] Init LEX: are there :- S\NP : (lambda $0:e true:t) -> {LEX#478=21.435469250725863(1.0),XEME#156=0.0(1.0),XTMP#110=0.0(0.1)}
 [P1T2] Init LEX: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#61=0.0(1.0),XTMP#5=0.0(0.1)}
-[P1T2] Init LEX: cell phone :- NP : phone:it -> {LEX#480=21.435469250725863(1.0),XEME#156=0.0(1.0),XTMP#25=0.0(0.1)}
+[P1T2] Init LEX: cell phone :- NP : phone:it -> {LEX#481=21.435469250725863(1.0),XEME#157=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: not :- N/N : (lambda $0:<e,t> (lambda $1:e (not:<t,t> ($0 $1)))) -> {LEX#261=10.0(1.0),XEME#39=0.0(1.0),XTMP#70=0.0(0.1)}
 [P1T2] Init LEX: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#81=0.0(1.0),XTMP#98=0.0(0.1)}
 [P1T2] Init LEX: hamburger :- NP : hamburger:it -> {LEX#262=10.0(1.0),XEME#112=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#93=0.0(1.0),XTMP#1=0.0(0.1)}
 [P1T2] Init LEX: are :- S\NP/PP : (lambda $0:<e,t> (lambda $1:e ($0 $1))) -> {LEX#263=10.0(1.0),XEME#20=0.0(1.0),XTMP#2=0.0(0.1)}
-[P1T2] Init LEX: can you :- S/S : (lambda $0:<e,t> (lambda $1:e ($0 $1))) -> {LEX#483=21.435469250725863(1.0),XEME#63=0.0(1.0),XTMP#3=0.0(0.1)}
+[P1T2] Init LEX: can you :- S/S : (lambda $0:<e,t> (lambda $1:e ($0 $1))) -> {LEX#484=21.435469250725863(1.0),XEME#63=0.0(1.0),XTMP#3=0.0(0.1)}
 [P1T2] Init LEX: of :- NP\N/NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> (person:<pe,t> $0) ($1 $2) (possesses:<pe,<e,t>> $0 $2)))))) -> {LEX#18=10.0(1.0),XEME#137=0.0(1.0),XTMP#107=0.0(0.1)}
-[P1T2] Init LEX: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#83=0.0(1.0),XTMP#48=0.0(0.1)}
 [P1T2] Init LEX: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#25=0.0(1.0),XTMP#57=0.0(0.1)}
+[P1T2] Init LEX: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#83=0.0(1.0),XTMP#48=0.0(0.1)}
 [P1T2] Init LEX: bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a)))) -> {LEX#86=10.0(1.0),XEME#83=0.0(1.0),XTMP#84=0.0(0.1)}
 [P1T2] Init LEX: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#83=0.0(1.0),XTMP#93=0.0(0.1)}
+[P1T2] Init LEX: apple :- NP : apple:it -> {LEX#456=10.0(1.0),XEME#154=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: 3414 :- NP : l3_414:ro -> {LEX#204=10.0(1.0),XEME#99=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: daniel urieli :- NP : daniel:pe -> {LEX#295=21.435469250725863(1.0),XEME#117=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: 3426 :- NP : l3_426:ro -> {LEX#404=10.0(1.0),XEME#146=0.0(1.0),XTMP#25=0.0(0.1)}
@@ -542,7 +546,7 @@
 [P1T2] Init LEX: 3508 :- NP : l3_508:ro -> {LEX#213=10.0(1.0),XEME#100=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: 3430 :- NP : l3_430:ro -> {LEX#413=10.0(1.0),XEME#149=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: 3512 :- NP : l3_512:ro -> {LEX#318=10.0(1.0),XEME#124=0.0(1.0),XTMP#25=0.0(0.1)}
-[P1T2] Init LEX: coffee :- NP : coffee:it -> {LEX#470=10.0(1.0),XEME#154=0.0(1.0),XTMP#25=0.0(0.1)}
+[P1T2] Init LEX: coffee :- NP : coffee:it -> {LEX#471=10.0(1.0),XEME#155=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: shiqi zhang :- NP : shiqi:pe -> {LEX#356=21.435469250725863(1.0),XEME#133=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: 3414a :- NP : l3_414a:ro -> {LEX#121=10.0(1.0),XEME#78=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: 3414b :- NP : l3_414b:ro -> {LEX#329=10.0(1.0),XEME#126=0.0(1.0),XTMP#25=0.0(0.1)}
@@ -555,8 +559,8 @@
 [P1T2] Init LEX: 3516 :- NP : l3_516:ro -> {LEX#130=10.0(1.0),XEME#80=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: 3502 :- NP : l3_502:ro -> {LEX#390=10.0(1.0),XEME#142=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: you :- NP : self:self -> {LEX#423=10.0(1.0),XEME#151=0.0(1.0),XTMP#25=0.0(0.1)}
+[P1T2] Init LEX: cell phone :- NP : phone:it -> {LEX#481=21.435469250725863(1.0),XEME#157=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: dana ballard :- NP : dana:pe -> {LEX#34=21.435469250725863(1.0),XEME#27=0.0(1.0),XTMP#25=0.0(0.1)}
-[P1T2] Init LEX: cell phone :- NP : phone:it -> {LEX#480=21.435469250725863(1.0),XEME#156=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: yourself :- NP : self:self -> {LEX#227=10.0(1.0),XEME#103=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: hamburger :- NP : hamburger:it -> {LEX#262=10.0(1.0),XEME#112=0.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init LEX: 3432 :- NP : l3_432:ro -> {LEX#37=10.0(1.0),XEME#29=0.0(1.0),XTMP#25=0.0(0.1)}
@@ -778,9 +782,10 @@
 [P1T2] Init XEME: excluding :- PP/NP : (lambda $0:e (lambda $1:e (not:<t,t> (equals:<e,<e,t>> $1 $0)))) -> {LEX#65=10.0(1.0),XEME#67=10.0(1.0),XTMP#95=0.0(0.1)}
 [P1T2] Init XEME: take :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#5=10.0(1.0),XEME#92=10.0(1.0),XTMP#15=0.0(0.1)}
 [P1T2] Init XEME: take :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a)))) -> {LEX#59=10.0(1.0),XEME#10=10.0(1.0),XTMP#97=0.0(0.1)}
+[P1T2] Init XEME: apple :- NP : apple:it -> {LEX#456=10.0(1.0),XEME#154=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: walk :- S/PP : (lambda $0:<a,t> (and:<t*,t> (action:<a,t> walk:a) ($0 walk:a))) -> {LEX#25=10.0(1.0),XEME#70=10.0(1.0),XTMP#73=0.0(0.1)}
 [P1T2] Init XEME: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#106=10.0(1.0),XTMP#83=0.0(0.1)}
-[P1T2] Init XEME: are :- NP\N/(NP/N) : (lambda $0:<<e,t>,e> (lambda $1:<e,t> ($0 (lambda $2:e ($1 $2))))) -> {LEX#459=10.0(1.0),XEME#20=10.0(1.0),XTMP#49=0.0(0.1)}
+[P1T2] Init XEME: are :- NP\N/(NP/N) : (lambda $0:<<e,t>,e> (lambda $1:<e,t> ($0 (lambda $2:e ($1 $2))))) -> {LEX#460=10.0(1.0),XEME#20=10.0(1.0),XTMP#49=0.0(0.1)}
 [P1T2] Init XEME: bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a)))) -> {LEX#86=10.0(1.0),XEME#97=10.0(1.0),XTMP#71=0.0(0.1)}
 [P1T2] Init XEME: take :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#5=10.0(1.0),XEME#69=10.0(1.0),XTMP#81=0.0(0.1)}
 [P1T2] Init XEME: take :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#5=10.0(1.0),XEME#139=10.0(1.0),XTMP#50=0.0(0.1)}
@@ -789,9 +794,9 @@
 [P1T2] Init XEME: take :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#5=10.0(1.0),XEME#90=10.0(1.0),XTMP#108=0.0(0.1)}
 [P1T2] Init XEME: bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a)))) -> {LEX#86=10.0(1.0),XEME#107=10.0(1.0),XTMP#97=0.0(0.1)}
 [P1T2] Init XEME: 3428 :- NP : l3_428:ro -> {LEX#242=10.0(1.0),XEME#108=10.0(1.0),XTMP#25=0.0(0.1)}
-[P1T2] Init XEME: coffee :- NP : coffee:it -> {LEX#470=10.0(1.0),XEME#154=10.0(1.0),XTMP#25=0.0(0.1)}
+[P1T2] Init XEME: coffee :- NP : coffee:it -> {LEX#471=10.0(1.0),XEME#155=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: take :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#5=10.0(1.0),XEME#92=10.0(1.0),XTMP#106=0.0(0.1)}
-[P1T2] Init XEME: what :- S/(S\NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2))))) -> {LEX#472=10.0(1.0),XEME#18=10.0(1.0),XTMP#92=0.0(0.1)}
+[P1T2] Init XEME: what :- S/(S\NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2))))) -> {LEX#473=10.0(1.0),XEME#18=10.0(1.0),XTMP#92=0.0(0.1)}
 [P1T2] Init XEME: s :- NP/N\NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> (person:<pe,t> $0) ($1 $2) (possesses:<pe,<e,t>> $0 $2)))))) -> {LEX#100=10.0(1.0),XEME#23=10.0(1.0),XTMP#46=0.0(0.1)}
 [P1T2] Init XEME: take :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#5=10.0(1.0),XEME#28=10.0(1.0),XTMP#98=0.0(0.1)}
 [P1T2] Init XEME: walk :- S/PP : (lambda $0:<a,t> (and:<t*,t> (action:<a,t> walk:a) ($0 walk:a))) -> {LEX#25=10.0(1.0),XEME#41=10.0(1.0),XTMP#43=0.0(0.1)}
@@ -799,20 +804,21 @@
 [P1T2] Init XEME: office :- N : (lambda $0:e (office:<of,t> $0)) -> {LEX#253=10.0(1.0),XEME#111=10.0(1.0),XTMP#74=0.0(0.1)}
 [P1T2] Init XEME: take :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a)))) -> {LEX#59=10.0(1.0),XEME#42=10.0(1.0),XTMP#82=0.0(0.1)}
 [P1T2] Init XEME: to :- PP/NP : (lambda $0:e (lambda $1:a (actionrecipient:<a,<e,t>> $1 $0))) -> {LEX#256=10.0(1.0),XEME#73=10.0(1.0),XTMP#26=0.0(0.1)}
-[P1T2] Init XEME: are there :- S\NP : (lambda $0:e true:t) -> {LEX#477=21.435469250725863(1.0),XEME#155=10.0(1.0),XTMP#110=0.0(0.1)}
+[P1T2] Init XEME: are there :- S\NP : (lambda $0:e true:t) -> {LEX#478=21.435469250725863(1.0),XEME#156=10.0(1.0),XTMP#110=0.0(0.1)}
 [P1T2] Init XEME: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#61=10.0(1.0),XTMP#5=0.0(0.1)}
-[P1T2] Init XEME: cell phone :- NP : phone:it -> {LEX#480=21.435469250725863(1.0),XEME#156=10.0(1.0),XTMP#25=0.0(0.1)}
+[P1T2] Init XEME: cell phone :- NP : phone:it -> {LEX#481=21.435469250725863(1.0),XEME#157=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: not :- N/N : (lambda $0:<e,t> (lambda $1:e (not:<t,t> ($0 $1)))) -> {LEX#261=10.0(1.0),XEME#39=10.0(1.0),XTMP#70=0.0(0.1)}
 [P1T2] Init XEME: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#81=10.0(1.0),XTMP#98=0.0(0.1)}
 [P1T2] Init XEME: hamburger :- NP : hamburger:it -> {LEX#262=10.0(1.0),XEME#112=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#93=10.0(1.0),XTMP#1=0.0(0.1)}
 [P1T2] Init XEME: are :- S\NP/PP : (lambda $0:<e,t> (lambda $1:e ($0 $1))) -> {LEX#263=10.0(1.0),XEME#20=10.0(1.0),XTMP#2=0.0(0.1)}
-[P1T2] Init XEME: can you :- S/S : (lambda $0:<e,t> (lambda $1:e ($0 $1))) -> {LEX#483=21.435469250725863(1.0),XEME#63=10.0(1.0),XTMP#3=0.0(0.1)}
+[P1T2] Init XEME: can you :- S/S : (lambda $0:<e,t> (lambda $1:e ($0 $1))) -> {LEX#484=21.435469250725863(1.0),XEME#63=10.0(1.0),XTMP#3=0.0(0.1)}
 [P1T2] Init XEME: of :- NP\N/NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> (person:<pe,t> $0) ($1 $2) (possesses:<pe,<e,t>> $0 $2)))))) -> {LEX#18=10.0(1.0),XEME#137=10.0(1.0),XTMP#107=0.0(0.1)}
-[P1T2] Init XEME: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#83=10.0(1.0),XTMP#48=0.0(0.1)}
 [P1T2] Init XEME: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#25=10.0(1.0),XTMP#57=0.0(0.1)}
+[P1T2] Init XEME: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#83=10.0(1.0),XTMP#48=0.0(0.1)}
 [P1T2] Init XEME: bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a)))) -> {LEX#86=10.0(1.0),XEME#83=10.0(1.0),XTMP#84=0.0(0.1)}
 [P1T2] Init XEME: bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1)))) -> {LEX#0=10.0(1.0),XEME#83=10.0(1.0),XTMP#93=0.0(0.1)}
+[P1T2] Init XEME: apple :- NP : apple:it -> {LEX#456=10.0(1.0),XEME#154=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: 3414 :- NP : l3_414:ro -> {LEX#204=10.0(1.0),XEME#99=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: daniel urieli :- NP : daniel:pe -> {LEX#295=21.435469250725863(1.0),XEME#117=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: 3426 :- NP : l3_426:ro -> {LEX#404=10.0(1.0),XEME#146=10.0(1.0),XTMP#25=0.0(0.1)}
@@ -827,7 +833,7 @@
 [P1T2] Init XEME: 3508 :- NP : l3_508:ro -> {LEX#213=10.0(1.0),XEME#100=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: 3430 :- NP : l3_430:ro -> {LEX#413=10.0(1.0),XEME#149=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: 3512 :- NP : l3_512:ro -> {LEX#318=10.0(1.0),XEME#124=10.0(1.0),XTMP#25=0.0(0.1)}
-[P1T2] Init XEME: coffee :- NP : coffee:it -> {LEX#470=10.0(1.0),XEME#154=10.0(1.0),XTMP#25=0.0(0.1)}
+[P1T2] Init XEME: coffee :- NP : coffee:it -> {LEX#471=10.0(1.0),XEME#155=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: shiqi zhang :- NP : shiqi:pe -> {LEX#356=21.435469250725863(1.0),XEME#133=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: 3414a :- NP : l3_414a:ro -> {LEX#121=10.0(1.0),XEME#78=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: 3414b :- NP : l3_414b:ro -> {LEX#329=10.0(1.0),XEME#126=10.0(1.0),XTMP#25=0.0(0.1)}
@@ -840,8 +846,8 @@
 [P1T2] Init XEME: 3516 :- NP : l3_516:ro -> {LEX#130=10.0(1.0),XEME#80=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: 3502 :- NP : l3_502:ro -> {LEX#390=10.0(1.0),XEME#142=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: you :- NP : self:self -> {LEX#423=10.0(1.0),XEME#151=10.0(1.0),XTMP#25=0.0(0.1)}
+[P1T2] Init XEME: cell phone :- NP : phone:it -> {LEX#481=21.435469250725863(1.0),XEME#157=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: dana ballard :- NP : dana:pe -> {LEX#34=21.435469250725863(1.0),XEME#27=10.0(1.0),XTMP#25=0.0(0.1)}
-[P1T2] Init XEME: cell phone :- NP : phone:it -> {LEX#480=21.435469250725863(1.0),XEME#156=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: yourself :- NP : self:self -> {LEX#227=10.0(1.0),XEME#103=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: hamburger :- NP : hamburger:it -> {LEX#262=10.0(1.0),XEME#112=10.0(1.0),XTMP#25=0.0(0.1)}
 [P1T2] Init XEME: 3432 :- NP : l3_432:ro -> {LEX#37=10.0(1.0),XEME#29=10.0(1.0),XTMP#25=0.0(0.1)}

@@ -1,4 +1,4 @@
-Lexical entries [704]:
+Lexical entries [705]:
 [20.0000] please :- S\S : (lambda $0:e $0) {LEX#63=10.0(1.0),XEME#46=10.0(1.0),XTMP#32=0.0(0.1)} (factoring)
 [20.0000] please :- S/S : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#272=10.0(1.0),XEME#46=10.0(1.0),XTMP#3=0.0(0.1)} (factoring)
 [20.0000] please :- S\S : (lambda $0:t $0) {LEX#386=10.0(1.0),XEME#46=10.0(1.0),XTMP#13=0.0(0.1)} (factoring)
@@ -11,12 +11,12 @@ Lexical entries [704]:
 [10.0000] please :- PP/PP : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#309=0.0(1.0),XEME#46=10.0(1.0),XTMP#40=0.0(0.1)} (factoring)
 [10.0000] please :- S/NP/(S/NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#343=0.0(1.0),XEME#46=10.0(1.0),XTMP#21=0.0(0.1)} (factoring)
 [10.0000] please :- PP/(S/NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#405=0.0(1.0),XEME#46=10.0(1.0),XTMP#34=0.0(0.1)} (factoring)
-[10.0000] please :- NP/N : (lambda $0:<e,t> (the:<<e,t>,e> (lambda $1:e ($0 $1)))) {LEX#461=0.0(1.0),XEME#46=10.0(1.0),XTMP#31=0.0(0.1)} (factoring)
-[10.0000] please :- S/S : (lambda $0:t $0) {LEX#469=0.0(1.0),XEME#46=10.0(1.0),XTMP#11=0.0(0.1)} (factoring)
-[10.0000] please :- NP/NP : (lambda $0:e $0) {LEX#478=0.0(1.0),XEME#46=10.0(1.0),XTMP#18=0.0(0.1)} (factoring)
+[10.0000] please :- NP/N : (lambda $0:<e,t> (the:<<e,t>,e> (lambda $1:e ($0 $1)))) {LEX#462=0.0(1.0),XEME#46=10.0(1.0),XTMP#31=0.0(0.1)} (factoring)
+[10.0000] please :- S/S : (lambda $0:t $0) {LEX#470=0.0(1.0),XEME#46=10.0(1.0),XTMP#11=0.0(0.1)} (factoring)
+[10.0000] please :- NP/NP : (lambda $0:e $0) {LEX#479=0.0(1.0),XEME#46=10.0(1.0),XTMP#18=0.0(0.1)} (factoring)
 [20.0000] i :- NP : me:pe {LEX#233=10.0(1.0),XEME#104=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] office :- N : (lambda $0:e (office:<of,t> $0)) {LEX#253=10.0(1.0),XEME#111=10.0(1.0),XTMP#74=0.0(0.1)} (factoring)
-[20.0000] coffee :- NP : coffee:it {LEX#470=10.0(1.0),XEME#154=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
+[20.0000] coffee :- NP : coffee:it {LEX#471=10.0(1.0),XEME#155=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [31.4355] how many :- S/(S/NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (count:<<e,t>,i> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2)))))) {LEX#75=21.435469250725863(1.0),XEME#55=10.0(1.0),XTMP#9=0.0(0.1)} (factoring)
 [31.4355] how many :- S/(S/NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (count:<<e,t>,i> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2)))))) {LEX#75=21.435469250725863(1.0),XEME#86=10.0(1.0),XTMP#63=0.0(0.1)} (factoring)
 [31.4355] how many :- S/(S\NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (count:<<e,t>,i> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2)))))) {LEX#166=21.435469250725863(1.0),XEME#55=10.0(1.0),XTMP#16=0.0(0.1)} (factoring)
@@ -44,8 +44,8 @@ Lexical entries [704]:
 [10.0000] how many :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (actionpatient:<a,<e,t>> bring:a $1) (actionrecipient:<a,<e,t>> bring:a $0) (action:<a,t> bring:a)))) {LEX#379=0.0(1.0),XEME#55=10.0(1.0),XTMP#24=0.0(0.1)} (factoring)
 [10.0000] how many :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) {LEX#395=0.0(1.0),XEME#55=10.0(1.0),XTMP#58=0.0(0.1)} (factoring)
 [10.0000] how many :- S/NP/(S/NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#452=0.0(1.0),XEME#2=10.0(1.0),XTMP#21=0.0(0.1)} (factoring)
-[10.0000] how many :- NP/NP : (lambda $0:e $0) {LEX#475=0.0(1.0),XEME#2=10.0(1.0),XTMP#18=0.0(0.1)} (factoring)
-[10.0000] how many :- S/S : (lambda $0:t $0) {LEX#479=0.0(1.0),XEME#2=10.0(1.0),XTMP#11=0.0(0.1)} (factoring)
+[10.0000] how many :- NP/NP : (lambda $0:e $0) {LEX#476=0.0(1.0),XEME#2=10.0(1.0),XTMP#18=0.0(0.1)} (factoring)
+[10.0000] how many :- S/S : (lambda $0:t $0) {LEX#480=0.0(1.0),XEME#2=10.0(1.0),XTMP#11=0.0(0.1)} (factoring)
 [20.0000] the :- NP/NP : (lambda $0:e $0) {LEX#141=10.0(1.0),XEME#3=10.0(1.0),XTMP#18=0.0(0.1)} (factoring)
 [20.0000] the :- NP/N : (lambda $0:<e,t> (the:<<e,t>,e> (lambda $1:e ($0 $1)))) {LEX#195=10.0(1.0),XEME#3=10.0(1.0),XTMP#31=0.0(0.1)} (factoring)
 [20.0000] the :- N/N : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#298=10.0(1.0),XEME#3=10.0(1.0),XTMP#19=0.0(0.1)} (factoring)
@@ -59,9 +59,9 @@ Lexical entries [704]:
 [10.0000] the :- PP/(S/NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#267=0.0(1.0),XEME#3=10.0(1.0),XTMP#34=0.0(0.1)} (factoring)
 [10.0000] the :- PP/(S\NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#302=0.0(1.0),XEME#3=10.0(1.0),XTMP#35=0.0(0.1)} (factoring)
 [10.0000] the :- PP/PP : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#384=0.0(1.0),XEME#3=10.0(1.0),XTMP#40=0.0(0.1)} (factoring)
-[10.0000] the :- S\NP/(S\NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#466=0.0(1.0),XEME#3=10.0(1.0),XTMP#8=0.0(0.1)} (factoring)
-[10.0000] the :- NP\N/(NP/N) : (lambda $0:<<e,t>,e> (lambda $1:<e,t> ($0 (lambda $2:e ($1 $2))))) {LEX#471=0.0(1.0),XEME#3=10.0(1.0),XTMP#49=0.0(0.1)} (factoring)
-[31.4355] are there :- S\NP : (lambda $0:e true:t) {LEX#477=21.435469250725863(1.0),XEME#155=10.0(1.0),XTMP#110=0.0(0.1)} (factoring)
+[10.0000] the :- S\NP/(S\NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#467=0.0(1.0),XEME#3=10.0(1.0),XTMP#8=0.0(0.1)} (factoring)
+[10.0000] the :- NP\N/(NP/N) : (lambda $0:<<e,t>,e> (lambda $1:<e,t> ($0 (lambda $2:e ($1 $2))))) {LEX#472=0.0(1.0),XEME#3=10.0(1.0),XTMP#49=0.0(0.1)} (factoring)
+[31.4355] are there :- S\NP : (lambda $0:e true:t) {LEX#478=21.435469250725863(1.0),XEME#156=10.0(1.0),XTMP#110=0.0(0.1)} (factoring)
 [20.0000] is :- S\NP/(S\NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#11=10.0(1.0),XEME#12=10.0(1.0),XTMP#8=0.0(0.1)} (factoring)
 [20.0000] is :- N/N : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#22=10.0(1.0),XEME#12=10.0(1.0),XTMP#19=0.0(0.1)} (factoring)
 [20.0000] is :- NP/NP : (lambda $0:e $0) {LEX#50=10.0(1.0),XEME#12=10.0(1.0),XTMP#18=0.0(0.1)} (factoring)
@@ -80,7 +80,7 @@ Lexical entries [704]:
 [10.0000] is :- S\NP/PP : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#324=0.0(1.0),XEME#12=10.0(1.0),XTMP#2=0.0(0.1)} (factoring)
 [10.0000] is :- S\S : (lambda $0:t $0) {LEX#337=0.0(1.0),XEME#12=10.0(1.0),XTMP#13=0.0(0.1)} (factoring)
 [10.0000] is :- PP/PP : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#410=0.0(1.0),XEME#12=10.0(1.0),XTMP#40=0.0(0.1)} (factoring)
-[10.0000] is :- S/NP : (lambda $0:e $0) {LEX#481=0.0(1.0),XEME#12=10.0(1.0),XTMP#60=0.0(0.1)} (factoring)
+[10.0000] is :- S/NP : (lambda $0:e $0) {LEX#482=0.0(1.0),XEME#12=10.0(1.0),XTMP#60=0.0(0.1)} (factoring)
 [31.4355] do not :- S\NP/(S\NP) : (lambda $0:<e,t> (lambda $1:e (not:<t,t> ($0 $1)))) {LEX#276=21.435469250725863(1.0),XEME#114=10.0(1.0),XTMP#38=0.0(0.1)} (factoring)
 [10.0000] do not :- N/N : (lambda $0:<e,t> (lambda $1:e (not:<t,t> ($0 $1)))) {LEX#348=0.0(1.0),XEME#114=10.0(1.0),XTMP#70=0.0(0.1)} (factoring)
 [10.0000] do not :- PP/NP : (lambda $0:e (lambda $1:e (not:<t,t> (equals:<e,<e,t>> $1 $0)))) {LEX#397=0.0(1.0),XEME#114=10.0(1.0),XTMP#95=0.0(0.1)} (factoring)
@@ -98,8 +98,8 @@ Lexical entries [704]:
 [10.0000] a :- PP/(S/NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#339=0.0(1.0),XEME#75=10.0(1.0),XTMP#34=0.0(0.1)} (factoring)
 [10.0000] a :- S/NP : (lambda $0:e $0) {LEX#364=0.0(1.0),XEME#75=10.0(1.0),XTMP#60=0.0(0.1)} (factoring)
 [10.0000] a :- S/S : (lambda $0:t $0) {LEX#389=0.0(1.0),XEME#75=10.0(1.0),XTMP#11=0.0(0.1)} (factoring)
-[10.0000] a :- NP/NP : (lambda $0:e $0) {LEX#467=0.0(1.0),XEME#75=10.0(1.0),XTMP#18=0.0(0.1)} (factoring)
-[10.0000] a :- NP/N : (lambda $0:<e,t> (the:<<e,t>,e> (lambda $1:e ($0 $1)))) {LEX#476=0.0(1.0),XEME#75=10.0(1.0),XTMP#31=0.0(0.1)} (factoring)
+[10.0000] a :- NP/NP : (lambda $0:e $0) {LEX#468=0.0(1.0),XEME#75=10.0(1.0),XTMP#18=0.0(0.1)} (factoring)
+[10.0000] a :- NP/N : (lambda $0:<e,t> (the:<<e,t>,e> (lambda $1:e ($0 $1)))) {LEX#477=0.0(1.0),XEME#75=10.0(1.0),XTMP#31=0.0(0.1)} (factoring)
 [20.0000] 3432 :- NP : l3_432:ro {LEX#37=10.0(1.0),XEME#29=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] 3430 :- NP : l3_430:ro {LEX#413=10.0(1.0),XEME#149=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] hamburger :- NP : hamburger:it {LEX#262=10.0(1.0),XEME#112=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
@@ -121,6 +121,7 @@ Lexical entries [704]:
 [10.0000] excluding :- NP\N/NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (equals:<e,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#421=0.0(1.0),XEME#48=10.0(1.0),XTMP#17=0.0(0.1)} (factoring)
 [20.0000] 3428 :- NP : l3_428:ro {LEX#242=10.0(1.0),XEME#108=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] 3426 :- NP : l3_426:ro {LEX#404=10.0(1.0),XEME#146=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
+[20.0000] apple :- NP : apple:it {LEX#456=10.0(1.0),XEME#154=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] how :- S/NP : (lambda $0:e $0) {LEX#408=10.0(1.0),XEME#8=10.0(1.0),XTMP#60=0.0(0.1)} (factoring)
 [10.0000] how :- S\NP/(S\NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#8=0.0(1.0),XEME#8=10.0(1.0),XTMP#8=0.0(0.1)} (factoring)
 [10.0000] how :- S\S : (lambda $0:t $0) {LEX#12=0.0(1.0),XEME#8=10.0(1.0),XTMP#13=0.0(0.1)} (factoring)
@@ -225,8 +226,8 @@ Lexical entries [704]:
 [10.0000] have :- PP/(S\NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#375=0.0(1.0),XEME#56=10.0(1.0),XTMP#35=0.0(0.1)} (factoring)
 [10.0000] have :- NP/N : (lambda $0:<e,t> (the:<<e,t>,e> (lambda $1:e ($0 $1)))) {LEX#392=0.0(1.0),XEME#56=10.0(1.0),XTMP#31=0.0(0.1)} (factoring)
 [10.0000] have :- S/S : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#441=0.0(1.0),XEME#56=10.0(1.0),XTMP#3=0.0(0.1)} (factoring)
-[10.0000] have :- NP/NP : (lambda $0:e $0) {LEX#465=0.0(1.0),XEME#56=10.0(1.0),XTMP#18=0.0(0.1)} (factoring)
-[31.4355] can you :- S/S : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#483=21.435469250725863(1.0),XEME#63=10.0(1.0),XTMP#3=0.0(0.1)} (factoring)
+[10.0000] have :- NP/NP : (lambda $0:e $0) {LEX#466=0.0(1.0),XEME#56=10.0(1.0),XTMP#18=0.0(0.1)} (factoring)
+[31.4355] can you :- S/S : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#484=21.435469250725863(1.0),XEME#63=10.0(1.0),XTMP#3=0.0(0.1)} (factoring)
 [10.0000] can you :- NP/N : (lambda $0:<e,t> (the:<<e,t>,e> (lambda $1:e ($0 $1)))) {LEX#90=0.0(1.0),XEME#63=10.0(1.0),XTMP#31=0.0(0.1)} (factoring)
 [10.0000] can you :- NP/NP : (lambda $0:e $0) {LEX#125=0.0(1.0),XEME#63=10.0(1.0),XTMP#18=0.0(0.1)} (factoring)
 [10.0000] can you :- S/NP : (lambda $0:e $0) {LEX#226=0.0(1.0),XEME#63=10.0(1.0),XTMP#60=0.0(0.1)} (factoring)
@@ -240,11 +241,11 @@ Lexical entries [704]:
 [10.0000] can you :- S\NP/(S\NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#442=0.0(1.0),XEME#63=10.0(1.0),XTMP#8=0.0(0.1)} (factoring)
 [10.0000] can you :- S\S : (lambda $0:e $0) {LEX#453=0.0(1.0),XEME#63=10.0(1.0),XTMP#32=0.0(0.1)} (factoring)
 [10.0000] can you :- PP/(S/NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#454=0.0(1.0),XEME#63=10.0(1.0),XTMP#34=0.0(0.1)} (factoring)
-[10.0000] can you :- S\S : (lambda $0:t $0) {LEX#460=0.0(1.0),XEME#63=10.0(1.0),XTMP#13=0.0(0.1)} (factoring)
+[10.0000] can you :- S\S : (lambda $0:t $0) {LEX#461=0.0(1.0),XEME#63=10.0(1.0),XTMP#13=0.0(0.1)} (factoring)
 [20.0000] no :- S\NP/(S\NP) : (lambda $0:<e,t> (lambda $1:e (not:<t,t> ($0 $1)))) {LEX#219=10.0(1.0),XEME#94=10.0(1.0),XTMP#38=0.0(0.1)} (factoring)
 [10.0000] no :- PP/PP : (lambda $0:<e,t> (lambda $1:e (not:<t,t> ($0 $1)))) {LEX#183=0.0(1.0),XEME#94=10.0(1.0),XTMP#86=0.0(0.1)} (factoring)
 [10.0000] no :- N/N : (lambda $0:<e,t> (lambda $1:e (not:<t,t> ($0 $1)))) {LEX#251=0.0(1.0),XEME#94=10.0(1.0),XTMP#70=0.0(0.1)} (factoring)
-[10.0000] no :- PP/NP : (lambda $0:e (lambda $1:e (not:<t,t> (equals:<e,<e,t>> $1 $0)))) {LEX#462=0.0(1.0),XEME#94=10.0(1.0),XTMP#95=0.0(0.1)} (factoring)
+[10.0000] no :- PP/NP : (lambda $0:e (lambda $1:e (not:<t,t> (equals:<e,<e,t>> $1 $0)))) {LEX#463=0.0(1.0),XEME#94=10.0(1.0),XTMP#95=0.0(0.1)} (factoring)
 [31.4355] peter stone :- NP : peter:pe {LEX#316=21.435469250725863(1.0),XEME#121=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] count :- S/(S/NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (count:<<e,t>,i> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2)))))) {LEX#94=10.0(1.0),XEME#65=10.0(1.0),XTMP#63=0.0(0.1)} (factoring)
 [20.0000] count :- S/(S\NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (count:<<e,t>,i> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2)))))) {LEX#108=10.0(1.0),XEME#72=10.0(1.0),XTMP#69=0.0(0.1)} (factoring)
@@ -259,7 +260,7 @@ Lexical entries [704]:
 [10.0000] count :- S/(S\NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2))))) {LEX#286=0.0(1.0),XEME#98=10.0(1.0),XTMP#92=0.0(0.1)} (factoring)
 [10.0000] count :- S/PP : (lambda $0:<a,t> (and:<t*,t> (action:<a,t> walk:a) ($0 walk:a))) {LEX#376=0.0(1.0),XEME#98=10.0(1.0),XTMP#30=0.0(0.1)} (factoring)
 [10.0000] count :- NP/N\NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#437=0.0(1.0),XEME#98=10.0(1.0),XTMP#53=0.0(0.1)} (factoring)
-[10.0000] count :- S/(S/NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2))))) {LEX#482=0.0(1.0),XEME#98=10.0(1.0),XTMP#39=0.0(0.1)} (factoring)
+[10.0000] count :- S/(S/NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2))))) {LEX#483=0.0(1.0),XEME#98=10.0(1.0),XTMP#39=0.0(0.1)} (factoring)
 [31.4355] matteo leonetti :- NP : matteo:pe {LEX#387=21.435469250725863(1.0),XEME#141=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (actionpatient:<a,<e,t>> bring:a $1) (actionrecipient:<a,<e,t>> bring:a $0) (action:<a,t> bring:a)))) {LEX#0=10.0(1.0),XEME#0=10.0(1.0),XTMP#0=0.0(0.1)} (factoring)
 [20.0000] bring :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (actionpatient:<a,<e,t>> bring:a $1) (actionrecipient:<a,<e,t>> bring:a $0) (action:<a,t> bring:a)))) {LEX#0=10.0(1.0),XEME#37=10.0(1.0),XTMP#36=0.0(0.1)} (factoring)
@@ -351,7 +352,7 @@ Lexical entries [704]:
 [20.0000] object :- N : (lambda $0:e (object:<ob,t> $0)) {LEX#126=10.0(1.0),XEME#79=10.0(1.0),XTMP#74=0.0(0.1)} (factoring)
 [20.0000] people :- N : (lambda $0:e (person:<pe,t> $0)) {LEX#427=10.0(1.0),XEME#130=10.0(1.0),XTMP#74=0.0(0.1)} (factoring)
 [10.0000] people :- NP\N/NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#347=0.0(1.0),XEME#130=10.0(1.0),XTMP#37=0.0(0.1)} (factoring)
-[10.0000] people :- NP/N\NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#474=0.0(1.0),XEME#130=10.0(1.0),XTMP#102=0.0(0.1)} (factoring)
+[10.0000] people :- NP/N\NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#475=0.0(1.0),XEME#130=10.0(1.0),XTMP#102=0.0(0.1)} (factoring)
 [20.0000] does :- S\NP/(S\NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#13=10.0(1.0),XEME#15=10.0(1.0),XTMP#8=0.0(0.1)} (factoring)
 [20.0000] does :- S/NP/(S/NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#99=10.0(1.0),XEME#15=10.0(1.0),XTMP#21=0.0(0.1)} (factoring)
 [10.0000] does :- S/S : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#17=0.0(1.0),XEME#15=10.0(1.0),XTMP#3=0.0(0.1)} (factoring)
@@ -364,9 +365,9 @@ Lexical entries [704]:
 [10.0000] does :- N/N : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#368=0.0(1.0),XEME#15=10.0(1.0),XTMP#19=0.0(0.1)} (factoring)
 [10.0000] does :- NP\N/(NP/N) : (lambda $0:<<e,t>,e> (lambda $1:<e,t> ($0 (lambda $2:e ($1 $2))))) {LEX#415=0.0(1.0),XEME#15=10.0(1.0),XTMP#49=0.0(0.1)} (factoring)
 [10.0000] does :- S\S : (lambda $0:t $0) {LEX#443=0.0(1.0),XEME#15=10.0(1.0),XTMP#13=0.0(0.1)} (factoring)
-[10.0000] does :- S/S : (lambda $0:t $0) {LEX#457=0.0(1.0),XEME#15=10.0(1.0),XTMP#11=0.0(0.1)} (factoring)
-[10.0000] does :- S\NP/PP : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#456=0.0(1.0),XEME#15=10.0(1.0),XTMP#2=0.0(0.1)} (factoring)
-[10.0000] does :- S\S : (lambda $0:e $0) {LEX#458=0.0(1.0),XEME#15=10.0(1.0),XTMP#32=0.0(0.1)} (factoring)
+[10.0000] does :- S/S : (lambda $0:t $0) {LEX#458=0.0(1.0),XEME#15=10.0(1.0),XTMP#11=0.0(0.1)} (factoring)
+[10.0000] does :- S\NP/PP : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#457=0.0(1.0),XEME#15=10.0(1.0),XTMP#2=0.0(0.1)} (factoring)
+[10.0000] does :- S\S : (lambda $0:e $0) {LEX#459=0.0(1.0),XEME#15=10.0(1.0),XTMP#32=0.0(0.1)} (factoring)
 [20.0000] of :- NP\N/NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#18=10.0(1.0),XEME#19=10.0(1.0),XTMP#17=0.0(0.1)} (factoring)
 [20.0000] of :- NP\N/NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#18=10.0(1.0),XEME#32=10.0(1.0),XTMP#55=0.0(0.1)} (factoring)
 [20.0000] of :- NP\N/NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#18=10.0(1.0),XEME#62=10.0(1.0),XTMP#62=0.0(0.1)} (factoring)
@@ -405,14 +406,14 @@ Lexical entries [704]:
 [10.0000] of :- NP/N\NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#103=0.0(1.0),XEME#66=10.0(1.0),XTMP#102=0.0(0.1)} (factoring)
 [10.0000] of :- PP/NP : (lambda $0:e (lambda $1:e (not:<t,t> (possesses:<pe,<e,t>> $1 $0)))) {LEX#436=0.0(1.0),XEME#19=10.0(1.0),XTMP#20=0.0(0.1)} (factoring)
 [10.0000] of :- S\NP/PP : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#446=0.0(1.0),XEME#54=10.0(1.0),XTMP#2=0.0(0.1)} (factoring)
-[10.0000] of :- S/NP : (lambda $0:e $0) {LEX#468=0.0(1.0),XEME#54=10.0(1.0),XTMP#60=0.0(0.1)} (factoring)
+[10.0000] of :- S/NP : (lambda $0:e $0) {LEX#469=0.0(1.0),XEME#54=10.0(1.0),XTMP#60=0.0(0.1)} (factoring)
 [10.0000] of :- NP/N\NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#103=0.0(1.0),XEME#140=10.0(1.0),XTMP#104=0.0(0.1)} (factoring)
 [20.0000] offices :- N : (lambda $0:e (office:<of,t> $0)) {LEX#196=10.0(1.0),XEME#96=10.0(1.0),XTMP#74=0.0(0.1)} (factoring)
 [20.0000] 3436 :- NP : l3_436:ro {LEX#371=10.0(1.0),XEME#138=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] are :- N\N/N : (lambda $0:<e,t> (lambda $1:<e,t> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2))))) {LEX#232=10.0(1.0),XEME#53=10.0(1.0),XTMP#29=0.0(0.1)} (factoring)
 [20.0000] are :- S\NP/PP : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#263=10.0(1.0),XEME#20=10.0(1.0),XTMP#2=0.0(0.1)} (factoring)
 [20.0000] are :- PP/PP : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#290=10.0(1.0),XEME#20=10.0(1.0),XTMP#40=0.0(0.1)} (factoring)
-[20.0000] are :- NP\N/(NP/N) : (lambda $0:<<e,t>,e> (lambda $1:<e,t> ($0 (lambda $2:e ($1 $2))))) {LEX#459=10.0(1.0),XEME#20=10.0(1.0),XTMP#49=0.0(0.1)} (factoring)
+[20.0000] are :- NP\N/(NP/N) : (lambda $0:<<e,t>,e> (lambda $1:<e,t> ($0 (lambda $2:e ($1 $2))))) {LEX#460=10.0(1.0),XEME#20=10.0(1.0),XTMP#49=0.0(0.1)} (factoring)
 [10.0000] are :- S\S : (lambda $0:t $0) {LEX#23=0.0(1.0),XEME#20=10.0(1.0),XTMP#13=0.0(0.1)} (factoring)
 [10.0000] are :- S/NP/(S/NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#27=0.0(1.0),XEME#20=10.0(1.0),XTMP#21=0.0(0.1)} (factoring)
 [10.0000] are :- S\NP/(S\NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#56=0.0(1.0),XEME#20=10.0(1.0),XTMP#8=0.0(0.1)} (factoring)
@@ -433,7 +434,7 @@ Lexical entries [704]:
 [10.0000] are :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (actionpatient:<a,<e,t>> bring:a $1) (actionrecipient:<a,<e,t>> bring:a $0) (action:<a,t> bring:a)))) {LEX#332=0.0(1.0),XEME#53=10.0(1.0),XTMP#24=0.0(0.1)} (factoring)
 [10.0000] are :- S/S : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#403=0.0(1.0),XEME#20=10.0(1.0),XTMP#3=0.0(0.1)} (factoring)
 [10.0000] are :- NP/N : (lambda $0:<e,t> (the:<<e,t>,e> (lambda $1:e ($0 $1)))) {LEX#424=0.0(1.0),XEME#20=10.0(1.0),XTMP#31=0.0(0.1)} (factoring)
-[10.0000] are :- S/(S/NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (count:<<e,t>,i> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2)))))) {LEX#464=0.0(1.0),XEME#53=10.0(1.0),XTMP#9=0.0(0.1)} (factoring)
+[10.0000] are :- S/(S/NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (count:<<e,t>,i> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2)))))) {LEX#465=0.0(1.0),XEME#53=10.0(1.0),XTMP#9=0.0(0.1)} (factoring)
 [20.0000] objects :- N : (lambda $0:e (object:<ob,t> $0)) {LEX#156=10.0(1.0),XEME#88=10.0(1.0),XTMP#74=0.0(0.1)} (factoring)
 [20.0000] counter :- NP : coffeecounter:sc {LEX#301=10.0(1.0),XEME#119=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] calendar :- NP : calendar:it {LEX#139=10.0(1.0),XEME#82=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
@@ -501,12 +502,12 @@ Lexical entries [704]:
 [10.0000] go :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (actionpatient:<a,<e,t>> bring:a $1) (actionrecipient:<a,<e,t>> walk:a $0) (action:<a,t> bring:a)))) {LEX#174=0.0(1.0),XEME#43=10.0(1.0),XTMP#96=0.0(0.1)} (factoring)
 [10.0000] go :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (actionpatient:<a,<e,t>> bring:a $1) (actionrecipient:<a,<e,t>> bring:a $0) (action:<a,t> bring:a)))) {LEX#67=0.0(1.0),XEME#77=10.0(1.0),XTMP#80=0.0(0.1)} (factoring)
 [10.0000] go :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (actionpatient:<a,<e,t>> walk:a $1) (actionrecipient:<a,<e,t>> bring:a $0) (action:<a,t> bring:a)))) {LEX#161=0.0(1.0),XEME#43=10.0(1.0),XTMP#5=0.0(0.1)} (factoring)
-[10.0000] go :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (actionpatient:<a,<e,t>> bring:a $1) (actionrecipient:<a,<e,t>> walk:a $0) (action:<a,t> walk:a)))) {LEX#473=0.0(1.0),XEME#17=10.0(1.0),XTMP#87=0.0(0.1)} (factoring)
+[10.0000] go :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (actionpatient:<a,<e,t>> bring:a $1) (actionrecipient:<a,<e,t>> walk:a $0) (action:<a,t> walk:a)))) {LEX#474=0.0(1.0),XEME#17=10.0(1.0),XTMP#87=0.0(0.1)} (factoring)
 [31.4355] daniel urieli :- NP : daniel:pe {LEX#295=21.435469250725863(1.0),XEME#117=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] 3502 :- NP : l3_502:ro {LEX#390=10.0(1.0),XEME#142=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] what :- S/NP : (lambda $0:e $0) {LEX#338=10.0(1.0),XEME#11=10.0(1.0),XTMP#60=0.0(0.1)} (factoring)
 [20.0000] what :- S/(S/NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2))))) {LEX#399=10.0(1.0),XEME#18=10.0(1.0),XTMP#39=0.0(0.1)} (factoring)
-[20.0000] what :- S/(S\NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2))))) {LEX#472=10.0(1.0),XEME#18=10.0(1.0),XTMP#92=0.0(0.1)} (factoring)
+[20.0000] what :- S/(S\NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2))))) {LEX#473=10.0(1.0),XEME#18=10.0(1.0),XTMP#92=0.0(0.1)} (factoring)
 [10.0000] what :- S/S : (lambda $0:t $0) {LEX#10=0.0(1.0),XEME#11=10.0(1.0),XTMP#11=0.0(0.1)} (factoring)
 [10.0000] what :- S/(S\NP)/N : (lambda $0:<e,t> (lambda $1:<e,t> (count:<<e,t>,i> (lambda $2:e (and:<t*,t> ($0 $2) ($1 $2)))))) {LEX#16=0.0(1.0),XEME#18=10.0(1.0),XTMP#16=0.0(0.1)} (factoring)
 [10.0000] what :- S\NP/PP : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#19=0.0(1.0),XEME#11=10.0(1.0),XTMP#2=0.0(0.1)} (factoring)
@@ -655,7 +656,7 @@ Lexical entries [704]:
 [20.0000] who :- N : (lambda $0:e (person:<pe,t> $0)) {LEX#300=10.0(1.0),XEME#118=10.0(1.0),XTMP#74=0.0(0.1)} (factoring)
 [10.0000] who :- NP/N\NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#303=0.0(1.0),XEME#118=10.0(1.0),XTMP#102=0.0(0.1)} (factoring)
 [10.0000] who :- NP\N/NP : (lambda $0:e (lambda $1:<e,t> (the:<<e,t>,e> (lambda $2:e (and:<t*,t> ($1 $2) (possesses:<pe,<e,t>> $0 $2) (person:<pe,t> $0)))))) {LEX#445=0.0(1.0),XEME#118=10.0(1.0),XTMP#37=0.0(0.1)} (factoring)
-[31.4355] cell phone :- NP : phone:it {LEX#480=21.435469250725863(1.0),XEME#156=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
+[31.4355] cell phone :- NP : phone:it {LEX#481=21.435469250725863(1.0),XEME#157=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] rooms :- N : (lambda $0:e (room:<ro,t> $0)) {LEX#317=10.0(1.0),XEME#123=10.0(1.0),XTMP#74=0.0(0.1)} (factoring)
 [20.0000] to :- PP/NP : (lambda $0:e (lambda $1:a (actionrecipient:<a,<e,t>> $1 $0))) {LEX#256=10.0(1.0),XEME#73=10.0(1.0),XTMP#26=0.0(0.1)} (factoring)
 [10.0000] to :- S/NP/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (actionrecipient:<a,<e,t>> bring:a $1) (actionrecipient:<a,<e,t>> bring:a $0) (action:<a,t> bring:a)))) {LEX#109=0.0(1.0),XEME#73=10.0(1.0),XTMP#10=0.0(0.1)} (factoring)
@@ -697,7 +698,7 @@ Lexical entries [704]:
 [10.0000] tell me :- S/NP/(S/NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#430=0.0(1.0),XEME#64=10.0(1.0),XTMP#21=0.0(0.1)} (factoring)
 [10.0000] tell me :- PP/(S\NP) : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#432=0.0(1.0),XEME#64=10.0(1.0),XTMP#35=0.0(0.1)} (factoring)
 [10.0000] tell me :- N/N : (lambda $0:<e,t> (lambda $1:e ($0 $1))) {LEX#433=0.0(1.0),XEME#64=10.0(1.0),XTMP#19=0.0(0.1)} (factoring)
-[10.0000] tell me :- S\S : (lambda $0:e $0) {LEX#463=0.0(1.0),XEME#64=10.0(1.0),XTMP#32=0.0(0.1)} (factoring)
+[10.0000] tell me :- S\S : (lambda $0:e $0) {LEX#464=0.0(1.0),XEME#64=10.0(1.0),XTMP#32=0.0(0.1)} (factoring)
 [20.0000] 3416 :- NP : l3_416:ro {LEX#114=10.0(1.0),XEME#74=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] 3418 :- NP : l3_418:ro {LEX#396=10.0(1.0),XEME#144=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
 [20.0000] 3412 :- NP : l3_412:ro {LEX#330=10.0(1.0),XEME#127=10.0(1.0),XTMP#25=0.0(0.1)} (factoring)
@@ -1101,12 +1102,12 @@ LEX#452=0.0
 LEX#453=0.0
 LEX#454=0.0
 LEX#455=0.0
-LEX#456=0.0
+LEX#456=10.0
 LEX#457=0.0
 LEX#458=0.0
-LEX#459=10.0
+LEX#459=0.0
 LEX#46=0.0
-LEX#460=0.0
+LEX#460=10.0
 LEX#461=0.0
 LEX#462=0.0
 LEX#463=0.0
@@ -1117,21 +1118,22 @@ LEX#467=0.0
 LEX#468=0.0
 LEX#469=0.0
 LEX#47=0.0
-LEX#470=10.0
-LEX#471=0.0
-LEX#472=10.0
-LEX#473=0.0
+LEX#470=0.0
+LEX#471=10.0
+LEX#472=0.0
+LEX#473=10.0
 LEX#474=0.0
 LEX#475=0.0
 LEX#476=0.0
-LEX#477=21.435469250725863
-LEX#478=0.0
+LEX#477=0.0
+LEX#478=21.435469250725863
 LEX#479=0.0
 LEX#48=0.0
-LEX#480=21.435469250725863
-LEX#481=0.0
+LEX#480=0.0
+LEX#481=21.435469250725863
 LEX#482=0.0
-LEX#483=21.435469250725863
+LEX#483=0.0
+LEX#484=21.435469250725863
 LEX#49=0.0
 LEX#5=10.0
 LEX#50=10.0
@@ -1253,6 +1255,7 @@ XEME#153=10.0
 XEME#154=10.0
 XEME#155=10.0
 XEME#156=10.0
+XEME#157=10.0
 XEME#16=10.0
 XEME#17=10.0
 XEME#18=10.0
