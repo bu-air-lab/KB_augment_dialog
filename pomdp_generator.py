@@ -428,7 +428,7 @@ class PomdpGenerator(object):
             exit(1)
 
         subprocess.check_output(pomdpsol + ' --timeout 5 --output ' \
-                                    + strategy + '_new_5.policy ' + strategy + '_new.pomdp', shell = True)
+                                    + strategy + '_new.policy ' + strategy + '_new.pomdp', shell = True)
         print 'finished training'
 
     def computeTransFunction(self, num_task, num_patient, num_recipient):
