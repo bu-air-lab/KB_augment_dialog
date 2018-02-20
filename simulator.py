@@ -208,7 +208,7 @@ class Simulator(object):
         strategy = str(num_task) + str(num_patient) + str(num_recipient)
 
         pg = pomdp_generator.PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-            wh_cost, yesno_cost)
+            wh_cost, yesno_cost,timeout=5)
 
         # once its generated:
         # to read the pomdp model

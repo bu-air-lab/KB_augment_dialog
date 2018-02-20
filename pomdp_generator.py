@@ -317,7 +317,7 @@ class ObservationNone(Observation):
 class PomdpGenerator(object):
 
     def __init__(self, num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        wh_cost, yesno_cost):
+        wh_cost, yesno_cost,timeout=5):
         
 
         self.num_task = num_task
@@ -408,7 +408,7 @@ class PomdpGenerator(object):
         #self.reward_mat = reward_mat_float_negative_deliveries
         self.writeToFile()
 
-        print 'training for 5 seconds'
+        print 'Training for '+ str(timeout)+' seconds'
 
         pomdpsol_lu = '/home/ludc/workspace/context_aware_icorpp/appl-0.96/src/pomdpsol'
         pomdpsol_zhang = '/home/szhang/software/appl/appl-0.95/src/pomdpsol'
@@ -427,9 +427,9 @@ class PomdpGenerator(object):
             print "pomdpsol not installed..."
             exit(1)
 
-        subprocess.check_output(pomdpsol + ' --timeout 5 --output ' \
+        subprocess.check_output(pomdpsol + ' --timeout '+str(timeout)+' --output ' \
                                     + strategy + '_new.policy ' + strategy + '_new.pomdp', shell = True)
-        print 'finished training'
+        print 'Finished training'
 
     def computeTransFunction(self, num_task, num_patient, num_recipient):
 
@@ -808,7 +808,7 @@ def main():
     strategy = str(num_task) + str(num_patient) + str(num_recipient)
 
     pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        wh_cost, yesno_cost)
+        wh_cost, yesno_cost,timeout=5)
 
 if __name__ == '__main__':
 
