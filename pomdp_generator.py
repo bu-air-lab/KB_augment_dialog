@@ -408,7 +408,7 @@ class PomdpGenerator(object):
         #self.reward_mat = reward_mat_float_negative_deliveries
         self.writeToFile()
 
-        print 'training for 60 seconds'
+        print 'training for 5 seconds'
 
         pomdpsol_lu = '/home/ludc/workspace/context_aware_icorpp/appl-0.96/src/pomdpsol'
         pomdpsol_zhang = '/home/szhang/software/appl/appl-0.95/src/pomdpsol'
@@ -427,9 +427,9 @@ class PomdpGenerator(object):
             print "pomdpsol not installed..."
             exit(1)
 
-        subprocess.check_output(pomdpsol + ' --timeout 60 --output ' \
-                                    + strategy + '_new.policy ' + strategy + '_new.pomdp', shell = True)
-        print 'finish training'
+        subprocess.check_output(pomdpsol + ' --timeout 5 --output ' \
+                                    + strategy + '_new_5.policy ' + strategy + '_new.pomdp', shell = True)
+        print 'finished training'
 
     def computeTransFunction(self, num_task, num_patient, num_recipient):
 
