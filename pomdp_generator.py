@@ -317,7 +317,7 @@ class ObservationNone(Observation):
 class PomdpGenerator(object):
 
     def __init__(self, num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        weight_t, weight_p, weight_r, wh_cost, yesno_cost):
+        wh_cost, yesno_cost):
         
 
         self.num_task = num_task
@@ -327,13 +327,13 @@ class PomdpGenerator(object):
         self.r_max = r_max
         self.r_min = r_min
 
-        self.weight_t = weight_t
-        self.weight_p = weight_p
-        self.weight_r = weight_r
+        self.weight_t=np.eye(num_task, dtype=float) 
+        self.weight_p=np.eye(num_patient, dtype=float) 
+        self.weight_r=np.eye(num_recipient, dtype=float)     
 
-        self.weight_t_bin = weight_t.astype(int)
-        self.weight_p_bin = weight_p.astype(int)
-        self.weight_r_bin = weight_r.astype(int)
+        self.weight_t_bin = self.weight_t.astype(int)
+        self.weight_p_bin = self.weight_p.astype(int)
+        self.weight_r_bin = self.weight_r.astype(int)
 
         # the larger, the more unreliable for the wh-questions. 
         self.magic_number = 0.3
@@ -801,9 +801,6 @@ def main():
 
     # row corresponds to action, column to underlying state
     # all
-    weight_t=np.eye(num_task, dtype=float) 
-    weight_p=np.eye(num_patient, dtype=float) 
-    weight_r=np.eye(num_recipient, dtype=float)     
  
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) 
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) + '_' + str(entry)
@@ -811,7 +808,7 @@ def main():
     strategy = str(num_task) + str(num_patient) + str(num_recipient)
 
     pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        weight_t, weight_p, weight_r, wh_cost, yesno_cost)
+        wh_cost, yesno_cost)
 
 if __name__ == '__main__':
 
