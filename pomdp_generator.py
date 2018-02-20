@@ -801,18 +801,10 @@ def main():
 
     # row corresponds to action, column to underlying state
     # all
-    weight_t = np.array([[1.00, 0.00, 0.00], 
-                         [0.00, 1.00, 0.00], 
-                         [0.00, 0.00, 1.00]])
-
-    weight_p = np.array([[1.0, 0.0, 0.0], 
-                         [0.0, 1.0, 0.0], 
-                         [0.0, 0.0, 1.0]])
-
-    weight_r = np.array([[1.0, 0.0, 0.0], 
-                         [0.0, 1.0, 0.0], 
-                         [0.0, 0.0, 1.0]])
-    
+    weight_t=np.eye(num_task, dtype=float) 
+    weight_p=np.eye(num_patient, dtype=float) 
+    weight_r=np.eye(num_recipient, dtype=float)     
+ 
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) 
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) + '_' + str(entry)
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) + '_' + str(entry1) + str(entry2)
