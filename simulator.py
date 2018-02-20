@@ -193,6 +193,7 @@ class Simulator(object):
 
     ######################################################################
     # EXPERIMENTAL: Generate model
+    # Saeid: this method is working fine now, only name of pomdp and policy files needs to be updated in future to avoid conflicts
     def generate_new_model(self):
         r_max = 20.0
         r_min = -20.0
@@ -204,28 +205,14 @@ class Simulator(object):
         num_patient = self.num_patient
         num_recipient = self.num_recipient
 
-        ''' 
-        #this needs to be replaced (Saeid)
-        weight_t = np.array([[1.00, 0.00, 0.00], 
-                            [0.00, 1.00, 0.00], 
-                            [0.00, 0.00, 1.00]])
-
-        weight_p = np.array([[1.0, 0.0, 0.0], 
-                             [0.0, 1.0, 0.0], 
-                             [0.0, 0.0, 1.0]])
-
-        weight_r = np.array([[1.0, 0.0, 0.0], 
-                             [0.0, 1.0, 0.0], 
-                             [0.0, 0.0, 1.0]])
-        '''
         strategy = str(num_task) + str(num_patient) + str(num_recipient)
 
-        pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-            weight_t, weight_p, weight_r, wh_cost, yesno_cost)
+        pg = pomdp_generator.PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
+            wh_cost, yesno_cost)
 
         # once its generated:
         # to read the pomdp model
-        model = pomdp_parser.Pomdp(filename=pomdp_file, parsing_print_flag=False)
+        model = pomdp_parser.Pomdp(filename=strategy+'_new.pomdp', parsing_print_flag=False)             # probably filename needs to be changed to a better one avoiding conflicts
         self.states = model.states
         self.actions = model.actions
         self.observations = model.observations
@@ -236,7 +223,7 @@ class Simulator(object):
 
         # to read the learned policy
         self.policy = policy_parser.Policy(len(self.states), len(self.actions), 
-            filename=policy_file)
+            filename=strategy+'_new.policy')
         # self.reinit_belief()
 
     ######################################################################
@@ -615,7 +602,7 @@ def main():
         print('note that initial belief is not uniform\n')
 
     s.run_numbers_of_trials()
-
+    #s.generate_new_model()
 if __name__ == '__main__':
     main()
 
