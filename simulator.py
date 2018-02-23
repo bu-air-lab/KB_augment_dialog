@@ -537,7 +537,7 @@ class Simulator(object):
             self.b = numpy.array(belief)
             self.b = self.b/ sum(self.b)
     def run(self):
-        self.retrain_parser()
+        #self.retrain_parser()
 
         cost = 0.0
         self.init_belief()
@@ -576,12 +576,22 @@ class Simulator(object):
             if(current_entropy > 2.3):
                 self.get_full_request(cycletime)
             else:
+                done = False
                 self.a = int(self.policy.select_action(self.b))
             
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
-                    # uncomment this later
-                    print('QUESTION: ' + self.action_to_text(self.actions[self.a]))
+                    
+                    question = self.action_to_text(self.actions[self.a])
+                    if question:
+                        print('QUESTION: ' + question)
+                    elif ('go' in self.actions[self.a]):
+                        print('EXECUTE: ' + self.actions[self.a])
+                        done = True
+
+
+                if done == True:
+                    break
 
                 raw_str = raw_input("Input observation: ")
 
