@@ -68,6 +68,7 @@ class Simulator(object):
             filename=policy_file)
 
         self.b = None   
+        self.b_plus = None   
         self.a = None
         self.o = None
 
@@ -111,6 +112,20 @@ class Simulator(object):
         self.b = self.b.T
 
     ######################################################################
+    #######################################################################
+    def init_belief_plus(self):
+
+        if self.uniform_init_belief:
+            self.b_plus = numpy.ones(len(self.states_plus)) / float(len(self.states_plus))
+                # print '\n',self.s, self.ct, self.b
+        else:
+            # here initial belief is sampled from a Dirichlet distribution
+            self.b_plus = numpy.random.dirichlet( numpy.ones(len(self.states_plus)) )
+
+        self.b_plus = self.b_plus.T
+
+    ######################################################################
+
 
     def get_known_words_to_number(self):
         "DEBUG: getting known words to observation map"
@@ -206,24 +221,25 @@ class Simulator(object):
         num_recipient = self.num_recipient
 
         strategy = str(num_task) + str(num_patient) + str(num_recipient)
-
-        pg = pomdp_generator.PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-            wh_cost, yesno_cost,timeout=5)
+      # two lines below commented temporarily
+      #  pg = pomdp_generator.PomdpGenerator(num_task, num_patient + 1, num_recipient+ 1, r_max, r_min, strategy, \
+      #      wh_cost, yesno_cost,timeout=2,pomdpfilename = '333_new_plus.pomdp')
 
         # once its generated:
         # to read the pomdp model
         model = pomdp_parser.Pomdp(filename=strategy+'_new.pomdp', parsing_print_flag=False)             # probably filename needs to be changed to a better one avoiding conflicts
-        self.states = model.states
-        self.actions = model.actions
-        self.observations = model.observations
+        self.states_plus = model.states
+        self.actions_plus = model.actions
+        self.observations_plus = model.observations
         # print self.observations
-        self.trans_mat = model.trans_mat
-        self.obs_mat = model.obs_mat
-        self.reward_mat = model.reward_mat
+        self.trans_mat_plus = model.trans_mat
+        self.obs_mat_plus = model.obs_mat
+        self.reward_mat_plus = model.reward_mat
 
         # to read the learned policy
-        self.policy = policy_parser.Policy(len(self.states), len(self.actions), 
-            filename=strategy+'_new.policy')
+        ##############################Saeid commented lines below ###################################
+        #self.policy = policy_parser.Policy(len(self.states), len(self.actions), 
+        #    filename=strategy+'_new.policy')
         # self.reinit_belief()
 
     ######################################################################
@@ -327,6 +343,8 @@ class Simulator(object):
 
             # update for patient observation
             self.update(cycletime)
+            self.update_plus(cycletime)
+            
 
         if recipient:
             # get action from key
@@ -339,6 +357,7 @@ class Simulator(object):
 
             # update for recipient observation
             self.update(cycletime)
+            self.update_plus(cycletime)
 
         print "Unmapped: ",unmapped_list
 
@@ -431,11 +450,34 @@ class Simulator(object):
             self.b = self.b/ sum(self.b)
 
     #######################################################################
+    #######################################################################
+    def update_plus(self,cycletime):
+
+        new_b_plus = numpy.dot(self.b_plus, self.trans_mat_plus[self.a, :])
+
+        new_b_plus = [new_b_plus[i] * self.obs_mat_plus[self.a, i, self.o] for i in range(len(self.states_plus))]
+
+        # print 'sum of belief: ',sum(new_b)
+
+        self.b_plus = (new_b_plus / sum(new_b_plus)).T
+
+        if cycletime == self.trigger and self.use_plog and (self.md == 'sad' or self.fl == False):
+
+            if self.b[len(self.tablelist)] == 1:
+                return
+            # print '\n',self.b
+            #belief = self.plog.cal_belief(mood = self.md, foll = self.fl, pdpDist = self.b, curr_table = self.ct, prev_table = self.pt).split(',')
+            # belief = self.plog.cal_belief(mood = 'sad', pdpDist = self.b, curr_table = self.ct).split(',')
+            for i in range(len(belief)):
+                belief[i] = float(belief[i].strip())
+            self.b = numpy.array(belief)
+            self.b = self.b/ sum(self.b)
     def run(self):
         self.retrain_parser()
 
         cost = 0.0
         self.init_belief()
+        self.init_belief_plus()
 
         reward = 0.0
         overall_reward = 0.0
@@ -459,7 +501,9 @@ class Simulator(object):
             # entropy
             old_entropy = current_entropy
             current_entropy = stats.entropy(self.b)
+            current_entropy_plus = stats.entropy(self.b_plus)
             print "DEBUG: Entropy = ",current_entropy
+            print "DEBUG: Entropy_plus = ",current_entropy_plus
             # check if entropy increased
             if (old_entropy < current_entropy):
                 inc_count += 1
@@ -489,6 +533,9 @@ class Simulator(object):
                 self.update(cycletime)
                 if self.print_flag:
                     print('\nbelief:\t' + str(self.b))
+                self.update_plus(cycletime)
+                if self.print_flag:
+                    print('\nbelief_plus:\t' + str(self.b_plus))
 
 
             overall_reward += self.reward_mat[self.a, self.s]
@@ -585,7 +632,6 @@ def main():
     f = open("./data/num_config.txt")
     num = f.readline().split()
     print num
-
     s = Simulator(uniform_init_belief = True, 
         auto_state = True, 
         auto_observations = False, # was true
@@ -600,7 +646,7 @@ def main():
  
     if not s.uniform_init_belief:   
         print('note that initial belief is not uniform\n')
-
+    s.generate_new_model()
     s.run_numbers_of_trials()
     #s.generate_new_model()
 if __name__ == '__main__':

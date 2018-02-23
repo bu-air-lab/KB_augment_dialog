@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import numpy as np
 import time
@@ -317,7 +316,7 @@ class ObservationNone(Observation):
 class PomdpGenerator(object):
 
     def __init__(self, num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        wh_cost, yesno_cost,timeout=5):
+        wh_cost, yesno_cost,timeout=5,pomdpfilename='333_new.pomdp'):
         
 
         self.num_task = num_task
@@ -399,11 +398,12 @@ class PomdpGenerator(object):
             reward_mat_float_negative_deliveries * reweight_factor
 
         # writing to files
-        self.filename = strategy + '_old.pomdp'
+        self.filename = pomdpfilename
         self.reward_mat = reward_mat_bin
         self.writeToFile()
 
-        self.filename = strategy +'_new.pomdp'
+        #self.filename = strategy +'_new.pomdp'
+        self.filename = pomdpfilename
         self.reward_mat = reward_mat_float
         #self.reward_mat = reward_mat_float_negative_deliveries
         self.writeToFile()
@@ -795,9 +795,9 @@ def main():
     wh_cost = -1.5
     yesno_cost = -1.0
 
-    num_task = 3
-    num_patient = 3
-    num_recipient = 3
+    num_task = 4
+    num_patient = 4
+    num_recipient = 4
 
     # row corresponds to action, column to underlying state
     # all
@@ -808,7 +808,7 @@ def main():
     strategy = str(num_task) + str(num_patient) + str(num_recipient)
 
     pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        wh_cost, yesno_cost,timeout=5)
+        wh_cost, yesno_cost,timeout=20, pomdpfilename='444_new.pomdp')
 
 if __name__ == '__main__':
 
