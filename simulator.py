@@ -473,8 +473,10 @@ class Simulator(object):
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
                     # uncomment this later
-                    print('QUESTION: ' + self.action_to_text(self.actions[self.a]))
-
+                    try:
+                        print('QUESTION: ' + self.action_to_text(self.actions[self.a]))
+                    except:
+                        print('self.action_to_text is None, maybe this line needs to be fixed')
                 raw_str = raw_input("Input observation: ")
 
                 # check entropy increases arbitrary no of times for now
