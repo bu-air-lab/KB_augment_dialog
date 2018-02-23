@@ -56,6 +56,7 @@ class Simulator(object):
         # to read the pomdp model
         model = pomdp_parser.Pomdp(filename=pomdp_file, parsing_print_flag=False)
         self.states = model.states
+        self.states_plus= None
         self.actions = model.actions
         self.observations = model.observations
         # print self.observations
@@ -227,7 +228,7 @@ class Simulator(object):
 
         # once its generated:
         # to read the pomdp model
-        model = pomdp_parser.Pomdp(filename=strategy+'_new.pomdp', parsing_print_flag=False)             # probably filename needs to be changed to a better one avoiding conflicts
+        model = pomdp_parser.Pomdp(filename='444_new.pomdp', parsing_print_flag=False)             # probably filename needs to be changed to a better one avoiding conflicts
         self.states_plus = model.states
         self.actions_plus = model.actions
         self.observations_plus = model.observations
