@@ -525,17 +525,7 @@ class Simulator(object):
 
         self.b_plus = (new_b_plus / sum(new_b_plus)).T
 
-        if cycletime == self.trigger and self.use_plog and (self.md == 'sad' or self.fl == False):
 
-            if self.b[len(self.tablelist)] == 1:
-                return
-            # print '\n',self.b
-            #belief = self.plog.cal_belief(mood = self.md, foll = self.fl, pdpDist = self.b, curr_table = self.ct, prev_table = self.pt).split(',')
-            # belief = self.plog.cal_belief(mood = 'sad', pdpDist = self.b, curr_table = self.ct).split(',')
-            for i in range(len(belief)):
-                belief[i] = float(belief[i].strip())
-            self.b = numpy.array(belief)
-            self.b = self.b/ sum(self.b)
     def run(self):
         #self.retrain_parser()
 
