@@ -343,6 +343,7 @@ class Simulator(object):
         if patient:
             # get action from key
             self.a = self.get_action('ask_p')
+            self.a_plus = self.get_action_plus('ask_p')
 
             # get observation from patient
             ind = self.known_words_to_number[patient]
@@ -351,11 +352,19 @@ class Simulator(object):
 
             # update for patient observation
             self.update(cycletime)
+
+            # for belief plus
+            self.o_plus = next(i for i in range(len(self.observations_plus)) \
+                if self.observations_plus[i] == ind)
+
+            # update for patient observation
+            self.update_plus(cycletime)
             
 
         if recipient:
             # get action from key
             self.a = self.get_action('ask_r')
+            self.a_plus = self.get_action_plus('ask_r')
 
             # get observation from patient
             ind = self.known_words_to_number[recipient]
@@ -365,57 +374,7 @@ class Simulator(object):
             # update for recipient observation
             self.update(cycletime)
 
-        print "Unmapped: ",unmapped_list
-##########################################################
-    def get_full_request_plus(self, cycletime):
-        print self.observations # debug
-        user_utterances = self.get_user_input()
-        parses_list = []
-        unmapped_list = []
-
-        for utterance,score in user_utterances:
-            parses,unmapped = self.parse_utterance(utterance)
-            parses_list.append(parses)
-            unmapped_list.append(unmapped)
-        
-        #print parses_list,unmapped_list
-        #print "action list: ", self.actions
-        #print "selected: " + self.actions[self.a]
-        patient = None
-        recipient = None
-        print "PARSES LIST: ",parses_list
-        for parses in parses_list:
-            for parse,score in parses:
-                for word in str(parse).split():
-                    match = None
-                    #print word
-                    match = re.search('\w*(?=:it.*)', word)
-                    if match:
-                        patient = match.group(0)
-                        print "Patient: " + patient
-                    match = None
-                    match = re.search('\w*(?=:pe.*)', word)
-                    if match:
-                        recipient = match.group(0)
-                        print "Recipient: " + recipient
-
-        if patient:
-            # get action from key
-            self.a_plus = self.get_action_plus('ask_p')
-
-            # get observation from patient
-            ind = self.known_words_to_number[patient]
-            self.o_plus = next(i for i in range(len(self.observations_plus)) \
-                if self.observations_plus[i] == ind)
-
-            # update for patient observation
-            self.update_plus(cycletime)
-            
-
-        if recipient:
-            # get action from key
-            self.a_plus = self.get_action_plus('ask_r')
-
+            # for belief plus
             # get observation from patient
             ind = self.known_words_to_number[recipient]
             self.o_plus = next(i for i in range(len(self.observations_plus)) \
@@ -425,6 +384,8 @@ class Simulator(object):
             self.update_plus(cycletime)
 
         print "Unmapped: ",unmapped_list
+##########################################################
+    
     def add_new(self, raw_str):
         print "DEBUG: adding new"
         #file_init_train = open(os.path.join(self.path_to_experiment,'data','fold0_init_train.ccg'),'a')
@@ -565,6 +526,11 @@ class Simulator(object):
 
             if(current_entropy > 2.3):
                 self.get_full_request(cycletime)
+                if self.print_flag:
+                    print('\nbelief:\t' + str(self.b))
+                self.update_plus(cycletime)
+                if self.print_flag:
+                    print('\nbelief_plus:\t' + str(self.b_plus))
             else:
                 done = False
                 self.a = int(self.policy.select_action(self.b))
