@@ -23,6 +23,8 @@ import string
 
 import ast
 
+numpy.set_printoptions(suppress=True)
+
 class Simulator(object):
 
     def __init__(self, 
