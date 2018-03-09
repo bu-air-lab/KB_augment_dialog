@@ -479,6 +479,9 @@ class Simulator(object):
     #######################################################################
     #######################################################################
     def update_plus(self,cycletime):
+        print self.actions_plus[self.a_plus]
+        if self.actions_plus[self.a_plus] == "ask_r" or self.actions_plus[self.a_plus] == "ask_p":
+            return
 
         new_b_plus = numpy.dot(self.b_plus, self.trans_mat_plus[self.actions_plus.index(self.actions[self.a]), :])
 
@@ -490,7 +493,7 @@ class Simulator(object):
 
 
     def run(self):
-        #self.retrain_parser()
+        self.retrain_parser()
 
         cost = 0.0
         self.init_belief()
@@ -523,19 +526,20 @@ class Simulator(object):
             print "DEBUG: Entropy_plus = ",current_entropy_plus
             # check if entropy increased
             if (old_entropy < current_entropy):
-                inc_count += 1
+                inc_count += 0
                 print "DEBUG: entropy increased"
 
             if(current_entropy > 2.3):
                 self.get_full_request(cycletime)
                 if self.print_flag:
                     print('\nbelief:\t' + str(self.b))
-                self.update_plus(cycletime)
+                #self.update_plus(cycletime)
                 if self.print_flag:
                     print('\nbelief_plus:\t' + str(self.b_plus))
             else:
                 done = False
                 self.a = int(self.policy.select_action(self.b))
+                self.a_plus = self.actions_plus.index(self.actions[self.a])
             
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
