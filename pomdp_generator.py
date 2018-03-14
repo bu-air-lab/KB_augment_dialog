@@ -341,8 +341,11 @@ class PomdpGenerator(object):
         self.polar_tp_rate = 0.8
         self.polar_tn_rate = 0.8
 
-        self.tablelist = conf.tablelist
-
+        #self.tablelist = conf.tablelist
+        self.tablelist = []
+        self.tlist(1,num_patient,num_recipient)      #had to hardcode num_task
+        print "Tablelist is :"
+        print self.tablelist
         self.state_set = []
         self.action_set = []
         self.observation_set = []
@@ -432,6 +435,13 @@ class PomdpGenerator(object):
         subprocess.check_output(pomdpsol + ' --timeout '+str(timeout)+' --output ' \
                                     + strategy + '_new.policy ' + strategy + '_new.pomdp', shell = True)
         print 'Finished training'
+
+    def tlist(self, num_task,num_patient, num_recipient):
+        for i in range(num_task):
+            for j in range(num_patient):
+                for k in range(num_recipient):
+                    self.tablelist.append([i,j,k])
+
 
     def computeTransFunction(self, num_task, num_patient, num_recipient):
 
@@ -833,9 +843,9 @@ def main():
     wh_cost = -1.5
     yesno_cost = -1.0
 
-    num_task = 3
-    num_patient = 3
-    num_recipient = 3
+    num_task = 4
+    num_patient = 4
+    num_recipient = 4
 
     # row corresponds to action, column to underlying state
     # all
