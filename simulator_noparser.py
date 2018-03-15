@@ -52,6 +52,7 @@ class Simulator(object):
         # to read the pomdp model
         model = pomdp_parser.Pomdp(filename=pomdp_file, parsing_print_flag=False)
         self.states = model.states
+        #model_plus= pomdp_parser.Pomdp(filename='444_new.pomdp', parsing_print_flag=False)
         self.states_plus= None
         self.actions = model.actions
         self.observations = model.observations
@@ -105,27 +106,11 @@ class Simulator(object):
         self.b_plus = self.b_plus.T
 
     ######################################################################
-    # EXPERIMENTAL: Generate model
-    # Saeid: this method is working fine now, only name of pomdp and policy files needs to be updated in future to avoid conflicts
-    def generate_new_model(self):
-        r_max = 20.0
-        r_min = -20.0
-
-        wh_cost = -1.5
-        yesno_cost = -1.0
-
-        num_task = self.num_task
-        num_patient = self.num_patient
-        num_recipient = self.num_recipient
-
-        strategy = str(num_task) + str(num_patient) + str(num_recipient)
-      # two lines below commented temporarily
-      #  pg = pomdp_generator.PomdpGenerator(num_task, num_patient + 1, num_recipient+ 1, r_max, r_min, strategy, \
-      #      wh_cost, yesno_cost,timeout=2,pomdpfilename = '333_new_plus.pomdp')
-
+    def read_model_plus(self):
+       
         # once its generated:
         # to read the pomdp model
-        model = pomdp_parser.Pomdp(filename='444_new.pomdp', parsing_print_flag=False)             # probably filename needs to be changed to a better one avoiding conflicts
+        model = pomdp_parser.Pomdp(filename='444_new.pomdp', parsing_print_flag=False) # probably filename needs to be changed to a better one avoiding conflicts
         self.states_plus = model.states
         self.actions_plus = model.actions
         self.observations_plus = model.observations
@@ -133,12 +118,6 @@ class Simulator(object):
         self.trans_mat_plus = model.trans_mat
         self.obs_mat_plus = model.obs_mat
         self.reward_mat_plus = model.reward_mat
-
-        # to read the learned policy
-        ##############################Saeid commented lines below ###################################
-        #self.policy = policy_parser.Policy(len(self.states), len(self.actions), 
-        #    filename=strategy+'_new.policy')
-        # self.reinit_belief()
 
     #####################################################################
     def get_action(self, string):
@@ -481,9 +460,9 @@ def main():
  
     if not s.uniform_init_belief:   
         print('note that initial belief is not uniform\n')
-    #s.generate_new_model()
+    s.read_model_plus()
     s.run_numbers_of_trials()
-    #s.generate_new_model()
+
 if __name__ == '__main__':
     main()
 
