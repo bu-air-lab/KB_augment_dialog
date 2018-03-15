@@ -316,7 +316,7 @@ class ObservationNone(Observation):
 class PomdpGenerator(object):
 
     def __init__(self, num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        wh_cost, yesno_cost,timeout=5,pomdpfilename='333_new.pomdp',is_plus=False):
+        wh_cost, yesno_cost,pomdpfile,timeout=5,is_plus=False):
         
 
         self.num_task = num_task
@@ -343,7 +343,7 @@ class PomdpGenerator(object):
 
         #self.tablelist = conf.tablelist
         self.tablelist = []
-        self.tlist(1,num_patient,num_recipient)      #had to hardcode num_task
+        self.tlist(num_task,num_patient,num_recipient)   
         print "Tablelist is :"
         print self.tablelist
         self.state_set = []
@@ -403,12 +403,12 @@ class PomdpGenerator(object):
             reward_mat_float_negative_deliveries * reweight_factor
 
         # writing to files
-        self.filename = pomdpfilename
+        self.filename = pomdpfile
         self.reward_mat = reward_mat_bin
         self.writeToFile()
-
-        #self.filename = strategy +'_new.pomdp'
-        self.filename = pomdpfilename
+        self.policyfile=strategy+'_new.policy'
+        
+        
         self.reward_mat = reward_mat_float
         #self.reward_mat = reward_mat_float_negative_deliveries
         self.writeToFile()
@@ -432,8 +432,8 @@ class PomdpGenerator(object):
             print "pomdpsol not installed..."
             exit(1)
 
-        subprocess.check_output(pomdpsol + ' --timeout '+str(timeout)+' --output ' \
-                                    + strategy + '_new.policy ' + strategy + '_new.pomdp', shell = True)
+        subprocess.check_output([pomdpsol, self.filename, \
+            '--timeout', str(timeout), '--output', self.policyfile])
         print 'Finished training'
 
     def tlist(self, num_task,num_patient, num_recipient):
@@ -843,9 +843,9 @@ def main():
     wh_cost = -1.5
     yesno_cost = -1.0
 
-    num_task = 4
-    num_patient = 4
-    num_recipient = 4
+    num_task = 1
+    num_patient = 3
+    num_recipient = 3
 
     # row corresponds to action, column to underlying state
     # all
@@ -854,9 +854,9 @@ def main():
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) + '_' + str(entry)
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) + '_' + str(entry1) + str(entry2)
     strategy = str(num_task) + str(num_patient) + str(num_recipient)
-
+    pomdpfile=strategy+'_new.pomdp'
     pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        wh_cost, yesno_cost,timeout=20, pomdpfilename='333_new.pomdp', is_plus=False)
+        wh_cost, yesno_cost,pomdpfile,timeout=20, is_plus=False )
 
 if __name__ == '__main__':
 
