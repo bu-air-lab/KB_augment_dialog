@@ -235,8 +235,12 @@ class Simulator(object):
         else:
             # main part
             #ind = self.get_observation_from_name(ind)
-            self.o = next(i for i in range(len(self.observations)) \
-                    if self.observations[i] == ind)
+            #self.o = next(i for i in range(len(self.observations)) \
+            #        if self.observations[i] == ind)
+
+            for i in range(len(self.observations)):
+            	if self.observations[i] == ind:
+            		self.o = i
 
             if self.o == None:
                 print "DEBUG: Not found in list of observations"
@@ -304,7 +308,7 @@ class Simulator(object):
             print "DEBUG: Entropy_plus = ",current_entropy_plus
             # check if entropy increased
             if (old_entropy < current_entropy):
-                inc_count += 0
+                inc_count += 1
                 print "DEBUG: entropy increased"
 
             if(current_entropy > 2.3):
