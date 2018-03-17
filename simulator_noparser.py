@@ -119,6 +119,9 @@ class Simulator(object):
         self.obs_mat_plus = model.obs_mat
         self.reward_mat_plus = model.reward_mat
 
+        self.policy_plus = policy_parser.Policy(len(self.states_plus), len(self.actions_plus), 
+            filename='444_new.policy')
+
     #####################################################################
     def get_action(self, string):
         i = 0
@@ -187,43 +190,16 @@ class Simulator(object):
     
     def add_new(self, raw_str):
         print "DEBUG: adding new"
-        '''
-        #file_init_train = open(os.path.join(self.path_to_experiment,'data','fold0_init_train.ccg'),'a')
-        file_seed = open(os.path.join(self.path_to_experiment,'resources','seed.lex'),'a')
-        file_nplist = open(os.path.join(self.path_to_experiment,'resources','np-list.lex'),'a')
-        file_geo_consts = open(os.path.join(self.path_to_experiment,'resources','geo.consts.ont'),'r')
-        lines = file_geo_consts.readlines()
-        file_geo_consts.close()
-        file_geo_consts_write = open(os.path.join(self.path_to_experiment,'resources','geo.consts.ont'),'w')
-        file_geo_consts_write.writelines([item for item in lines[:-1]])
-
-        if self.actions[self.a] == 'ask_p':
-            self.num_patient += 1
-            self.known_words_to_number[raw_str] = 'p'+str(self.num_patient - 1)
-            file_seed.write(raw_str + " :- NP : " + raw_str + ":it\n")
-            file_nplist.write(raw_str + " :- NP : " + raw_str + ":it\n")            
-            file_geo_consts_write.write(raw_str + ":it\n")
-
-        elif self.actions[self.a] == 'ask_r':
-            self.num_recipient += 1
-            self.known_words_to_number[raw_str] = 'r'+str(self.num_recipient - 1)
-            file_seed.write(raw_str + " :- NP : " + raw_str + ":pe\n")
-            file_nplist.write(raw_str + " :- NP : " + raw_str + ":pe\n")
-            file_geo_consts_write.write(raw_str + ":pe\n")
-
-        file_geo_consts_write.write(")\n")
-        self.write_known_words_to_number()
-
-        file_num_config = open(os.path.join(self.path_to_main,'data','num_config.txt'), 'w+')
-        file_num_config.write(str(self.num_task) + " " + str(self.num_patient) + " " + str(self.num_recipient))
-        file_num_config.close()
-        file_geo_consts_write.close()
-        file_nplist.close()
-        file_seed.close()
-        self.retrain_parser()
-
-        #self.generate_new_model()
-        '''
+        self.num_patient += 1
+        self.num_recipient += 1
+        self.b = self.b_plus
+        self.states = self.states_plus
+        self.actions = self.actions_plus
+        self.observations = self.observations_plus
+        self.trans_mat = self.trans_mat_plus
+        self.obs_mat = self.obs_mat_plus
+        self.reward_mat = self.reward_mat_plus
+        self.policy = self.policy_plus
 
     #######################################################################
     def observe(self, ind):
