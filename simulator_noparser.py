@@ -161,7 +161,21 @@ class Simulator(object):
         # get action from key
         self.a = self.get_action('ask_p')
         self.a_plus = self.get_action_plus('ask_p')
-        raw_str = raw_input("Input observation (patient/item): ")
+
+        # if auto observe, get initial request
+        if self.auto_observations:
+            rand = numpy.random.random_sample()
+            acc = 0.0
+            for i in range(len(self.observations_plus)):
+                acc += self.obs_mat_plus[self.a_plus, self.s_plus, i]
+                if acc > rand:
+                    raw_str = self.observations_plus[i]
+                    self.request_p = raw_str
+                    break
+            if raw_str == None:
+                sys.exit('Error: observation no sampled properly')
+        else:
+            raw_str = raw_input("Input observation (patient/item): ")
 
         ''' Note: Should we have a random observation for unknown here too
         like we do for the later phases?  For now I have implemented it
@@ -179,7 +193,21 @@ class Simulator(object):
         # get action from key
         self.a = self.get_action('ask_r')
         self.a_plus = self.get_action_plus('ask_r')
-        raw_str = raw_input("Input observation (recipient/person): ")
+
+        if self.auto_observations:
+            rand = numpy.random.random_sample()
+            acc = 0.0
+            for i in range(len(self.observations_plus)):
+                acc += self.obs_mat_plus[self.a_plus, self.s_plus, i]
+                if acc > rand:
+                    raw_str = self.observations_plus[i]
+                    self.request_r = raw_str
+                    break
+            if raw_str == None:
+                sys.exit('Error: observation no sampled properly')
+        else:
+            raw_str = raw_input("Input observation (recipient/person): ")
+        
         self.observe(raw_str)
         # update for recipient observation
         self.update(cycletime)
@@ -202,33 +230,36 @@ class Simulator(object):
         self.policy = self.policy_plus
 
     #######################################################################
+    def auto_observe(self):
+        if self.actions[self.a] == "ask_p":
+            return self.request_p
+        elif self.actions[self.a] == "ask_r":
+            return self.request_r
+        elif 'confirm' in self.actions[self.a]:
+            if self.request_r in self.actions[self.a] or self.request_p in self.actions[self.a]:
+                return 'yes'
+
+        return 'no'
+
     def observe(self, ind):
         self.o = None
+        print "OBSERVE:",ind
 
-        if self.auto_observations:
-            # not functional right now
-            sys.exit("Error: Auto observation not implemented")
-        else:
-            # main part
-            #ind = self.get_observation_from_name(ind)
-            #self.o = next(i for i in range(len(self.observations)) \
-            #        if self.observations[i] == ind)
+        for i in range(len(self.observations)):
+        	if self.observations[i] == ind:
+        		self.o = i
 
+        if self.o == None:
+            print "DEBUG: Not found in list of observations (unknown/new)"
+            rand = numpy.random.random_sample()
+            acc = 0.0
             for i in range(len(self.observations)):
-            	if self.observations[i] == ind:
-            		self.o = i
-
+                acc += self.obs_mat[self.a, self.s, i]
+                if acc > rand:
+                    self.o = i
+                    break
             if self.o == None:
-                print "DEBUG: Not found in list of observations"
-                rand = numpy.random.random_sample()
-                acc = 0.0
-                for i in range(len(self.observations)):
-                    acc += self.obs_mat[self.a, self.s, i]
-                    if acc > rand:
-                        self.o = i
-                        break
-                if self.o == None:
-                    sys.exit('Error: observation is not properly sampled')                
+                sys.exit('Error: observation is not properly sampled')                
 
 
     #######################################################################
@@ -241,7 +272,7 @@ class Simulator(object):
 
 
     def update_plus(self,cycletime):
-        print self.actions_plus[self.a_plus]
+        #print self.actions_plus[self.a_plus]
         if self.actions_plus[self.a_plus] == "ask_r" or self.actions_plus[self.a_plus] == "ask_p":
             return
 
@@ -290,10 +321,10 @@ class Simulator(object):
             if(current_entropy > 2.3):
                 self.get_full_request(cycletime)
                 if self.print_flag:
-                    print('\nbelief:\t' + str(self.b))
+                    print('\n\tbelief:\t\t' + str(self.b))
 
                 if self.print_flag:
-                    print('\nbelief_plus:\t' + str(self.b_plus))
+                    print('\n\tbelief_plus:\t' + str(self.b_plus))
             else:
                 done = False
                 self.a = int(self.policy.select_action(self.b))
@@ -313,7 +344,10 @@ class Simulator(object):
                 if done == True:
                     break
 
-                raw_str = raw_input("Input observation: ")
+                if self.auto_observations:
+                    raw_str = self.auto_observe()
+                else:
+                    raw_str = raw_input("Input observation: ")
 
                 # check entropy increases arbitrary no of times for now
                 if (inc_count > 2):
@@ -326,10 +360,10 @@ class Simulator(object):
 
                 self.update(cycletime)
                 if self.print_flag:
-                    print('\nbelief:\t' + str(self.b))
+                    print('\n\tbelief:\t\t' + str(self.b))
                 self.update_plus(cycletime)
                 if self.print_flag:
-                    print('\nbelief_plus:\t' + str(self.b_plus))
+                    print('\n\tbelief_plus:\t' + str(self.b_plus))
 
 
             overall_reward += self.reward_mat[self.a, self.s]
@@ -386,6 +420,8 @@ class Simulator(object):
             else:
                 self.s = int(input("Please specify the index of state: "))
 
+            self.s_plus = self.states_plus.index(self.states[self.s])
+
             # run this episode and save the reward
             reward, cost, overall_reward = self.run()
             reward_list.append(reward)
@@ -428,12 +464,12 @@ def main():
     print num
     s = Simulator(uniform_init_belief = True, 
         auto_state = True, 
-        auto_observations = False, # was true
+        auto_observations = True, # was true
         print_flag = True, 
         use_plog = False,
         policy_file = '333_new.policy', 
         pomdp_file =  '333_new.pomdp',
-        trials_num = 10,
+        trials_num = 1,
         num_task = int(num[0]), 
         num_patient = int(num[1]), 
         num_recipient = int(num[2]))
