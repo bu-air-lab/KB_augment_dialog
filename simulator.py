@@ -239,6 +239,8 @@ class Simulator(object):
         self.trans_mat_plus = model.trans_mat
         self.obs_mat_plus = model.obs_mat
         self.reward_mat_plus = model.reward_mat
+        self.policy_plus = policy_parser.Policy(len(self.states_plus), len(self.actions_plus), 
+            filename='444_new.policy')
 
         # to read the learned policy
         ##############################Saeid commented lines below ###################################
@@ -385,7 +387,7 @@ class Simulator(object):
             # update for recipient observation
             self.update_plus(cycletime)
 
-        print "Unmapped: ",unmapped_list
+        #print "Unmapped: ",unmapped_list
 ##########################################################
     
     def add_new(self, raw_str):
@@ -425,6 +427,16 @@ class Simulator(object):
         self.retrain_parser()
 
         #self.generate_new_model()
+        self.num_patient += 1
+        self.num_recipient += 1
+        self.b = self.b_plus
+        self.states = self.states_plus
+        self.actions = self.actions_plus
+        self.observations = self.observations_plus
+        self.trans_mat = self.trans_mat_plus
+        self.obs_mat = self.obs_mat_plus
+        self.reward_mat = self.reward_mat_plus
+        self.policy = self.policy_plus
 
     #######################################################################
     def observe(self, ind):
@@ -479,7 +491,7 @@ class Simulator(object):
     #######################################################################
     #######################################################################
     def update_plus(self,cycletime):
-        print self.actions_plus[self.a_plus]
+        #print self.actions_plus[self.a_plus]
         if self.actions_plus[self.a_plus] == "ask_r" or self.actions_plus[self.a_plus] == "ask_p":
             return
 
@@ -507,6 +519,7 @@ class Simulator(object):
         current_entropy = float("inf")
         old_entropy = float("inf")
         inc_count = 0
+        added = False
 
         while True:
             cycletime += 1
@@ -523,10 +536,10 @@ class Simulator(object):
             current_entropy = stats.entropy(self.b)
             current_entropy_plus = stats.entropy(self.b_plus)
             print "DEBUG: Entropy = ",current_entropy
-            print "DEBUG: Entropy_plus = ",current_entropy_plus
+            #print "DEBUG: Entropy_plus = ",current_entropy_plus
             # check if entropy increased
             if (old_entropy < current_entropy):
-                inc_count += 0
+                inc_count += 1
                 print "DEBUG: entropy increased"
 
             if(current_entropy > 2.3):
@@ -535,7 +548,7 @@ class Simulator(object):
                     print('\nbelief:\t' + str(self.b))
                 #self.update_plus(cycletime)
                 if self.print_flag:
-                    print('\nbelief_plus:\t' + str(self.b_plus))
+                    print('\nbelief+:\t' + str(self.b_plus))
             else:
                 done = False
                 self.a = int(self.policy.select_action(self.b))
@@ -558,9 +571,11 @@ class Simulator(object):
                 raw_str = raw_input("Input observation: ")
 
                 # check entropy increases arbitrary no of times for now
-                if (inc_count > 2):
-                    print "--- new item/person ---"
-                    self.add_new(raw_str)
+                if (inc_count > 2 and added == False):
+                    if (self.actions[self.a] == "ask_p" or self.actions[self.a] == "ask_r"):
+                        print "--- new item/person ---"
+                        added = True
+                        self.add_new(raw_str)
 
                 self.observe(raw_str)
                 if self.print_flag:
@@ -568,10 +583,10 @@ class Simulator(object):
 
                 self.update(cycletime)
                 if self.print_flag:
-                    print('\nbelief:\t' + str(self.b))
+                    print('\n\tbelief: ' + str(self.b))
                 self.update_plus(cycletime)
                 if self.print_flag:
-                    print('\nbelief_plus:\t' + str(self.b_plus))
+                    print('\n\tbelief+: ' + str(self.b_plus))
 
 
             overall_reward += self.reward_mat[self.a, self.s]
