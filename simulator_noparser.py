@@ -296,6 +296,7 @@ class Simulator(object):
         current_entropy = float("inf")
         old_entropy = float("inf")
         inc_count = 0
+        added = False
 
         while True:
             cycletime += 1
@@ -350,9 +351,11 @@ class Simulator(object):
                     raw_str = raw_input("Input observation: ")
 
                 # check entropy increases arbitrary no of times for now
-                if (inc_count > 2):
-                    print "--- new item/person ---"
-                    self.add_new(raw_str)
+                if (inc_count > 2  and added == False):
+                    if (self.actions[self.a] == "ask_p" or self.actions[self.a] == "ask_r"):
+                        print "--- new item/person ---"
+                        added = True
+                        self.add_new(raw_str)
 
                 self.observe(raw_str)
                 if self.print_flag:
@@ -464,7 +467,7 @@ def main():
     print num
     s = Simulator(uniform_init_belief = True, 
         auto_state = True, 
-        auto_observations = True, # was true
+        auto_observations = False, # was true
         print_flag = True, 
         use_plog = False,
         policy_file = '333_new.policy', 
