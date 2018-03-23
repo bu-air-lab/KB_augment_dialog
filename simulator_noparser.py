@@ -231,15 +231,19 @@ class Simulator(object):
 
     #######################################################################
     def auto_observe(self):
-        if self.actions[self.a] == "ask_p":
-            return self.request_p
-        elif self.actions[self.a] == "ask_r":
-            return self.request_r
-        elif 'confirm' in self.actions[self.a]:
-            if self.request_r in self.actions[self.a] or self.request_p in self.actions[self.a]:
-                return 'yes'
+        rand = numpy.random.random_sample()
+        acc = 0.0
+        for i in range(len(self.observations_plus)):
+            acc += self.obs_mat_plus[self.a_plus, self.s_plus, i]
+            if acc > rand:
+                raw_str = self.observations_plus[i]
+                self.request_p = raw_str
+                break
+        
+        if raw_str == None:
+            sys.exit('Error: observation no sampled properly')
 
-        return 'no'
+        return raw_str
 
     def observe(self, ind):
         self.o = None
@@ -250,16 +254,12 @@ class Simulator(object):
         		self.o = i
 
         if self.o == None:
-            print "DEBUG: Not found in list of observations (unknown/new)"
-            rand = numpy.random.random_sample()
-            acc = 0.0
-            for i in range(len(self.observations)):
-                acc += self.obs_mat[self.a, self.s, i]
-                if acc > rand:
-                    self.o = i
-                    break
-            if self.o == None:
-                sys.exit('Error: observation is not properly sampled')                
+            q_type = str(self.actions[self.a][-1])
+
+            domain = [self.observations.index(o) for o in self.observations if q_type in o]
+            print domain
+            self.o = random.choice(domain)
+            print self.o
 
 
     #######################################################################
@@ -467,7 +467,7 @@ def main():
     print num
     s = Simulator(uniform_init_belief = True, 
         auto_state = True, 
-        auto_observations = False, # was true
+        auto_observations = True, # was true
         print_flag = True, 
         use_plog = False,
         policy_file = '333_new.policy', 
