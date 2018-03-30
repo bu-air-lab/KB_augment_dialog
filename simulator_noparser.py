@@ -20,6 +20,11 @@ import string
 
 import ast
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+
 numpy.set_printoptions(suppress=True)
 
 class Simulator(object):
@@ -469,8 +474,9 @@ def main():
     #f = open("./data/num_config.txt")
     #num = f.readline().split()
     #print num
+    num=100
     df=pd.DataFrame() 
-    for name in ['133', '144','155']:
+    for name in ['133', '144','155','166','177','188']:
 
 	    s = Simulator(uniform_init_belief = True, 
 	        auto_state = True, 
@@ -481,7 +487,7 @@ def main():
 	        pomdp_file =  name +'_new.pomdp',
                 pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.pomdp',
                 policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.policy',
-	        trials_num = 10,
+	        trials_num = num,
 	        num_task = int(name[0]), 
 	        num_patient = int(name[1]), 
 	        num_recipient = int(name[2]))
@@ -494,6 +500,28 @@ def main():
             df.at[name,'Overall Success']= b
             df.at[name,'Overall Reward']= c
     print df
+    fig=plt.figure(figsize=(8,3))
+    for count,metric in enumerate(list(df)):
+        ax=plt.subplot(1,len(list(df)),count+1)
+
+        l1 = plt.plot([3,4,5,6,7,8],df.loc['133':'188',metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+        plt.ylabel(metric)
+        plt.xlim(2.5,8.5)
+        xleft , xright =ax.get_xlim()
+        ybottom , ytop = ax.get_ylim()
+        ax.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)
+
+
+        plt.xlabel('Recipients/Patients')
+
+
+    ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
+    fig.tight_layout()
+    plt.show()
+    fig.savefig('Results_'+str(num)+'_trials')
+
+
+
 
 if __name__ == '__main__':
     main()

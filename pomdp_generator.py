@@ -843,7 +843,7 @@ def main():
     wh_cost = -1.5
     yesno_cost = -1.0
     
-    for i in range(3,7):
+    for i in range(3,10):
     	num_task = 1
     	num_patient = i
     	num_recipient = i
