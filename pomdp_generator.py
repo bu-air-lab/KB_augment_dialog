@@ -842,10 +842,11 @@ def main():
 
     wh_cost = -1.5
     yesno_cost = -1.0
-
-    num_task = 1
-    num_patient = 3
-    num_recipient = 3
+    
+    for i in range(3,7):
+    	num_task = 1
+    	num_patient = i
+    	num_recipient = i
 
     # row corresponds to action, column to underlying state
     # all
@@ -853,10 +854,10 @@ def main():
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) 
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) + '_' + str(entry)
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) + '_' + str(entry1) + str(entry2)
-    strategy = str(num_task) + str(num_patient) + str(num_recipient)
-    pomdpfile=strategy+'_new.pomdp'
-    pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        wh_cost, yesno_cost,pomdpfile,timeout=20, is_plus=False )
+    	strategy = str(num_task) + str(num_patient) + str(num_recipient)
+    	pomdpfile=strategy+'_new.pomdp'
+    	pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
+        	wh_cost, yesno_cost,pomdpfile,timeout=20, is_plus=False )
 
 if __name__ == '__main__':
 

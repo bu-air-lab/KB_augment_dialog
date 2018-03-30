@@ -14,7 +14,7 @@ import subprocess
 import gen_dis_plog
 import conf
 import re
-
+import pandas as pd
 import os
 import string
 
@@ -31,12 +31,16 @@ class Simulator(object):
         print_flag=True,
         use_plog = False,
         policy_file='policy/default.policy', 
-        pomdp_file='models/default.pomdp', 
-        trials_num=1000,
+        pomdp_file='models/default.pomdp',
+        pomdp_file_plus=None,
+        policy_file_plus=None,
+        trials_num=1,
         num_task=1, 
         num_patient=1,
         num_recipient=1):
 
+        self.pomdp_file_plus=pomdp_file_plus
+        self.policy_file_plus=policy_file_plus
         self.auto_observations = auto_observations
         self.auto_state = auto_state
         self.uniform_init_belief = uniform_init_belief
@@ -110,7 +114,7 @@ class Simulator(object):
        
         # once its generated:
         # to read the pomdp model
-        model = pomdp_parser.Pomdp(filename='444_new.pomdp', parsing_print_flag=False) # probably filename needs to be changed to a better one avoiding conflicts
+        model = pomdp_parser.Pomdp(filename=self.pomdp_file_plus, parsing_print_flag=False) # probably filename needs to be changed to a better one avoiding conflicts
         self.states_plus = model.states
         self.actions_plus = model.actions
         self.observations_plus = model.observations
@@ -120,7 +124,7 @@ class Simulator(object):
         self.reward_mat_plus = model.reward_mat
 
         self.policy_plus = policy_parser.Policy(len(self.states_plus), len(self.actions_plus), 
-            filename='444_new.policy')
+            filename=self.policy_file_plus)
 
     #####################################################################
     def get_action(self, string):
@@ -458,30 +462,38 @@ class Simulator(object):
             ' with std ' + str(numpy.std(overall_reward_arr)))
 
         return (numpy.mean(cost_arr), numpy.mean(success_arr), \
-            numpy.mean(reward_arr))
+            numpy.mean(overall_reward_arr))
 
 def main():
     # the number of variables are stored in this file for now
-    f = open("./data/num_config.txt")
-    num = f.readline().split()
-    print num
-    s = Simulator(uniform_init_belief = True, 
-        auto_state = True, 
-        auto_observations = True, # was true
-        print_flag = True, 
-        use_plog = False,
-        policy_file = '333_new.policy', 
-        pomdp_file =  '333_new.pomdp',
-        trials_num = 1,
-        num_task = int(num[0]), 
-        num_patient = int(num[1]), 
-        num_recipient = int(num[2]))
- 
-    if not s.uniform_init_belief:   
-        print('note that initial belief is not uniform\n')
-    s.read_model_plus()
-    s.run_numbers_of_trials()
+    #f = open("./data/num_config.txt")
+    #num = f.readline().split()
+    #print num
+    df=pd.DataFrame() 
+    for name in ['133', '144','155']:
+
+	    s = Simulator(uniform_init_belief = True, 
+	        auto_state = True, 
+	        auto_observations = True, # was true
+	        print_flag = True, 
+	        use_plog = False,
+	        policy_file = name+'_new.policy',
+	        pomdp_file =  name +'_new.pomdp',
+                pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.pomdp',
+                policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.policy',
+	        trials_num = 10,
+	        num_task = int(name[0]), 
+	        num_patient = int(name[1]), 
+	        num_recipient = int(name[2]))
+	 
+	    if not s.uniform_init_belief:   
+	        print('note that initial belief is not uniform\n')
+	    s.read_model_plus()
+	    a,b,c=s.run_numbers_of_trials()
+            df.at[name,'Overall Cost']= a
+            df.at[name,'Overall Success']= b
+            df.at[name,'Overall Reward']= c
+    print df
 
 if __name__ == '__main__':
     main()
-
