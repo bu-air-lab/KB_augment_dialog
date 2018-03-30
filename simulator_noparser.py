@@ -224,6 +224,7 @@ class Simulator(object):
         self.update_plus(cycletime)
 
 ##########################################################
+
     
     def add_new(self, raw_str):
         print "DEBUG: adding new"
@@ -232,6 +233,7 @@ class Simulator(object):
         self.b = self.b_plus
         self.states = self.states_plus
         self.actions = self.actions_plus
+        self.s = self.s_plus
         self.observations = self.observations_plus
         self.trans_mat = self.trans_mat_plus
         self.obs_mat = self.obs_mat_plus
@@ -259,8 +261,8 @@ class Simulator(object):
         print "OBSERVE:",ind
 
         for i in range(len(self.observations)):
-        	if self.observations[i] == ind:
-        		self.o = i
+            if self.observations[i] == ind:
+                self.o = i
 
         if self.o == None:
             q_type = str(self.actions[self.a][-1])
@@ -307,6 +309,9 @@ class Simulator(object):
         inc_count = 0
         added = False
 
+        print 'num_recipients', self.num_recipient
+        print 'num_patients', self.num_patient
+
         while True:
             cycletime += 1
 
@@ -342,7 +347,10 @@ class Simulator(object):
             
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
-                    
+
+                    print 'num_recipients', self.num_recipient
+                    print 'num_patients', self.num_patient
+
                     question = self.action_to_text(self.actions[self.a])
                     if question:
                         print('QUESTION: ' + question)
@@ -409,6 +417,17 @@ class Simulator(object):
         string_i = ''
         string_p = ''
         string_r = ''
+
+        initial_num_recipient = self.num_recipient
+        initial_num_patient = self.num_patient
+        initial_states = self.states
+        initial_actions = self.actions
+        initial_observations = self.observations
+        initial_trans_mat = self.trans_mat
+        initial_obs_mat = self.obs_mat
+        initial_reward_mat = self.reward_mat
+        initial_policy = self.policy
+
         
         bar = Bar('Processing', max=self.trials_num)
 
@@ -439,14 +458,35 @@ class Simulator(object):
             reward_list.append(reward)
             cost_list.append(cost)
             overall_reward_list.append(overall_reward)
-
+ 
             guide_index = int(self.a - (3 + self.num_task + self.num_patient \
-                + self.num_recipient))
+               + self.num_recipient))
+
+            print 'self.a', self.a
+            print 'self.num_task', self.num_task
+            print 'num_recipient', self.num_recipient
+            print 'num_patient', self.num_patient
+            print 'guide index: ' , guide_index
+            print 'state index: ', self.s
+            print self.states
+            print self.actions
 
             if guide_index == int(self.s):
                 success_list.append(1.0)
             else:
                 success_list.append(0.0)
+
+            self.num_patient = initial_num_patient
+            self.num_recipient = initial_num_recipient
+            self.num_recipient = initial_num_recipient
+            self.num_patient = initial_num_patient
+            self.states = initial_states
+            self.actions = initial_actions
+            self.observations = initial_observations
+            self.trans_mat = initial_trans_mat
+            self.obs_mat = initial_obs_mat
+            self.reward_mat = initial_reward_mat
+            self.policy = initial_policy
 
             bar.next()
 
@@ -474,32 +514,34 @@ def main():
     #f = open("./data/num_config.txt")
     #num = f.readline().split()
     #print num
-    num=100
+    num=300
     df=pd.DataFrame() 
     for name in ['133', '144','155','166','177','188']:
+   # for name in ['133']:
 
-	    s = Simulator(uniform_init_belief = True, 
-	        auto_state = True, 
-	        auto_observations = True, # was true
-	        print_flag = True, 
-	        use_plog = False,
-	        policy_file = name+'_new.policy',
-	        pomdp_file =  name +'_new.pomdp',
+        s = Simulator(uniform_init_belief = True, 
+            auto_state = True, 
+            auto_observations = True, # was true
+            print_flag = True, 
+            use_plog = False,
+            policy_file = name+'_new.policy',
+            pomdp_file =  name +'_new.pomdp',
                 pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.pomdp',
                 policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.policy',
-	        trials_num = num,
-	        num_task = int(name[0]), 
-	        num_patient = int(name[1]), 
-	        num_recipient = int(name[2]))
-	 
-	    if not s.uniform_init_belief:   
-	        print('note that initial belief is not uniform\n')
-	    s.read_model_plus()
-	    a,b,c=s.run_numbers_of_trials()
-            df.at[name,'Overall Cost']= a
-            df.at[name,'Overall Success']= b
-            df.at[name,'Overall Reward']= c
+            trials_num = num,
+            num_task = int(name[0]), 
+            num_patient = int(name[1]), 
+            num_recipient = int(name[2]))
+     
+        if not s.uniform_init_belief:   
+            print('note that initial belief is not uniform\n')
+        s.read_model_plus()
+        a,b,c=s.run_numbers_of_trials()
+        df.at[name,'Overall Cost']= a
+        df.at[name,'Overall Success']= b
+        df.at[name,'Overall Reward']= c
     print df
+    
     fig=plt.figure(figsize=(8,3))
     for count,metric in enumerate(list(df)):
         ax=plt.subplot(1,len(list(df)),count+1)
@@ -519,9 +561,6 @@ def main():
     fig.tight_layout()
     plt.show()
     fig.savefig('Results_'+str(num)+'_trials')
-
-
-
-
+    
 if __name__ == '__main__':
     main()
