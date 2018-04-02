@@ -509,16 +509,37 @@ class Simulator(object):
         return (numpy.mean(cost_arr), numpy.mean(success_arr), \
             numpy.mean(overall_reward_arr))
 
-def main():
-    # the number of variables are stored in this file for now
-    #f = open("./data/num_config.txt")
-    #num = f.readline().split()
-    #print num
-    num=300
-    df=pd.DataFrame() 
-    for name in ['133', '144','155','166','177','188']:
-   # for name in ['133']:
+def plotgenerate(df,filelist,num):
+    fig=plt.figure(figsize=(8,3))
+    for count,metric in enumerate(list(df)):
+        ax=plt.subplot(1,len(list(df)),count+1)
 
+        l1 = plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+        plt.ylabel(metric)
+        plt.xlim(3-0.5,3+len(filelist)-0.5)
+        xleft , xright =ax.get_xlim()
+        ybottom , ytop = ax.get_ylim()
+        ax.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)
+
+
+        plt.xlabel('Recipients/Patients')
+
+
+    ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
+    fig.tight_layout()
+    plt.show()
+    fig.savefig('Results_'+str(num)+'_trials')
+
+
+
+
+def main():
+
+
+    num=15                                            #number of trials
+    filelist=['133', '144','155']                     #list of pomdp files
+    df=pd.DataFrame() 
+    for name in filelist:
         s = Simulator(uniform_init_belief = True, 
             auto_state = True, 
             auto_observations = True, # was true
@@ -536,31 +557,14 @@ def main():
         if not s.uniform_init_belief:   
             print('note that initial belief is not uniform\n')
         s.read_model_plus()
+        ###Saving results in a dataframe and passing data frame to plot generate_function
         a,b,c=s.run_numbers_of_trials()
         df.at[name,'Overall Cost']= a
         df.at[name,'Overall Success']= b
         df.at[name,'Overall Reward']= c
     print df
-    
-    fig=plt.figure(figsize=(8,3))
-    for count,metric in enumerate(list(df)):
-        ax=plt.subplot(1,len(list(df)),count+1)
-
-        l1 = plt.plot([3,4,5,6,7,8],df.loc['133':'188',metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
-        plt.ylabel(metric)
-        plt.xlim(2.5,8.5)
-        xleft , xright =ax.get_xlim()
-        ybottom , ytop = ax.get_ylim()
-        ax.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)
+    plotgenerate(df,filelist,num)
 
 
-        plt.xlabel('Recipients/Patients')
-
-
-    ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
-    fig.tight_layout()
-    plt.show()
-    fig.savefig('Results_'+str(num)+'_trials')
-    
 if __name__ == '__main__':
     main()
