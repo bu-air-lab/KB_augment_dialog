@@ -360,6 +360,7 @@ class Simulator(object):
 
 
                 if done == True:
+                    overall_reward += self.reward_mat[self.a, self.s]
                     break
 
                 if self.auto_observations:
@@ -389,8 +390,8 @@ class Simulator(object):
             overall_reward += self.reward_mat[self.a, self.s]
             # print('current cost: ' + str(self.reward_mat[self.a, self.s]))
             # print('overall cost: ' + str(overall_reward))
-            # print self.actions[self.a]
-
+            print 'action is : ', self.actions[self.a]
+            print 'go' in self.actions[self.a]
             if 'go' in self.actions[self.a]:
                 # print '--------------------',
                 if self.print_flag is True:
@@ -462,14 +463,14 @@ class Simulator(object):
             guide_index = int(self.a - (3 + self.num_task + self.num_patient \
                + self.num_recipient))
 
-            print 'self.a', self.a
-            print 'self.num_task', self.num_task
-            print 'num_recipient', self.num_recipient
-            print 'num_patient', self.num_patient
-            print 'guide index: ' , guide_index
-            print 'state index: ', self.s
-            print self.states
-            print self.actions
+          #  print 'self.a', self.a
+          #  print 'self.num_task', self.num_task
+          #  print 'num_recipient', self.num_recipient
+          #  print 'num_patient', self.num_patient
+          #  print 'guide index: ' , guide_index
+          #  print 'state index: ', self.s
+          #  print self.states
+          #  print self.actions
 
             if guide_index == int(self.s):
                 success_list.append(1.0)
@@ -537,7 +538,7 @@ def main():
 
 
     num=15                                            #number of trials
-    filelist=['133', '144','155']                     #list of pomdp files
+    filelist=['133','144','155','166']                     #list of pomdp files
     df=pd.DataFrame() 
     for name in filelist:
         s = Simulator(uniform_init_belief = True, 
@@ -563,7 +564,7 @@ def main():
         df.at[name,'Overall Success']= b
         df.at[name,'Overall Reward']= c
     print df
-    plotgenerate(df,filelist,num)
+    #plotgenerate(df,filelist,num)
 
 
 if __name__ == '__main__':
