@@ -294,6 +294,13 @@ class Simulator(object):
         self.b_plus = (new_b_plus / sum(new_b_plus)).T
 
 
+    def entropy_check(self, entropy):
+        if entropy > (0.40358 * self.num_patient + 0.771449):
+            return True
+
+        return False
+
+
     def run(self):
         cost = 0.0
         self.init_belief()
@@ -333,7 +340,7 @@ class Simulator(object):
                 inc_count += 1
                 print "DEBUG: entropy increased"
 
-            if(current_entropy > 2.3):
+            if(self.entropy_check(current_entropy)):
                 self.get_full_request(cycletime)
                 if self.print_flag:
                     print('\n\tbelief:\t\t' + str(self.b))
@@ -419,6 +426,7 @@ class Simulator(object):
         string_p = ''
         string_r = ''
 
+        # save initial values to reset before next run
         initial_num_recipient = self.num_recipient
         initial_num_patient = self.num_patient
         initial_states = self.states
@@ -463,19 +471,12 @@ class Simulator(object):
             guide_index = int(self.a - (3 + self.num_task + self.num_patient \
                + self.num_recipient))
 
-          #  print 'self.a', self.a
-          #  print 'self.num_task', self.num_task
-          #  print 'num_recipient', self.num_recipient
-          #  print 'num_patient', self.num_patient
-          #  print 'guide index: ' , guide_index
-          #  print 'state index: ', self.s
-          #  print self.states
-          #  print self.actions
-
             if guide_index == int(self.s):
                 success_list.append(1.0)
             else:
                 success_list.append(0.0)
+
+            # reset for next run
 
             self.num_patient = initial_num_patient
             self.num_recipient = initial_num_recipient
@@ -537,7 +538,7 @@ def plotgenerate(df,filelist,num):
 def main():
 
 
-    num=15                                            #number of trials
+    num=1                                           #number of trials
     filelist=['133','144','155','166']                     #list of pomdp files
     df=pd.DataFrame() 
     for name in filelist:
