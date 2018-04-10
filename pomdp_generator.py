@@ -837,8 +837,8 @@ class PomdpGenerator(object):
 
 def main():
 
-    r_max = 20.0
-    r_min = -20.0
+    r_max = 50.0
+    r_min = -50.0
 
     wh_cost = -1.5
     yesno_cost = -1.0
