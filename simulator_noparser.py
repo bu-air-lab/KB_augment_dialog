@@ -271,7 +271,7 @@ class Simulator(object):
 
             domain = [self.observations.index(o) for o in self.observations if q_type in o]
             #print domain
-            self.o = random.choice(domain)
+            self.o = numpy.random.choice(domain)
             #print self.o
 
 
@@ -465,6 +465,9 @@ class Simulator(object):
 
         for i in range(self.trials_num):
 
+            # seed random for experiments
+            numpy.random.seed(i)
+
             # get a sample as the current state, terminal state exclusive
             if self.auto_state:
                 self.s = numpy.random.randint(low=0, high=len(self.states)-1,
@@ -567,7 +570,7 @@ def main():
     for name in filelist:
         s = Simulator(uniform_init_belief = True, 
             auto_state = True, 
-            auto_observations = False, # was true
+            auto_observations = True, # was true
             print_flag = True, 
             use_plog = False,
             policy_file = name+'_new.policy',
