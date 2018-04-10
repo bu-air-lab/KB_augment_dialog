@@ -42,7 +42,8 @@ class Simulator(object):
         trials_num=1,
         num_task=1, 
         num_patient=1,
-        num_recipient=1):
+        num_recipient=1,
+        belief_threshold=0.7):
 
         self.pomdp_file_plus=pomdp_file_plus
         self.policy_file_plus=policy_file_plus
@@ -52,6 +53,7 @@ class Simulator(object):
         self.print_flag = print_flag
         self.use_plog = use_plog
         self.trials_num = trials_num
+        self.belief_threshold = belief_threshold
 
         self.num_task = num_task
         self.num_patient = num_patient
@@ -268,9 +270,9 @@ class Simulator(object):
             q_type = str(self.actions[self.a][-1])
 
             domain = [self.observations.index(o) for o in self.observations if q_type in o]
-            print domain
+            #print domain
             self.o = random.choice(domain)
-            print self.o
+            #print self.o
 
 
     #######################################################################
@@ -296,6 +298,26 @@ class Simulator(object):
 
     def entropy_check(self, entropy):
         if entropy > (0.40358 * self.num_patient + 0.771449):
+            return True
+
+        return False
+
+
+    def belief_check(self):
+        n = self.num_recipient + 1
+        belief_r = 0
+        for i in range(n):
+            belief_r += self.b_plus[n * i + n - 1]
+
+        m = self.num_patient + 1
+        belief_p = 0
+        for i in range(m):
+            belief_p += self.b_plus[m * (m - 1) + i]
+
+        print "DEBUG: Marginal r = ",belief_r
+        print "DEBUG: Marginal p = ",belief_p
+
+        if belief_r > self.belief_threshold or belief_p > self.belief_threshold:
             return True
 
         return False
@@ -376,11 +398,12 @@ class Simulator(object):
                     raw_str = raw_input("Input observation: ")
 
                 # check entropy increases arbitrary no of times for now
-                if (inc_count > 2  and added == False):
-                    if (self.actions[self.a] == "ask_p" or self.actions[self.a] == "ask_r"):
-                        print "--- new item/person ---"
-                        added = True
-                        self.add_new(raw_str)
+                if (added == False):
+                    if(inc_count > 2 or self.belief_check()):
+                        if (self.actions[self.a] == "ask_p" or self.actions[self.a] == "ask_r"):
+                            print "--- new item/person ---"
+                            added = True
+                            self.add_new(raw_str)
 
                 self.observe(raw_str)
                 if self.print_flag:
@@ -538,13 +561,13 @@ def plotgenerate(df,filelist,num):
 def main():
 
 
-    num=1                                           #number of trials
+    num=100                                          #number of trials
     filelist=['133','144','155','166']                     #list of pomdp files
     df=pd.DataFrame() 
     for name in filelist:
         s = Simulator(uniform_init_belief = True, 
             auto_state = True, 
-            auto_observations = True, # was true
+            auto_observations = False, # was true
             print_flag = True, 
             use_plog = False,
             policy_file = name+'_new.policy',
@@ -554,7 +577,8 @@ def main():
             trials_num = num,
             num_task = int(name[0]), 
             num_patient = int(name[1]), 
-            num_recipient = int(name[2]))
+            num_recipient = int(name[2]),
+            belief_threshold = 0.7)
      
         if not s.uniform_init_belief:   
             print('note that initial belief is not uniform\n')
@@ -565,7 +589,7 @@ def main():
         df.at[name,'Overall Success']= b
         df.at[name,'Overall Reward']= c
     print df
-    #plotgenerate(df,filelist,num)
+    plotgenerate(df,filelist,num)
 
 
 if __name__ == '__main__':
