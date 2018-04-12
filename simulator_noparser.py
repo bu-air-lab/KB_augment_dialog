@@ -347,7 +347,7 @@ class Simulator(object):
             # print self.b
 
             if self.print_flag:
-                print('\tstate:\t' + self.states[self.s] + ' ' + str(self.s))
+                print('\tstate:\t' + self.states_plus[self.s_plus] + ' ' + str(self.s_plus))
                 print('\tcost so far:\t' + str(cost))
 
             # select action
@@ -389,7 +389,7 @@ class Simulator(object):
 
 
                 if done == True:
-                    overall_reward += self.reward_mat[self.a, self.s]
+                    overall_reward += self.reward_mat_plus[self.a_plus, self.s_plus]
                     break
 
                 if self.auto_observations:
@@ -417,7 +417,7 @@ class Simulator(object):
                     print('\n\tbelief_plus:\t' + str(self.b_plus))
 
 
-            overall_reward += self.reward_mat[self.a, self.s]
+            overall_reward += self.reward_mat_plus[self.a_plus, self.s_plus]
             # print('current cost: ' + str(self.reward_mat[self.a, self.s]))
             # print('overall cost: ' + str(overall_reward))
             print 'action is : ', self.actions[self.a]
@@ -425,17 +425,17 @@ class Simulator(object):
             if 'go' in self.actions[self.a]:
                 # print '--------------------',
                 if self.print_flag is True:
-                    print('\treward: ' + str(self.reward_mat[self.a, self.s]))
-                reward += self.reward_mat[self.a, self.s]
+                    print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
+                reward += self.reward_mat_plus[self.a_plus, self.s_plus]
                 break
             else:
-                cost += self.reward_mat[self.a, self.s]
+                cost += self.reward_mat_plus[self.a_plus, self.s_plus]
 
             if cycletime == 20:
-                cost += self.reward_mat[self.a, self.s]
+                cost += self.reward_mat_plus[self.a_plus, self.s_plus]
                 break
 
-        return reward, cost, overall_reward
+        return reward, cost, overall_reward, added
 
     #######################################################################
     def run_numbers_of_trials(self):
@@ -444,6 +444,12 @@ class Simulator(object):
         success_list = []
         reward_list = []
         overall_reward_list = []
+        
+        # for new item or person
+        true_positives = 0.0
+        false_positives = 0.0
+        true_negatives = 0.0
+        false_negatives = 0.0
 
         string_i = ''
         string_p = ''
@@ -470,9 +476,9 @@ class Simulator(object):
 
             # get a sample as the current state, terminal state exclusive
             if self.auto_state:
-                self.s = numpy.random.randint(low=0, high=len(self.states)-1,
+                self.s_plus = numpy.random.randint(low=0, high=len(self.states_plus)-1,
                     size=(1))[0]
-                tuples = self.states[self.s].split('_')
+                tuples = self.states_plus[self.s_plus].split('_')
                 ids = [int(tuples[0][1]),int(tuples[1][1]),int(tuples[2][1])]
                 self.ct = numpy.random.randint(low=0, high=len(self.tablelist),size=(1))[0] ###curr table
                 self.pt = self.ct - 1 if self.ct != 0 else len(self.tablelist)-1
@@ -484,12 +490,21 @@ class Simulator(object):
                 if self.tablelist[self.pt][0] == ids[0] and self.tablelist[self.pt][1] == ids[1] and self.tablelist[self.pt][2] == ids[2]:
                      self.fl = False
             else:
-                self.s = int(input("Please specify the index of state: "))
+                self.s_plus = int(input("Please specify the index of state: "))
 
-            self.s_plus = self.states_plus.index(self.states[self.s])
+            '''!!! important note: State self.s not used as goal anymore, since we need new items to be possible as well,
+            instead self.s_plus is used to compare''' 
+
+            #self.s_plus = self.states_plus.index(self.states[self.s])
+            print self.states_plus[self.s_plus]
+            print self.states
+            if str(self.states_plus[self.s_plus]) in self.states:
+                is_new = False
+            else:
+                is_new = True
 
             # run this episode and save the reward
-            reward, cost, overall_reward = self.run()
+            reward, cost, overall_reward, added = self.run()
             reward_list.append(reward)
             cost_list.append(cost)
             overall_reward_list.append(overall_reward)
@@ -497,10 +512,21 @@ class Simulator(object):
             guide_index = int(self.a - (3 + self.num_task + self.num_patient \
                + self.num_recipient))
 
-            if guide_index == int(self.s):
+            print guide_index, self.s_plus
+
+            if guide_index == int(self.s_plus):
                 success_list.append(1.0)
             else:
                 success_list.append(0.0)
+
+            if is_new == True and added == True:
+                true_positives += 1
+            elif is_new == True and added == False:
+                false_negatives += 1
+            elif is_new == False and added == True:
+                false_positives += 1
+            elif is_new == False and added == False:
+                true_negatives += 1
 
             # reset for next run
 
@@ -534,8 +560,14 @@ class Simulator(object):
         print('average overall reward: ' + str(numpy.mean(overall_reward_arr)) + \
             ' with std ' + str(numpy.std(overall_reward_arr)))
 
+        print('True positives (%):' + str(true_positives / self.trials_num))
+        print('False positives (%):' + str(false_positives / self.trials_num))
+        print('True negatives (%):' + str(true_negatives / self.trials_num))
+        print('False negatives (%):' + str(false_negatives / self.trials_num))
+
         return (numpy.mean(cost_arr), numpy.mean(success_arr), \
             numpy.mean(overall_reward_arr))
+
 
 def plotgenerate(df,filelist,num):
     fig=plt.figure(figsize=(8,3))
@@ -564,8 +596,9 @@ def plotgenerate(df,filelist,num):
 def main():
 
 
-    num=100                                          #number of trials
-    filelist=['133','144','155','166']                     #list of pomdp files
+    num=5                                          #number of trials
+    #filelist=['133','144','155','166']                     #list of pomdp files
+    filelist = ['133']
     df=pd.DataFrame() 
     for name in filelist:
         s = Simulator(uniform_init_belief = True, 
