@@ -563,13 +563,18 @@ class Simulator(object):
         print('average overall reward: ' + str(numpy.mean(overall_reward_arr)) + \
             ' with std ' + str(numpy.std(overall_reward_arr)))
 
-        print('True positives (%):' + str(true_positives / self.trials_num))
-        print('False positives (%):' + str(false_positives / self.trials_num))
-        print('True negatives (%):' + str(true_negatives / self.trials_num))
-        print('False negatives (%):' + str(false_negatives / self.trials_num))
+        print('True positives (%):' + str(true_positives))
+        print('False positives (%):' + str(false_positives))
+        print('True negatives (%):' + str(true_negatives))
+        print('False negatives (%):' + str(false_negatives))
+
+        precision = true_positives/(true_positives + false_positives)
+        recall = true_positives/(true_positives + false_negatives)
+        print('Precision:' + str(precision))
+        print('Recall:' + str(recall))
 
         return (numpy.mean(cost_arr), numpy.mean(success_arr), \
-            numpy.mean(overall_reward_arr))
+            numpy.mean(overall_reward_arr), precision, recall)
 
 
 def plotgenerate(df,filelist,num):
@@ -600,8 +605,8 @@ def main():
 
 
     num=500                                         #number of trials
-    #filelist=['133','144','155','166']                     #list of pomdp files
-    filelist = ['133', '144']
+    filelist=['133','144','155','166']                     #list of pomdp files
+    #filelist = ['133', '144']
     df=pd.DataFrame() 
     for name in filelist:
         s = Simulator(uniform_init_belief = True, 
@@ -623,10 +628,12 @@ def main():
             print('note that initial belief is not uniform\n')
         s.read_model_plus()
         ###Saving results in a dataframe and passing data frame to plot generate_function
-        a,b,c=s.run_numbers_of_trials()
+        a,b,c,p,r=s.run_numbers_of_trials()
         df.at[name,'Overall Cost']= a
         df.at[name,'Overall Success']= b
         df.at[name,'Overall Reward']= c
+        df.at[name,'Precision']= p
+        df.at[name,'Recall']= r
     print df
     plotgenerate(df,filelist,num)
 
