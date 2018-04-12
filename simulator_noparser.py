@@ -43,7 +43,8 @@ class Simulator(object):
         num_task=1, 
         num_patient=1,
         num_recipient=1,
-        belief_threshold=0.7):
+        belief_threshold=0.7,
+        ent_threshold=2):
 
         self.pomdp_file_plus=pomdp_file_plus
         self.policy_file_plus=policy_file_plus
@@ -54,6 +55,7 @@ class Simulator(object):
         self.use_plog = use_plog
         self.trials_num = trials_num
         self.belief_threshold = belief_threshold
+        self.ent_threshold = ent_threshold
 
         self.num_task = num_task
         self.num_patient = num_patient
@@ -396,7 +398,7 @@ class Simulator(object):
 
                 # check entropy increases arbitrary no of times for now
                 if (added == False):
-                    if(inc_count > 2 or self.belief_check()):
+                    if(inc_count > self.ent_threshold or self.belief_check()):
                         if (self.actions[self.a] == "ask_p" or self.actions[self.a] == "ask_r"):
                             print "--- new item/person ---"
                             added = True
@@ -578,22 +580,24 @@ class Simulator(object):
 
 
 def plotgenerate(df,filelist,num):
-    fig=plt.figure(figsize=(8,3))
+    fig=plt.figure(figsize=(3*len(list(df)),5))
+    
     for count,metric in enumerate(list(df)):
         ax=plt.subplot(1,len(list(df)),count+1)
-
-        l1 = plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+      
+        #l1 = plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+        l1 = plt.plot(range(filelist[0],filelist[0]+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
         plt.ylabel(metric)
-        plt.xlim(3-0.5,3+len(filelist)-0.5)
+        plt.xlim(filelist[0]-0.5,filelist[0]+len(filelist)-0.5)
         xleft , xright =ax.get_xlim()
         ybottom , ytop = ax.get_ylim()
         ax.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)
 
 
-        plt.xlabel('Recipients/Patients')
+        plt.xlabel('Recipient/Patient')
 
 
-    ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
+    #ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
     fig.tight_layout()
     plt.show()
     fig.savefig('Results_'+str(num)+'_trials')
@@ -604,11 +608,16 @@ def plotgenerate(df,filelist,num):
 def main():
 
 
-    num=500                                         #number of trials
+    num=200                                        #number of trials
     filelist=['133','144','155','166']                     #list of pomdp files
+    entlist=[2,3,4,5,6,7]
+    belieflist=[0.3,0.4,0.5,0.6,0.7]
     #filelist = ['133', '144']
     df=pd.DataFrame() 
-    for name in filelist:
+    # just use for sth in somelist, not for sth in range(len(ssomelist))
+    for iterator in entlist:
+        name = '133'  # or name = filelist[i]
+
         s = Simulator(uniform_init_belief = True, 
             auto_state = True, 
             auto_observations = True, # was true
@@ -622,20 +631,23 @@ def main():
             num_task = int(name[0]), 
             num_patient = int(name[1]), 
             num_recipient = int(name[2]),
-            belief_threshold = 0.7)
+            belief_threshold = 0.7,
+            ent_threshold = iterator)
      
         if not s.uniform_init_belief:   
             print('note that initial belief is not uniform\n')
         s.read_model_plus()
         ###Saving results in a dataframe and passing data frame to plot generate_function
+
+        #Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
         a,b,c,p,r=s.run_numbers_of_trials()
-        df.at[name,'Overall Cost']= a
-        df.at[name,'Overall Success']= b
-        df.at[name,'Overall Reward']= c
-        df.at[name,'Precision']= p
-        df.at[name,'Recall']= r
+        df.at[iterator,'Overall Cost']= a
+        df.at[iterator,'Overall Success']= b
+        df.at[iterator,'Overall Reward']= c
+        df.at[iterator,'Precision']= p
+        df.at[iterator,'Recall']= r
     print df
-    plotgenerate(df,filelist,num)
+    plotgenerate(df,entlist,num)
 
 
 if __name__ == '__main__':
