@@ -338,9 +338,6 @@ class Simulator(object):
         inc_count = 0
         added = False
 
-        print 'num_recipients', self.num_recipient
-        print 'num_patients', self.num_patient
-
         while True:
             cycletime += 1
 
@@ -509,12 +506,18 @@ class Simulator(object):
             cost_list.append(cost)
             overall_reward_list.append(overall_reward)
  
+            '''
             guide_index = int(self.a - (3 + self.num_task + self.num_patient \
                + self.num_recipient))
 
-            print guide_index, self.s_plus
-
             if guide_index == int(self.s_plus):
+                success_list.append(1.0)
+            else:
+                success_list.append(0.0)
+            '''
+
+            # use string based checking of success for now
+            if str(self.states_plus[self.s_plus]) in self.actions[self.a]:
                 success_list.append(1.0)
             else:
                 success_list.append(0.0)
@@ -596,9 +599,9 @@ def plotgenerate(df,filelist,num):
 def main():
 
 
-    num=5                                          #number of trials
+    num=500                                         #number of trials
     #filelist=['133','144','155','166']                     #list of pomdp files
-    filelist = ['133']
+    filelist = ['133', '144']
     df=pd.DataFrame() 
     for name in filelist:
         s = Simulator(uniform_init_belief = True, 
