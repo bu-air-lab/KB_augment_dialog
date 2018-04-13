@@ -594,7 +594,7 @@ def plotgenerate(df,filelist,num):
         ax.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)
 
 
-        plt.xlabel('Recipient/Patient')
+        plt.xlabel('Belief Threshold')
 
 
     #ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
@@ -608,7 +608,7 @@ def plotgenerate(df,filelist,num):
 def main():
 
 
-    num=200                                        #number of trials
+    num=500                                        #number of trials
     filelist=['133','144','155','166']                     #list of pomdp files
     entlist=[2,3,4,5,6,7]
     belieflist=[0.3,0.4,0.5,0.6,0.7]
@@ -616,7 +616,7 @@ def main():
     df=pd.DataFrame() 
     # just use for sth in somelist, not for sth in range(len(ssomelist))
     for iterator in entlist:
-        name = '133'  # or name = filelist[i]
+        name = '133'  # or name = iterator
 
         s = Simulator(uniform_init_belief = True, 
             auto_state = True, 
