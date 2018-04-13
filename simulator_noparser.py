@@ -585,16 +585,16 @@ def plotgenerate(df,filelist,num):
     for count,metric in enumerate(list(df)):
         ax=plt.subplot(1,len(list(df)),count+1)
       
-        #l1 = plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
-        l1 = plt.plot(range(filelist[0],filelist[0]+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+        l1 = plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+        #l1 = plt.plot(range(filelist[0],filelist[0]+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
         plt.ylabel(metric)
-        plt.xlim(filelist[0]-0.5,filelist[0]+len(filelist)-0.5)
+        plt.xlim(2.5,6.5)
         xleft , xright =ax.get_xlim()
         ybottom , ytop = ax.get_ylim()
         ax.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)
 
 
-        plt.xlabel('Belief Threshold')
+        plt.xlabel('Patients/Patiens Num')
 
 
     #ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
@@ -615,8 +615,8 @@ def main():
     #filelist = ['133', '144']
     df=pd.DataFrame() 
     # just use for sth in somelist, not for sth in range(len(ssomelist))
-    for iterator in entlist:
-        name = '133'  # or name = iterator
+    for iterator in filelist:
+        name = iterator  # or name = iterator
 
         s = Simulator(uniform_init_belief = True, 
             auto_state = True, 
@@ -632,7 +632,7 @@ def main():
             num_patient = int(name[1]), 
             num_recipient = int(name[2]),
             belief_threshold = 0.7,
-            ent_threshold = iterator)
+            ent_threshold = 2)
      
         if not s.uniform_init_belief:   
             print('note that initial belief is not uniform\n')
@@ -647,7 +647,7 @@ def main():
         df.at[iterator,'Precision']= p
         df.at[iterator,'Recall']= r
     print df
-    plotgenerate(df,entlist,num)
+    plotgenerate(df,filelist,num)
 
 
 if __name__ == '__main__':
