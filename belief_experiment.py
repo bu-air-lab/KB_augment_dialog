@@ -14,7 +14,7 @@ def plotgenerate(df,belieflist,num):
         #l1 = plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
         l1 = plt.plot(belieflist, df.loc[belieflist[0]:belieflist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
         plt.ylabel(metric)
-        plt.xlim(belieflist[0]-0.5,belieflist[0]+len(belieflist)-0.5)
+        plt.xlim(0,1)
         xleft,xright = ax.get_xlim()
         ybottom,ytop = ax.get_ylim()
         ax.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)
@@ -50,7 +50,7 @@ def main():
             num_patient = int(name[1]), 
             num_recipient = int(name[2]),
             belief_threshold = iterator,
-            ent_threshold = 2)
+            ent_threshold = 5)
      
         if not s.uniform_init_belief:   
             print('note that initial belief is not uniform\n')
