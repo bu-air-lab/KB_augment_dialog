@@ -475,10 +475,21 @@ class Simulator(object):
 
             # get a sample as the current state, terminal state exclusive
             if self.auto_state:
-                self.s_plus = numpy.random.randint(low=0, high=len(self.states_plus)-1,
-                    size=(1))[0]
-                tuples = self.states_plus[self.s_plus].split('_')
-                ids = [int(tuples[0][1]),int(tuples[1][1]),int(tuples[2][1])]
+                # 50% chance fixed to select unknown state
+                unknown_state = numpy.random.choice([True, False])
+
+                if unknown_state == False:
+                    self.s = numpy.random.randint(low=0, high=len(self.states)-1, size=(1))[0]
+                    tuples = self.states[self.s].split('_')
+                    ids = [int(tuples[0][1]),int(tuples[1][1]),int(tuples[2][1])]
+                    self.s_plus = self.states_plus.index(self.states[self.s])
+                else:
+                    unknown_set = set(self.states_plus) - set(self.states)
+                    unknown_set = list(unknown_set)
+                    selected = numpy.random.choice(unknown_set)
+                    self.s_plus = self.states_plus.index(selected)
+
+                '''
                 self.ct = numpy.random.randint(low=0, high=len(self.tablelist),size=(1))[0] ###curr table
                 self.pt = self.ct - 1 if self.ct != 0 else len(self.tablelist)-1
                 self.md = 'happy'
@@ -487,7 +498,7 @@ class Simulator(object):
                 if self.tablelist[self.ct][0] != ids[0] and self.tablelist[self.ct][1] != ids[1] and self.tablelist[self.ct][2] != ids[2]:
                      self.md = 'sad'
                 if self.tablelist[self.pt][0] == ids[0] and self.tablelist[self.pt][1] == ids[1] and self.tablelist[self.pt][2] == ids[2]:
-                     self.fl = False
+                     self.fl = False '''
             else:
                 self.s_plus = int(input("Please specify the index of state: "))
 
@@ -519,7 +530,7 @@ class Simulator(object):
             '''
 
             # use string based checking of success for now
-            if str(self.states_plus[self.s_plus]) in self.actions[self.a]:
+            if (str(self.states_plus[self.s_plus]) in self.actions[self.a]) and (is_new == added):
                 success_list.append(1.0)
             else:
                 success_list.append(0.0)
@@ -610,6 +621,7 @@ def main():
 
     num=500                                        #number of trials
     filelist=['133','144','155','166']                     #list of pomdp files
+    #filelist=['133']
     entlist=[2,3,4,5,6,7]
     belieflist=[0.3,0.4,0.5,0.6,0.7]
     #filelist = ['133', '144']
@@ -621,7 +633,7 @@ def main():
         s = Simulator(uniform_init_belief = True, 
             auto_state = True, 
             auto_observations = True, # was true
-            print_flag = True, 
+            print_flag = True,
             use_plog = False,
             policy_file = name+'_new.policy',
             pomdp_file =  name +'_new.pomdp',
