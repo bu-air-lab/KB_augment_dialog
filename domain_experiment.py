@@ -5,20 +5,22 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-def plotgenerate(df,belieflist,num):
+def plotgenerate(df,filelist,num):
     fig=plt.figure(figsize=(3*len(list(df)),5))
     
-    for count, metric in enumerate(list(df)):
+    for count,metric in enumerate(list(df)):
         ax=plt.subplot(1,len(list(df)),count+1)
-
-        #l1 = plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
-        l1 = plt.plot(belieflist, df.loc[belieflist[0]:belieflist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+      
+        l1 = plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+        #l1 = plt.plot(range(filelist[0],filelist[0]+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
         plt.ylabel(metric)
-        plt.xlim(0,1)
-        xleft,xright = ax.get_xlim()
-        ybottom,ytop = ax.get_ylim()
+        plt.xlim(2.5,6.5)
+        xleft , xright =ax.get_xlim()
+        ybottom , ytop = ax.get_ylim()
         ax.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)
-        plt.xlabel('Belief Threshold')
+
+
+        plt.xlabel('Patients/Patiens Num')
 
 
     #ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
@@ -27,14 +29,21 @@ def plotgenerate(df,belieflist,num):
     fig.savefig('Results_'+str(num)+'_trials')
 
 
+
+
 def main():
+
+
     num=500                                        #number of trials
+    filelist=['133','144','155','166']                     #list of pomdp files
+    #filelist=['133']
+    entlist=[2,3,4,5,6,7]
     belieflist=[0.3,0.4,0.5,0.6,0.7]
     #filelist = ['133', '144']
     df=pd.DataFrame() 
     # just use for sth in somelist, not for sth in range(len(ssomelist))
-    for iterator in belieflist:
-        name = '155'  # or name = iterator
+    for iterator in filelist:
+        name = iterator  # or name = iterator
 
         s = Simulator(uniform_init_belief = True, 
             auto_state = True, 
@@ -48,8 +57,8 @@ def main():
             num_task = int(name[0]), 
             num_patient = int(name[1]), 
             num_recipient = int(name[2]),
-            belief_threshold = iterator,
-            ent_threshold = 9)
+            belief_threshold = 0.7,
+            ent_threshold = 2)
      
         if not s.uniform_init_belief:   
             print('note that initial belief is not uniform\n')
@@ -64,7 +73,8 @@ def main():
         df.at[iterator,'Precision']= p
         df.at[iterator,'Recall']= r
     print df
-    plotgenerate(df,belieflist,num)
+    plotgenerate(df,filelist,num)
+
 
 if __name__ == '__main__':
     main()

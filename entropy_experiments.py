@@ -40,7 +40,6 @@ def main():
             auto_state = True, 
             auto_observations = True, # was true
             print_flag = True, 
-            use_plog = False,
             policy_file = name+'_new.policy',
             pomdp_file =  name +'_new.pomdp',
                 pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.pomdp',

@@ -11,18 +11,12 @@ import random
 from scipy import stats
 from progress.bar import Bar
 import subprocess
-import gen_dis_plog
 import conf
 import re
-import pandas as pd
 import os
 import string
 
 import ast
-
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 
 
 numpy.set_printoptions(suppress=True)
@@ -34,7 +28,6 @@ class Simulator(object):
         auto_state = False, 
         uniform_init_belief =True,
         print_flag=True,
-        use_plog = False,
         policy_file='policy/default.policy', 
         pomdp_file='models/default.pomdp',
         pomdp_file_plus=None,
@@ -52,7 +45,6 @@ class Simulator(object):
         self.auto_state = auto_state
         self.uniform_init_belief = uniform_init_belief
         self.print_flag = print_flag
-        self.use_plog = use_plog
         self.trials_num = trials_num
         self.belief_threshold = belief_threshold
         self.ent_threshold = ent_threshold
@@ -84,12 +76,7 @@ class Simulator(object):
         self.a_plus=None
         self.o = None
         self.o_plus= None
-        self.md = 'happy'
-        self.fl = True
-        self.trigger= 1 ###triggle of event in which dialog turn
         # self.dialog_turn = 0
-
-        self.plog = gen_dis_plog.DistrGen()
 
         numpy.set_printoptions(precision=2)
 
@@ -489,16 +476,6 @@ class Simulator(object):
                     selected = numpy.random.choice(unknown_set)
                     self.s_plus = self.states_plus.index(selected)
 
-                '''
-                self.ct = numpy.random.randint(low=0, high=len(self.tablelist),size=(1))[0] ###curr table
-                self.pt = self.ct - 1 if self.ct != 0 else len(self.tablelist)-1
-                self.md = 'happy'
-                self.fl = True
-                # print self.tablelist[self.ct], ids
-                if self.tablelist[self.ct][0] != ids[0] and self.tablelist[self.ct][1] != ids[1] and self.tablelist[self.ct][2] != ids[2]:
-                     self.md = 'sad'
-                if self.tablelist[self.pt][0] == ids[0] and self.tablelist[self.pt][1] == ids[1] and self.tablelist[self.pt][2] == ids[2]:
-                     self.fl = False '''
             else:
                 self.s_plus = int(input("Please specify the index of state: "))
 
@@ -519,15 +496,6 @@ class Simulator(object):
             cost_list.append(cost)
             overall_reward_list.append(overall_reward)
  
-            '''
-            guide_index = int(self.a - (3 + self.num_task + self.num_patient \
-               + self.num_recipient))
-
-            if guide_index == int(self.s_plus):
-                success_list.append(1.0)
-            else:
-                success_list.append(0.0)
-            '''
 
             # use string based checking of success for now
             if (str(self.states_plus[self.s_plus]) in self.actions[self.a]) and (is_new == added):
@@ -590,77 +558,4 @@ class Simulator(object):
             numpy.mean(overall_reward_arr), precision, recall)
 
 
-def plotgenerate(df,filelist,num):
-    fig=plt.figure(figsize=(3*len(list(df)),5))
-    
-    for count,metric in enumerate(list(df)):
-        ax=plt.subplot(1,len(list(df)),count+1)
-      
-        l1 = plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
-        #l1 = plt.plot(range(filelist[0],filelist[0]+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
-        plt.ylabel(metric)
-        plt.xlim(2.5,6.5)
-        xleft , xright =ax.get_xlim()
-        ybottom , ytop = ax.get_ylim()
-        ax.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)
 
-
-        plt.xlabel('Patients/Patiens Num')
-
-
-    #ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
-    fig.tight_layout()
-    plt.show()
-    fig.savefig('Results_'+str(num)+'_trials')
-
-
-
-
-def main():
-
-
-    num=500                                        #number of trials
-    filelist=['133','144','155','166']                     #list of pomdp files
-    #filelist=['133']
-    entlist=[2,3,4,5,6,7]
-    belieflist=[0.3,0.4,0.5,0.6,0.7]
-    #filelist = ['133', '144']
-    df=pd.DataFrame() 
-    # just use for sth in somelist, not for sth in range(len(ssomelist))
-    for iterator in filelist:
-        name = iterator  # or name = iterator
-
-        s = Simulator(uniform_init_belief = True, 
-            auto_state = True, 
-            auto_observations = True, # was true
-            print_flag = True,
-            use_plog = False,
-            policy_file = name+'_new.policy',
-            pomdp_file =  name +'_new.pomdp',
-                pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.pomdp',
-                policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.policy',
-            trials_num = num,
-            num_task = int(name[0]), 
-            num_patient = int(name[1]), 
-            num_recipient = int(name[2]),
-            belief_threshold = 0.7,
-            ent_threshold = 2)
-     
-        if not s.uniform_init_belief:   
-            print('note that initial belief is not uniform\n')
-        s.read_model_plus()
-        ###Saving results in a dataframe and passing data frame to plot generate_function
-
-        #Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
-        a,b,c,p,r=s.run_numbers_of_trials()
-        df.at[iterator,'Overall Cost']= a
-        df.at[iterator,'Overall Success']= b
-        df.at[iterator,'Overall Reward']= c
-        df.at[iterator,'Precision']= p
-        df.at[iterator,'Recall']= r
-    print df
-    plotgenerate(df,filelist,num)
-
-
-if __name__ == '__main__':
-    main()
