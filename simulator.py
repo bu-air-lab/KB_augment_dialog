@@ -44,6 +44,8 @@ class Simulator(object):
 
         # print(pomdp_file)
         # print(policy_file)
+        # generate main model
+        self.generate_model(num_task, num_patient, num_recipient, pomdp_file, False)
 
         self.pomdp_file_plus=pomdp_file_plus
         self.policy_file_plus=policy_file_plus
@@ -82,6 +84,9 @@ class Simulator(object):
         self.o = None
         self.o_plus= None
         # self.dialog_turn = 0
+
+        self.generate_model(num_task, num_patient+1, num_recipient+1, pomdp_file_plus, True)
+        self.read_plus_model()
 
         # for semantic parser
         self.path_to_main = os.path.dirname(os.path.abspath(__file__))
@@ -213,25 +218,28 @@ class Simulator(object):
     ######################################################################
     # EXPERIMENTAL: Generate model
     # Saeid: this method is working fine now, only name of pomdp and policy files needs to be updated in future to avoid conflicts
-    def generate_new_model(self):
+    def generate_model(self, num_task, num_patient, num_recipient, file_name, is_plus):
         r_max = 50.0
         r_min = -50.0
 
         wh_cost = -1.5
         yesno_cost = -1.0
 
-        num_task = self.num_task
-        num_patient = self.num_patient
-        num_recipient = self.num_recipient
+        # This is weird compatibility thing so i dont have to edit pomdp generator (should be fixed later)
+        strategy = file_name[:-10]
 
-        strategy = str(num_task) + str(num_patient) + str(num_recipient)
-      # two lines below commented temporarily
-      #  pg = pomdp_generator.PomdpGenerator(num_task, num_patient + 1, num_recipient+ 1, r_max, r_min, strategy, \
-      #      wh_cost, yesno_cost,timeout=2,pomdpfilename = '333_new_plus.pomdp')
+        pg = pomdp_generator.PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
+            wh_cost, yesno_cost,pomdpfilename = file_name,timeout=2, is_plus=is_plus)
 
-        # once its generated:
+        # to read the learned policy
+        ##############################Saeid commented lines below ###################################
+        #self.policy = policy_parser.Policy(len(self.states), len(self.actions), 
+        #    filename=strategy+'_new.policy')
+        # self.reinit_belief()
+
+    def read_plus_model(self):
         # to read the pomdp model
-        model = pomdp_parser.Pomdp(filename=self.pomdp_file_plus, parsing_print_flag=False)             # probably filename needs to be changed to a better one avoiding conflicts
+        model = pomdp_parser.Pomdp(filename=self.pomdp_file_plus, parsing_print_flag=False) 
         self.states_plus = model.states
         self.actions_plus = model.actions
         self.observations_plus = model.observations
@@ -241,12 +249,6 @@ class Simulator(object):
         self.reward_mat_plus = model.reward_mat
         self.policy_plus = policy_parser.Policy(len(self.states_plus), len(self.actions_plus), 
             filename=self.policy_file_plus)
-
-        # to read the learned policy
-        ##############################Saeid commented lines below ###################################
-        #self.policy = policy_parser.Policy(len(self.states), len(self.actions), 
-        #    filename=strategy+'_new.policy')
-        # self.reinit_belief()
 
     ######################################################################
     # EXPERIMENTAL: Retrain parser:
@@ -408,7 +410,6 @@ class Simulator(object):
         file_seed.close()
         self.retrain_parser()
 
-        #self.generate_new_model()
         self.num_patient += 1
         self.num_recipient += 1
         self.b = self.b_plus
@@ -420,6 +421,10 @@ class Simulator(object):
         self.obs_mat = self.obs_mat_plus
         self.reward_mat = self.reward_mat_plus
         self.policy = self.policy_plus
+
+        # generate new plus model
+        self.generate_model(num_task, num_patient+1, num_recipient+1, self.pomdp_file_plus, True)
+        self.read_plus_model()
 
     #######################################################################
     def observe(self, raw_str):
@@ -736,7 +741,6 @@ class Simulator(object):
             numpy.mean(overall_reward_arr), precision, recall)
 
 def main():
-    name = 'main'
     # the number of variables are stored in this file for now
     f = open("./data/num_config.txt")
     num = f.readline().split()
@@ -745,10 +749,10 @@ def main():
         auto_state = True, 
         auto_observations = False, # was true
         print_flag = True, 
-        policy_file = name+'.policy', 
-        pomdp_file =  name+'.pomdp',
-        policy_file_plus = name+'_plus.policy',
-        pomdp_file_plus = name+'_plus.pomdp',
+        policy_file = 'main_new.policy', 
+        pomdp_file =  'main_new.pomdp',
+        policy_file_plus = 'main_plus_new.policy',
+        pomdp_file_plus = 'main_plus_new.pomdp',
         trials_num = 1,
         num_task = int(num[0]), 
         num_patient = int(num[1]), 
@@ -758,9 +762,9 @@ def main():
  
     if not s.uniform_init_belief:   
         print('note that initial belief is not uniform\n')
-    s.generate_new_model()
+
     s.run_numbers_of_trials()
-    #s.generate_new_model()
+
 if __name__ == '__main__':
     main()
 
