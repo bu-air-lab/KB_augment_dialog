@@ -406,9 +406,8 @@ class Simulator(object):
             overall_reward += self.reward_mat_plus[self.a_plus, self.s_plus]
             # print('current cost: ' + str(self.reward_mat[self.a, self.s]))
             # print('overall cost: ' + str(overall_reward))
-            print 'action is : ', self.actions[self.a]
-            print 'go' in self.actions[self.a]
-            if 'go' in self.actions[self.a]:
+
+            if 'go' in self.actions_plus[self.a_plus]:
                 # print '--------------------',
                 if self.print_flag is True:
                     print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
