@@ -40,7 +40,7 @@ class Simulator(object):
         num_patient=1,
         num_recipient=1,
         belief_threshold=0.4,
-        ent_threshold=3):
+        ent_threshold=2):
 
         # print(pomdp_file)
         # print(policy_file)
@@ -219,17 +219,17 @@ class Simulator(object):
     # EXPERIMENTAL: Generate model
     # Saeid: this method is working fine now, only name of pomdp and policy files needs to be updated in future to avoid conflicts
     def generate_model(self, num_task, num_patient, num_recipient, file_name, is_plus):
-        r_max = 50.0
-        r_min = -50.0
+        r_max = 20.0
+        r_min = -20.0
 
-        wh_cost = -1.5
+        wh_cost = -3.0
         yesno_cost = -1.0
 
         # This is weird compatibility thing so i dont have to edit pomdp generator (should be fixed later)
         strategy = file_name[:-10]
 
         pg = pomdp_generator.PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-            wh_cost, yesno_cost,pomdpfilename = file_name,timeout=2, is_plus=is_plus)
+            wh_cost, yesno_cost,pomdpfile = file_name,timeout=20, is_plus=is_plus)
 
         # to read the learned policy
         ##############################Saeid commented lines below ###################################
@@ -423,27 +423,28 @@ class Simulator(object):
         self.policy = self.policy_plus
 
         # generate new plus model
-        self.generate_model(num_task, num_patient+1, num_recipient+1, self.pomdp_file_plus, True)
+        self.generate_model(self.num_task, self.num_patient+1, self.num_recipient+1, self.pomdp_file_plus, True)
         self.read_plus_model()
 
     #######################################################################
     def observe(self, raw_str):
         self.o = None
-        print "OBSERVE:",raw_str
 
-        ind = self.known_words_to_number[raw_str]
+        ind = self.get_observation_from_name(raw_str)
 
-        for i in range(len(self.observations)):
-            if self.observations[i] == ind:
-                self.o = i
+        if ind == None:
+            if self.print_flag:
+                print "DEBUG: Not found in list of observations"
 
-        if self.o == None:
             q_type = str(self.actions[self.a][-1])
 
             domain = [self.observations.index(o) for o in self.observations if q_type in o]
             #print domain
             self.o = numpy.random.choice(domain)
-            #print self.o
+        else:
+            for i in range(len(self.observations)):
+                if self.observations[i] == ind:
+                    self.o = i
 
 
     #######################################################################
@@ -517,7 +518,7 @@ class Simulator(object):
             # print self.b
 
             if self.print_flag:
-                print('\tstate:\t' + self.states[self.s] + ' ' + str(self.s))
+                print('\tstate (plus):\t' + self.states_plus[self.s_plus] + ' ' + str(self.s_plus))
                 print('\tcost so far:\t' + str(cost))
 
             # select action
@@ -563,7 +564,7 @@ class Simulator(object):
                 if done == True:
                     break
 
-                raw_str = raw_input("Input observation: ")
+                raw_str = raw_input("ANSWER (enter a word): ")
 
                 # check entropy increases arbitrary no of times for now
                 if (added == False):
@@ -586,7 +587,7 @@ class Simulator(object):
                     print('\n\tbelief+: ' + str(self.b_plus))
 
 
-            overall_reward += self.reward_mat_plus[self.a, self.s]
+            overall_reward += self.reward_mat_plus[self.a_plus, self.s_plus]
             # print('current cost: ' + str(self.reward_mat[self.a, self.s]))
             # print('overall cost: ' + str(overall_reward))
             # print self.actions[self.a]
@@ -641,7 +642,7 @@ class Simulator(object):
         for i in range(self.trials_num):
 
             # seed random for experiments
-            numpy.random.seed(i)
+            numpy.random.seed(i+9309)
 
             # get a sample as the current state, terminal state exclusive
             if self.auto_state:
