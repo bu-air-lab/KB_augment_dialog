@@ -15,7 +15,7 @@ import conf
 import re
 import os
 import string
-
+import time
 import ast
 
 
@@ -292,21 +292,28 @@ class Simulator(object):
         return False
 
 
+    def get_marginal_edges(self, b, n, m):
+        belief_rn = 0
+        for i in range(m):
+            belief_rn += self.b[n * i + n - 1]
+
+        belief_pm = 0
+        for i in range(n):
+            belief_pm += self.b[n * (m - 1) + i]
+
+        return belief_rn, belief_pm
+
+
     def belief_check(self):
         n = self.num_recipient + 1
-        belief_r = 0
-        for i in range(n):
-            belief_r += self.b_plus[n * i + n - 1]
-
         m = self.num_patient + 1
-        belief_p = 0
-        for i in range(m):
-            belief_p += self.b_plus[m * (m - 1) + i]
 
-        print "DEBUG: Marginal r = ",belief_r
-        print "DEBUG: Marginal p = ",belief_p
+        belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, n, m)
 
-        if belief_r > self.belief_threshold or belief_p > self.belief_threshold:
+        print "DEBUG: Marginal rn = ",belief_rn
+        print "DEBUG: Marginal pm = ",belief_pm
+
+        if belief_rn > self.belief_threshold or belief_pm > self.belief_threshold:
             return True
 
         return False
@@ -416,8 +423,10 @@ class Simulator(object):
             else:
                 cost += self.reward_mat_plus[self.a_plus, self.s_plus]
 
-            if cycletime == 20:
+            if cycletime == 50:
                 cost += self.reward_mat_plus[self.a_plus, self.s_plus]
+                print "REACHED CYCLE TIME 50"
+                sys.exit(1)
                 break
 
         return reward, cost, overall_reward, added
@@ -457,7 +466,7 @@ class Simulator(object):
         for i in range(self.trials_num):
 
             # seed random for experiments
-            numpy.random.seed(i)
+            numpy.random.seed(i+2)
 
             # get a sample as the current state, terminal state exclusive
             if self.auto_state:
