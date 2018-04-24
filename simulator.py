@@ -222,7 +222,7 @@ class Simulator(object):
         r_max = 20.0
         r_min = -20.0
 
-        wh_cost = -3.0
+        wh_cost = -1.5
         yesno_cost = -1.0
 
         # This is weird compatibility thing so i dont have to edit pomdp generator (should be fixed later)
@@ -373,6 +373,22 @@ class Simulator(object):
 
         #print "Unmapped: ",unmapped_list
 ##########################################################
+    def reinit_belief(self, added_type):
+        m = self.num_patient + 1
+        n = self.num_recipient + 1
+        if added_type == 'p':
+            for i in range(m):
+                self.b_plus[(n * i + (n - 1))] = 0
+        elif added_type == 'r':
+            for i in range(n):
+                self.b_plus[(n * (m - 1) + i)] = 0
+
+        b_sum = sum(self.b_plus)
+
+        # renormalize
+        for i in range(len(self.b_plus)):
+            self.b_plus[i] = self.b_plus[i]/b_sum
+
     
     def add_new(self, raw_str):
         print "DEBUG: adding new"
@@ -385,19 +401,25 @@ class Simulator(object):
         file_geo_consts_write = open(os.path.join(self.path_to_experiment,'resources','geo.consts.ont'),'w')
         file_geo_consts_write.writelines([item for item in lines[:-1]])
 
-        if self.actions[self.a] == 'ask_p':
+        #if self.actions[self.a] == 'ask_p':
+        belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, self.num_patient+1, self.num_recipient+1)
+        if belief_pm > belief_rn:
+            self.reinit_belief('p')
             self.num_patient += 1
             self.known_words_to_number[raw_str] = 'p'+str(self.num_patient - 1)
             file_seed.write(raw_str + " :- NP : " + raw_str + ":it\n")
             file_nplist.write(raw_str + " :- NP : " + raw_str + ":it\n")            
             file_geo_consts_write.write(raw_str + ":it\n")
-
-        elif self.actions[self.a] == 'ask_r':
+            
+        #elif self.actions[self.a] == 'ask_r':
+        else:
+            self.reinit_belief('r')
             self.num_recipient += 1
             self.known_words_to_number[raw_str] = 'r'+str(self.num_recipient - 1)
             file_seed.write(raw_str + " :- NP : " + raw_str + ":pe\n")
             file_nplist.write(raw_str + " :- NP : " + raw_str + ":pe\n")
             file_geo_consts_write.write(raw_str + ":pe\n")
+            
 
         file_geo_consts_write.write(")\n")
         self.write_known_words_to_number()
@@ -423,8 +445,8 @@ class Simulator(object):
         self.policy = self.policy_plus
 
         # generate new plus model
-        self.generate_model(self.num_task, self.num_patient+1, self.num_recipient+1, self.pomdp_file_plus, True)
-        self.read_plus_model()
+        #self.generate_model(self.num_task, self.num_patient+1, self.num_recipient+1, self.pomdp_file_plus, True)
+        #self.read_plus_model()
 
     #######################################################################
     def observe(self, raw_str):
@@ -475,21 +497,29 @@ class Simulator(object):
         return False
 
 
+    # for this domain n = num_patients, m = num_patients in the belief distribution
+    def get_marginal_edges(self, b, n, m):
+        belief_rn = 0
+        for i in range(m):
+            belief_rn += b[n * i + n - 1]
+
+        belief_pm = 0
+        for i in range(n):
+            belief_pm += b[n * (m - 1) + i]
+
+        return belief_rn, belief_pm
+
+
     def belief_check(self):
         n = self.num_recipient + 1
-        belief_r = 0
-        for i in range(n):
-            belief_r += self.b_plus[n * i + n - 1]
-
         m = self.num_patient + 1
-        belief_p = 0
-        for i in range(m):
-            belief_p += self.b_plus[m * (m - 1) + i]
 
-        print "DEBUG: Marginal r = ",belief_r
-        print "DEBUG: Marginal p = ",belief_p
+        belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, n, m)
 
-        if belief_r > self.belief_threshold or belief_p > self.belief_threshold:
+        print "DEBUG: Marginal rn = ",belief_rn
+        print "DEBUG: Marginal pm = ",belief_pm
+
+        if belief_rn > self.belief_threshold or belief_pm > self.belief_threshold:
             return True
 
         return False
