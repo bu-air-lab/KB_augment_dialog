@@ -28,7 +28,7 @@ def plotgenerate(df,belieflist,num):
 
 
 def main():
-    num=500                                        #number of trials
+    num=100                                        #number of trials
     belieflist=[0.3,0.4,0.5,0.6,0.7]
     #filelist = ['133', '144']
     df=pd.DataFrame() 

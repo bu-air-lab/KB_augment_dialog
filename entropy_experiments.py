@@ -28,7 +28,7 @@ def plotgenerate(df,belieflist,num):
 
 
 def main():
-    num=500                                        #number of trials
+    num=100                                        #number of trials
     entropylist=[2,3,4,5,6,7,8]
     #filelist = ['133', '144']
     df=pd.DataFrame() 
