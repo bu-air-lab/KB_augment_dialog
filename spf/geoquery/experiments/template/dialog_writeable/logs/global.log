@@ -39,24 +39,10 @@ Init Model :: lexicalFeatures=[LexicalFeatureSet:
 Created resources model of type model
 Created resources loggerModel of type logger.model
 Created resources validator of type validator.labeled
-Init TemplateSupervisedGenlex: #templates=111
+Init TemplateSupervisedGenlex: #templates=155
 Created resources genlex of type genlex.template.supervised
-Created resources train of type data.single
+Created resources test of type data.single
+Init Tester:  size(testData)=1
+Created resources tester of type tester
 Created resources learningFilter of type filter.sentence.length
-Init ValidationPerceptron: numIterations=20, margin=1.000000, trainingData.size()=6, trainingDataDebug.size()=0  ...
-Init ValidationPerceptron: ... lexiconGenerationBeamSize=100
-Init ValidationPerceptron: ... conflateParses=true, errorDriven=true
-Created resources perceptron of type learner.validation.perceptron
-Init ValidationPerceptron: numIterations=20, trainingData.size()=6, trainingDataDebug.size()=0, maxSentenceLength=2147483647 ...
-Init ValidationPerceptron: ... lexiconGenerationBeamSize=100
-Init ValidationPerceptron: ... conflateParses=false, erroDriven=true
-Init ValidationPerceptron: ... c=0.000100, alpha0=1.000000
-Created resources stocgrad of type learner.validation.stocgrad
-Created resources initSeedLex of type init.lex
-Created resources initNPs of type init.lex
-Created resources expScorer of type scorer.lenexp
-Created resources initSeedLexWeights of type init.lex.weights
-Created resources initSeedXemeWeights of type init.lex.weights
-Created resources initNPsLexWeights of type init.lex.weights
-Created resources initNPsXemeWeights of type init.lex.weights
-Ordered to train model: model
+Loading model (id=null) from: /home/sujay/context_aware_icorpp/spf/geoquery/experiments/template/dialog_writeable/rlg.model
