@@ -350,12 +350,17 @@ class Simulator(object):
             # get action from key
             self.a = self.get_action('ask_p')
             self.a_plus = self.get_action_plus('ask_p')
-
             # get observation from patient
             self.observe(patient)
-            # update for patient observation
             self.update(cycletime)
             # update for b+
+            self.update_plus(cycletime)
+        else:
+            self.a = self.get_action('ask_p')
+            self.a_plus = self.get_action_plus('ask_p')
+            # random/unknown observation
+            self.observe(None)
+            self.update(cycletime)
             self.update_plus(cycletime)
             
 
@@ -363,12 +368,17 @@ class Simulator(object):
             # get action from key
             self.a = self.get_action('ask_r')
             self.a_plus = self.get_action_plus('ask_r')
-
             # get observation from patient
             self.observe(recipient)
             # update for recipient observation
             self.update(cycletime)
             # update for b+
+            self.update_plus(cycletime)
+        else:
+            self.a = self.get_action('ask_r')
+            self.a_plus = self.get_action_plus('ask_r')
+            self.observe(None)
+            self.update(cycletime)
             self.update_plus(cycletime)
 
         #print "Unmapped: ",unmapped_list
@@ -621,6 +631,9 @@ class Simulator(object):
             # print('current cost: ' + str(self.reward_mat[self.a, self.s]))
             # print('overall cost: ' + str(overall_reward))
             # print self.actions[self.a]
+
+            if self.a_plus == None:
+                continue
 
             if 'go' in self.actions_plus[self.a_plus]:
                 # print '--------------------',
