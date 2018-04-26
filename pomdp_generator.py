@@ -419,6 +419,7 @@ class PomdpGenerator(object):
         file_path = open('config/sarsop_path','r')
         if file_path.mode == 'r':
             pomdpsol_path = file_path.read()
+            file_path.close()
         else:
             print "Error: could not open pomdp solver path file 'config/sarsop_path'"
             exit(1)
