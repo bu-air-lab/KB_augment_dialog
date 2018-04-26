@@ -415,21 +415,18 @@ class PomdpGenerator(object):
 
         print 'Training for '+ str(timeout)+' seconds'
 
-        pomdpsol_lu = '/home/ludc/workspace/context_aware_icorpp/appl-0.96/src/pomdpsol'
-        pomdpsol_zhang = '/home/szhang/software/appl/appl-0.95/src/pomdpsol'
-        pomdpsol_sujay = '/home/sujay/context_aware_icorpp/sarsop/src/pomdpsol'
-        pomdpsol_saeid = '/home/saeid/software/sarsop/src/pomdpsol'
-
-        if os.path.isfile(pomdpsol_lu):
-            pomdpsol = pomdpsol_lu
-        elif os.path.isfile(pomdpsol_zhang):
-            pomdpsol = pomdpsol_zhang
-        elif os.path.isfile(pomdpsol_sujay):
-        	pomdpsol = pomdpsol_sujay
-        elif os.path.isfile(pomdpsol_saeid):
-                pomdpsol = pomdpsol_saeid
+        pomdpsol_path = None
+        file_path = open('config/sarsop_path','r')
+        if file_path.mode == 'r':
+            pomdpsol_path = file_path.read()
         else:
-            print "pomdpsol not installed..."
+            print "Error: could not open pomdp solver path file 'config/sarsop_path'"
+            exit(1)
+
+        if os.path.isfile(pomdpsol_path):
+            pomdpsol = pomdpsol_path
+        else:
+            print "Error: pomdpsol not installed..."
             exit(1)
 
         subprocess.check_output([pomdpsol, self.filename, \
