@@ -262,7 +262,7 @@ class Simulator(object):
         if useFile:
             user_input = "Test string"
         else:
-            user_input = raw_input("QUESTION: How can I help you?\n")
+            user_input = raw_input()
 
         user_input = user_input.strip().lower()
         user_input = user_input.replace("'s"," s")
@@ -319,6 +319,7 @@ class Simulator(object):
         if self.print_flag:
             print self.observations # debug
         
+        print "QUESTION: How can I help you?"
         user_utterances = self.get_user_input()
         parses_list = []
         unmapped_list = []
