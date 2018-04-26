@@ -557,9 +557,9 @@ class Simulator(object):
 
             # print self.b
 
-            if self.print_flag:
-                print('\tstate (plus):\t' + self.states_plus[self.s_plus] + ' ' + str(self.s_plus))
-                print('\tcost so far:\t' + str(cost))
+            ##if self.print_flag:
+                ##print('\tstate (plus):\t' + self.states_plus[self.s_plus] + ' ' + str(self.s_plus))
+                ##print('\tcost so far:\t' + str(cost))
 
             # select action
             # entropy
@@ -627,7 +627,7 @@ class Simulator(object):
                     print('\n\tbelief+: ' + str(self.b_plus))
 
 
-            overall_reward += self.reward_mat_plus[self.a_plus, self.s_plus]
+            ## overall_reward += self.reward_mat_plus[self.a_plus, self.s_plus]
             # print('current cost: ' + str(self.reward_mat[self.a, self.s]))
             # print('overall cost: ' + str(overall_reward))
             # print self.actions[self.a]
@@ -637,20 +637,22 @@ class Simulator(object):
 
             if 'go' in self.actions_plus[self.a_plus]:
                 # print '--------------------',
-                if self.print_flag is True:
-                    print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
-                reward += self.reward_mat_plus[self.a_plus, self.s_plus]
+                ##if self.print_flag is True:
+                    ##print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
+                ##reward += self.reward_mat_plus[self.a_plus, self.s_plus]
                 break
-            else:
-                cost += self.reward_mat_plus[self.a_plus, self.s_plus]
+            ##else:
+                ##cost += self.reward_mat_plus[self.a_plus, self.s_plus]
 
             if cycletime == 20:
-                cost += self.reward_mat_plus[self.a_plus, self.s_plus]
+                ##cost += self.reward_mat_plus[self.a_plus, self.s_plus]
                 break
 
-        return reward, cost, overall_reward, added
+        ##return reward, cost, overall_reward, added
+        return
 
     #######################################################################
+    '''
     def run_numbers_of_trials(self):
 
         cost_list = []
@@ -706,8 +708,8 @@ class Simulator(object):
             else:
                 self.s_plus = int(input("Please specify the index of state: "))
 
-            '''!!! important note: State self.s not used as goal anymore, since we need new items to be possible as well,
-            instead self.s_plus is used to compare''' 
+            #!!! important note: State self.s not used as goal anymore, since we need new items to be possible as well,
+            #instead self.s_plus is used to compare 
 
             #self.s_plus = self.states_plus.index(self.states[self.s])
             print self.states_plus[self.s_plus]
@@ -783,6 +785,8 @@ class Simulator(object):
 
         return (numpy.mean(cost_arr), numpy.mean(success_arr), \
             numpy.mean(overall_reward_arr), precision, recall)
+    '''
+
 
 def main():
     # the number of variables are stored in this file for now
@@ -807,7 +811,8 @@ def main():
     if not s.uniform_init_belief:   
         print('note that initial belief is not uniform\n')
 
-    s.run_numbers_of_trials()
+    ##s.run_numbers_of_trials()
+    s.run()
 
 if __name__ == '__main__':
     main()
