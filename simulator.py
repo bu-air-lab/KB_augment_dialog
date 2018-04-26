@@ -141,7 +141,8 @@ class Simulator(object):
         file_known = open(os.path.join(self.path_to_main,'data','known_words_to_obs.txt'), 'r')
         s = file_known.read()
         self.known_words_to_number = ast.literal_eval(s)
-        print(str(self.known_words_to_number))
+        if self.print_flag:
+            print(str(self.known_words_to_number))
         file_known.close()
 
     def write_known_words_to_number(self):
@@ -261,7 +262,7 @@ class Simulator(object):
         if useFile:
             user_input = "Test string"
         else:
-            user_input = raw_input("Enter text: ")
+            user_input = raw_input("QUESTION: How can I help you?\n")
 
         user_input = user_input.strip().lower()
         user_input = user_input.replace("'s"," s")
@@ -315,7 +316,9 @@ class Simulator(object):
 
     ######################################################################
     def get_full_request(self, cycletime):
-        print self.observations # debug
+        if self.print_flag:
+            print self.observations # debug
+        
         user_utterances = self.get_user_input()
         parses_list = []
         unmapped_list = []
@@ -325,12 +328,12 @@ class Simulator(object):
             parses_list.append(parses)
             unmapped_list.append(unmapped)
         
-        #print parses_list,unmapped_list
-        #print "action list: ", self.actions
-        #print "selected: " + self.actions[self.a]
         patient = None
         recipient = None
-        print "PARSES LIST: ",parses_list
+
+        if self.print_flag:
+            print "PARSES LIST: ",parses_list
+
         for parses in parses_list:
             for parse,score in parses:
                 for word in str(parse).split():
@@ -339,12 +342,14 @@ class Simulator(object):
                     match = re.search('\w*(?=:it.*)', word)
                     if match:
                         patient = match.group(0)
-                        print "Patient: " + patient
+                        if self.print_flag:
+                            print "Patient: " + patient
                     match = None
                     match = re.search('\w*(?=:pe.*)', word)
                     if match:
                         recipient = match.group(0)
-                        print "Recipient: " + recipient
+                        if self.print_flag:
+                            print "Recipient: " + recipient
 
         if patient:
             # get action from key
@@ -526,8 +531,9 @@ class Simulator(object):
 
         belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, n, m)
 
-        print "DEBUG: Marginal rn = ",belief_rn
-        print "DEBUG: Marginal pm = ",belief_pm
+        if self.print_flag:
+            print "DEBUG: Marginal rn = ",belief_rn
+            print "DEBUG: Marginal pm = ",belief_pm
 
         if belief_rn > self.belief_threshold or belief_pm > self.belief_threshold:
             return True
@@ -796,7 +802,7 @@ def main():
     s = Simulator(uniform_init_belief = True, 
         auto_state = True, 
         auto_observations = False, # was true
-        print_flag = True, 
+        print_flag = False, 
         policy_file = 'main_new.policy', 
         pomdp_file =  'main_new.pomdp',
         policy_file_plus = 'main_plus_new.policy',
