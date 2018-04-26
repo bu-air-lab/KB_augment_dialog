@@ -40,7 +40,8 @@ class Simulator(object):
         num_patient=1,
         num_recipient=1,
         belief_threshold=0.4,
-        ent_threshold=2):
+        ent_threshold=2,
+        print_file=False):
 
         # print(pomdp_file)
         # print(policy_file)
@@ -56,11 +57,14 @@ class Simulator(object):
         self.trials_num = trials_num
         self.belief_threshold = belief_threshold
         self.ent_threshold = ent_threshold
-
+        self.print_file = print_file
         self.num_task = num_task
         self.num_patient = num_patient
         self.num_recipient = num_recipient
         self.tablelist = conf.tablelist
+
+        self.file_out = open('data/output', 'w')
+        self.file_in = open('data/input', 'r')
 
         # to read the pomdp model
         model = pomdp_parser.Pomdp(filename=pomdp_file, parsing_print_flag=False)
@@ -320,6 +324,9 @@ class Simulator(object):
             print self.observations # debug
         
         print "QUESTION: How can I help you?"
+        if self.print_file:
+            self.file_out.write("How can I help you?")
+
         user_utterances = self.get_user_input()
         parses_list = []
         unmapped_list = []
@@ -603,10 +610,12 @@ class Simulator(object):
                 question = self.action_to_text(self.actions[self.a])
                 if question:
                     print('QUESTION: ' + question)
+                    if self.print_file:
+                        file_out.write(question)
+
                 elif ('go' in self.actions[self.a]):
                     print('EXECUTE: ' + self.actions[self.a])
                     done = True
-
 
                 if done == True:
                     break
@@ -654,6 +663,9 @@ class Simulator(object):
             if cycletime == 20:
                 ##cost += self.reward_mat_plus[self.a_plus, self.s_plus]
                 break
+
+        self.file_out.close()
+        self.file_in.close()
 
         ##return reward, cost, overall_reward, added
         return
@@ -813,7 +825,8 @@ def main():
         num_patient = int(num[1]), 
         num_recipient = int(num[2]),
         belief_threshold = 0.4,
-        ent_threshold = 2)
+        ent_threshold = 2,
+        print_file= True)
  
     if not s.uniform_init_belief:   
         print('note that initial belief is not uniform\n')
