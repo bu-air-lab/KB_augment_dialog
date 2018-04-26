@@ -1,46 +1,21 @@
 [P1T2] ============ (Job load_and_test started)
 [P1T2] 1 : ==================
-[P1T2] bring apple to shiqi
+[P1T2] bring to james
 (lambda $0:e $0)
-[P1T2] Test parsing time 0.04
-[P1T2] EXACT stats -- recording wrong parse: (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a shiqi:pe) (actionpatient:<a,<e,t>> bring:a apple:it))
-[P1T2] [EXACT stats]  Record incorrect.
-[P1T2] WRONG: (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a shiqi:pe) (actionpatient:<a,<e,t>> bring:a apple:it))
-[P1T2] [LexEntries and scores:
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#150=10.0(1.0),XTMP#109=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#61=10.0(1.0),XTMP#45=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#61=10.0(1.0),XTMP#59=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#4=10.0(1.0),XTMP#47=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#101=10.0(1.0),XTMP#44=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#113=10.0(1.0),XTMP#51=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#83=10.0(1.0),XTMP#84=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#83=10.0(1.0),XTMP#101=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#97=10.0(1.0),XTMP#71=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#61=10.0(1.0),XTMP#75=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#83=10.0(1.0),XTMP#54=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#107=10.0(1.0),XTMP#97=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#4=10.0(1.0),XTMP#33=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#93=10.0(1.0),XTMP#68=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#34=10.0(1.0),XTMP#58=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#59=10.0(1.0),XTMP#6=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#97=10.0(1.0),XTMP#91=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#58=10.0(1.0),XTMP#23=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#59=10.0(1.0),XTMP#82=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#59=10.0(1.0),XTMP#42=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#87=10.0(1.0),XTMP#67=0.0(0.1)}]
-[20.0] bring :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#86=10.0(1.0),XEME#4=10.0(1.0),XTMP#79=0.0(0.1)}]
-[20.0] apple :- NP : apple:it [{LEX#456=10.0(1.0),XEME#154=10.0(1.0),XTMP#25=0.0(0.1)}]
-[20.0] to :- PP/NP : (lambda $0:e (lambda $1:a (actionrecipient:<a,<e,t>> $1 $0))) [{LEX#256=10.0(1.0),XEME#73=10.0(1.0),XTMP#26=0.0(0.1)}]
-[0.0] shiqi :- NP : shiqi:pe [{LEX#501=0.0(1.0),XEME#160=0.0(1.0),XTMP#25=0.0(0.1)}]
-]
-[P1T2] Had correct parses: false
-[P1T2] Feats: {LEX#256=10.0(1.0),LEX#456=10.0(1.0),LEX#501=0.0(1.0),LEX#86=10.0(1.0),RULE#>apply=0.4007208983726771(0.30000000000000004),RULE#lex=0.2667520913257126(0.4),XEME#101=10.0(0.045454545454545456),XEME#107=10.0(0.045454545454545456),XEME#113=10.0(0.045454545454545456),XEME#150=10.0(0.045454545454545456),XEME#154=10.0(1.0),XEME#160=0.0(1.0),XEME#34=10.0(0.045454545454545456),XEME#4=10.0(0.13636363636363635),XEME#58=10.0(0.045454545454545456),XEME#59=10.0(0.13636363636363635),XEME#61=10.0(0.13636363636363635),XEME#73=10.0(1.0),XEME#83=10.0(0.13636363636363635),XEME#87=10.0(0.045454545454545456),XEME#93=10.0(0.045454545454545456),XEME#97=10.0(0.09090909090909091),XTMP#101=0.0(0.004545454545454546),XTMP#109=0.0(0.004545454545454546),XTMP#23=0.0(0.004545454545454546),XTMP#25=0.0(0.2),XTMP#26=0.0(0.1),XTMP#33=0.0(0.004545454545454546),XTMP#42=0.0(0.004545454545454546),XTMP#44=0.0(0.004545454545454546),XTMP#45=0.0(0.004545454545454546),XTMP#47=0.0(0.004545454545454546),XTMP#51=0.0(0.004545454545454546),XTMP#54=0.0(0.004545454545454546),XTMP#58=0.0(0.004545454545454546),XTMP#59=0.0(0.004545454545454546),XTMP#6=0.0(0.004545454545454546),XTMP#67=0.0(0.004545454545454546),XTMP#68=0.0(0.004545454545454546),XTMP#71=0.0(0.004545454545454546),XTMP#75=0.0(0.004545454545454546),XTMP#79=0.0(0.004545454545454546),XTMP#82=0.0(0.004545454545454546),XTMP#84=0.0(0.004545454545454546),XTMP#91=0.0(0.004545454545454546),XTMP#97=0.0(0.004545454545454546)}
+[P1T2] Test parsing time 0.06
+[P1T2] no parses
+[P1T2] EXACT stats -- recording no parse
+[P1T2] [EXACT stats]  Record failure.
+[P1T2] EMPTY Parsing time 0.044000
+[P1T2] no parses
+[P1T2] EXACT stats -- recording no parse with skipping
+[P1T2] [EXACT stats]  Record sloppy failure.
 [P1T2] === EXACT statistics:
 Recall: 0.0/1.0 = 0.0
-Precision: 0.0/1.0 = 0.0
+Precision: 0.0/0.0 = 0.0
 F1: 0.0
 SKIP Recall: 0.0/1.0 = 0.0
-SKIP Precision: 0.0/1.0 = 0.0
+SKIP Precision: 0.0/0.0 = 0.0
 SKIP F1: 0.0
-[P1T2] Total run time 0.0470 seconds
+[P1T2] Total run time 0.1080 seconds
 [P1T2] ============ (Job load_and_test completed)

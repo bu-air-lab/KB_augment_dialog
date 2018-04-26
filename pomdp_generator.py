@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import numpy as np
 import time
@@ -317,12 +316,14 @@ class ObservationNone(Observation):
 class PomdpGenerator(object):
 
     def __init__(self, num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        wh_cost, yesno_cost,timeout=5):
+        wh_cost, yesno_cost,pomdpfile,timeout=5,is_plus=False):
         
 
         self.num_task = num_task
         self.num_patient = num_patient
         self.num_recipient = num_recipient
+
+        self.is_plus = is_plus
 
         self.r_max = r_max
         self.r_min = r_min
@@ -340,8 +341,11 @@ class PomdpGenerator(object):
         self.polar_tp_rate = 0.8
         self.polar_tn_rate = 0.8
 
-        self.tablelist = conf.tablelist
-
+        #self.tablelist = conf.tablelist
+        self.tablelist = []
+        self.tlist(num_task,num_patient,num_recipient)   
+        print "Tablelist is :"
+        print self.tablelist
         self.state_set = []
         self.action_set = []
         self.observation_set = []
@@ -399,37 +403,42 @@ class PomdpGenerator(object):
             reward_mat_float_negative_deliveries * reweight_factor
 
         # writing to files
-        self.filename = strategy + '_old.pomdp'
+        self.filename = pomdpfile
         self.reward_mat = reward_mat_bin
         self.writeToFile()
-
-        self.filename = strategy +'_new.pomdp'
+        self.policyfile=strategy+'_new.policy'
+        
+        
         self.reward_mat = reward_mat_float
         #self.reward_mat = reward_mat_float_negative_deliveries
         self.writeToFile()
 
         print 'Training for '+ str(timeout)+' seconds'
 
-        pomdpsol_lu = '/home/ludc/workspace/context_aware_icorpp/appl-0.96/src/pomdpsol'
-        pomdpsol_zhang = '/home/szhang/software/appl/appl-0.95/src/pomdpsol'
-        pomdpsol_sujay = '/home/sujay/context_aware_icorpp/sarsop/src/pomdpsol'
-        pomdpsol_saeid = '/home/saeid/software/sarsop/src/pomdpsol'
-
-        if os.path.isfile(pomdpsol_lu):
-            pomdpsol = pomdpsol_lu
-        elif os.path.isfile(pomdpsol_zhang):
-            pomdpsol = pomdpsol_zhang
-        elif os.path.isfile(pomdpsol_sujay):
-        	pomdpsol = pomdpsol_sujay
-        elif os.path.isfile(pomdpsol_saeid):
-                pomdpsol = pomdpsol_saeid
+        pomdpsol_path = None
+        file_path = open('config/sarsop_path','r')
+        if file_path.mode == 'r':
+            pomdpsol_path = file_path.read()
         else:
-            print "pomdpsol not installed..."
+            print "Error: could not open pomdp solver path file 'config/sarsop_path'"
             exit(1)
 
-        subprocess.check_output(pomdpsol + ' --timeout '+str(timeout)+' --output ' \
-                                    + strategy + '_new.policy ' + strategy + '_new.pomdp', shell = True)
+        if os.path.isfile(pomdpsol_path):
+            pomdpsol = pomdpsol_path
+        else:
+            print "Error: pomdpsol not installed..."
+            exit(1)
+
+        subprocess.check_output([pomdpsol, self.filename, \
+            '--timeout', str(timeout), '--output', self.policyfile])
         print 'Finished training'
+
+    def tlist(self, num_task,num_patient, num_recipient):
+        for i in range(num_task):
+            for j in range(num_patient):
+                for k in range(num_recipient):
+                    self.tablelist.append([i,j,k])
+
 
     def computeTransFunction(self, num_task, num_patient, num_recipient):
 
@@ -510,11 +519,29 @@ class PomdpGenerator(object):
                                                 [state.getIndex()]\
                                                 [observation.getIndex()]\
                                                 = tp_rate
+                                        elif observation.getpatientIndex() == \
+                                            (num_patient - 1):
+                                            if self.is_plus:
+                                                obs_mat[action.getIndex()]\
+                                                    [state.getIndex()]\
+                                                    [observation.getIndex()]\
+                                                    = ((1.0-tp_rate) / (num_patient)) * 2
+                                            else:
+                                                obs_mat[action.getIndex()]\
+                                                    [state.getIndex()]\
+                                                    [observation.getIndex()]\
+                                                    = (1.0-tp_rate) / (num_patient-1)
                                         else:
-                                            obs_mat[action.getIndex()]\
-                                                [state.getIndex()]\
-                                                [observation.getIndex()]\
-                                                = (1.0-tp_rate) / (num_patient-1)
+                                            if self.is_plus and (state.getpatientIndex() != (num_patient-1)):
+                                                obs_mat[action.getIndex()]\
+                                                    [state.getIndex()]\
+                                                    [observation.getIndex()]\
+                                                    = (1.0-tp_rate) / (num_patient)
+                                            else:                                                
+                                                obs_mat[action.getIndex()]\
+                                                    [state.getIndex()]\
+                                                    [observation.getIndex()]\
+                                                    = (1.0-tp_rate) / (num_patient-1)
 
                     elif action.var == 'recipient':
                         tp_rate = 1.0 / pow(num_recipient, magic_number)
@@ -531,11 +558,29 @@ class PomdpGenerator(object):
                                                 [state.getIndex()]\
                                                 [observation.getIndex()]\
                                                 = tp_rate
+                                        elif observation.getrecipientIndex() == \
+                                            (num_recipient - 1):
+                                            if self.is_plus:
+                                                obs_mat[action.getIndex()]\
+                                                    [state.getIndex()]\
+                                                    [observation.getIndex()]\
+                                                    = ((1.0-tp_rate) / (num_recipient)) * 2
+                                            else:
+                                                obs_mat[action.getIndex()]\
+                                                    [state.getIndex()]\
+                                                    [observation.getIndex()]\
+                                                    = (1.0-tp_rate) / (num_recipient-1)
                                         else:
-                                            obs_mat[action.getIndex()]\
-                                                [state.getIndex()]\
-                                                [observation.getIndex()]\
-                                                = (1.0-tp_rate) / (num_recipient-1)
+                                            if self.is_plus and (state.getrecipientIndex() != (num_recipient-1)):
+                                                obs_mat[action.getIndex()]\
+                                                    [state.getIndex()]\
+                                                    [observation.getIndex()]\
+                                                    = (1.0-tp_rate) / (num_recipient)
+                                            else:
+                                                obs_mat[action.getIndex()]\
+                                                    [state.getIndex()]\
+                                                    [observation.getIndex()]\
+                                                    = (1.0-tp_rate) / (num_recipient-1)
                     
                 elif action.q_type == 'polar':
                     if action.var == 'task':
@@ -789,15 +834,16 @@ class PomdpGenerator(object):
 
 def main():
 
-    r_max = 20.0
-    r_min = -20.0
+    r_max = 50.0
+    r_min = -50.0
 
     wh_cost = -1.5
     yesno_cost = -1.0
-
-    num_task = 3
-    num_patient = 3
-    num_recipient = 3
+    
+    for i in range(3,10):
+    	num_task = 1
+    	num_patient = i
+    	num_recipient = i
 
     # row corresponds to action, column to underlying state
     # all
@@ -805,10 +851,10 @@ def main():
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) 
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) + '_' + str(entry)
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) + '_' + str(entry1) + str(entry2)
-    strategy = str(num_task) + str(num_patient) + str(num_recipient)
-
-    pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        wh_cost, yesno_cost,timeout=5)
+    	strategy = str(num_task) + str(num_patient) + str(num_recipient)
+    	pomdpfile=strategy+'_new.pomdp'
+    	pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
+        	wh_cost, yesno_cost,pomdpfile,timeout=20, is_plus=False )
 
 if __name__ == '__main__':
 

@@ -14,7 +14,6 @@ from scipy import stats
 #sys.path.append('/home/szhang/software/python_progress/progress-1.2')
 from progress.bar import Bar
 import subprocess
-import gen_dis_plog
 import conf
 import re
 
@@ -23,6 +22,8 @@ import string
 
 import ast
 
+numpy.set_printoptions(suppress=True)
+
 class Simulator(object):
 
     def __init__(self, 
@@ -30,23 +31,31 @@ class Simulator(object):
         auto_state = False, 
         uniform_init_belief =True,
         print_flag=True,
-        use_plog = False,
         policy_file='policy/default.policy', 
-        pomdp_file='models/default.pomdp', 
-        trials_num=1000,
+        pomdp_file='models/default.pomdp',
+        pomdp_file_plus=None,
+        policy_file_plus=None,
+        trials_num=1,
         num_task=1, 
         num_patient=1,
-        num_recipient=1):
+        num_recipient=1,
+        belief_threshold=0.4,
+        ent_threshold=2):
 
         # print(pomdp_file)
         # print(policy_file)
+        # generate main model
+        self.generate_model(num_task, num_patient, num_recipient, pomdp_file, False)
 
+        self.pomdp_file_plus=pomdp_file_plus
+        self.policy_file_plus=policy_file_plus
         self.auto_observations = auto_observations
         self.auto_state = auto_state
         self.uniform_init_belief = uniform_init_belief
         self.print_flag = print_flag
-        self.use_plog = use_plog
         self.trials_num = trials_num
+        self.belief_threshold = belief_threshold
+        self.ent_threshold = ent_threshold
 
         self.num_task = num_task
         self.num_patient = num_patient
@@ -56,6 +65,7 @@ class Simulator(object):
         # to read the pomdp model
         model = pomdp_parser.Pomdp(filename=pomdp_file, parsing_print_flag=False)
         self.states = model.states
+        self.states_plus= None
         self.actions = model.actions
         self.observations = model.observations
         # print self.observations
@@ -68,15 +78,15 @@ class Simulator(object):
             filename=policy_file)
 
         self.b = None   
+        self.b_plus = None   
         self.a = None
+        self.a_plus=None
         self.o = None
-
-        self.md = 'happy'
-        self.fl = True
-        self.trigger= 1 ###triggle of event in which dialog turn
+        self.o_plus= None
         # self.dialog_turn = 0
 
-        self.plog = gen_dis_plog.DistrGen()
+        self.generate_model(num_task, num_patient+1, num_recipient+1, pomdp_file_plus, True)
+        self.read_plus_model()
 
         # for semantic parser
         self.path_to_main = os.path.dirname(os.path.abspath(__file__))
@@ -110,14 +120,29 @@ class Simulator(object):
 
         self.b = self.b.T
 
+    #######################################################################
+    def init_belief_plus(self):
+
+        if self.uniform_init_belief:
+            self.b_plus = numpy.ones(len(self.states_plus)) / float(len(self.states_plus))
+                # print '\n',self.s, self.ct, self.b
+        else:
+            # here initial belief is sampled from a Dirichlet distribution
+            self.b_plus = numpy.random.dirichlet( numpy.ones(len(self.states_plus)) )
+
+        self.b_plus = self.b_plus.T
+
+
     ######################################################################
+
 
     def get_known_words_to_number(self):
         "DEBUG: getting known words to observation map"
         file_known = open(os.path.join(self.path_to_main,'data','known_words_to_obs.txt'), 'r')
         s = file_known.read()
         self.known_words_to_number = ast.literal_eval(s)
-        print(str(self.known_words_to_number))
+        if self.print_flag:
+            print(str(self.known_words_to_number))
         file_known.close()
 
     def write_known_words_to_number(self):
@@ -194,37 +219,37 @@ class Simulator(object):
     ######################################################################
     # EXPERIMENTAL: Generate model
     # Saeid: this method is working fine now, only name of pomdp and policy files needs to be updated in future to avoid conflicts
-    def generate_new_model(self):
+    def generate_model(self, num_task, num_patient, num_recipient, file_name, is_plus):
         r_max = 20.0
         r_min = -20.0
 
         wh_cost = -1.5
         yesno_cost = -1.0
 
-        num_task = self.num_task
-        num_patient = self.num_patient
-        num_recipient = self.num_recipient
-
-        strategy = str(num_task) + str(num_patient) + str(num_recipient)
+        # This is weird compatibility thing so i dont have to edit pomdp generator (should be fixed later)
+        strategy = file_name[:-10]
 
         pg = pomdp_generator.PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-            wh_cost, yesno_cost,timeout=5)
-
-        # once its generated:
-        # to read the pomdp model
-        model = pomdp_parser.Pomdp(filename=strategy+'_new.pomdp', parsing_print_flag=False)             # probably filename needs to be changed to a better one avoiding conflicts
-        self.states = model.states
-        self.actions = model.actions
-        self.observations = model.observations
-        # print self.observations
-        self.trans_mat = model.trans_mat
-        self.obs_mat = model.obs_mat
-        self.reward_mat = model.reward_mat
+            wh_cost, yesno_cost,pomdpfile = file_name,timeout=20, is_plus=is_plus)
 
         # to read the learned policy
-        self.policy = policy_parser.Policy(len(self.states), len(self.actions), 
-            filename=strategy+'_new.policy')
+        ##############################Saeid commented lines below ###################################
+        #self.policy = policy_parser.Policy(len(self.states), len(self.actions), 
+        #    filename=strategy+'_new.policy')
         # self.reinit_belief()
+
+    def read_plus_model(self):
+        # to read the pomdp model
+        model = pomdp_parser.Pomdp(filename=self.pomdp_file_plus, parsing_print_flag=False) 
+        self.states_plus = model.states
+        self.actions_plus = model.actions
+        self.observations_plus = model.observations
+        # print self.observations
+        self.trans_mat_plus = model.trans_mat
+        self.obs_mat_plus = model.obs_mat
+        self.reward_mat_plus = model.reward_mat
+        self.policy_plus = policy_parser.Policy(len(self.states_plus), len(self.actions_plus), 
+            filename=self.policy_file_plus)
 
     ######################################################################
     # EXPERIMENTAL: Retrain parser:
@@ -237,7 +262,7 @@ class Simulator(object):
         if useFile:
             user_input = "Test string"
         else:
-            user_input = raw_input("Enter text: ")
+            user_input = raw_input()
 
         user_input = user_input.strip().lower()
         user_input = user_input.replace("'s"," s")
@@ -270,6 +295,12 @@ class Simulator(object):
             if action == string:
                 return i
             i += 1
+    def get_action_plus(self, string):
+        i = 0
+        for action in self.actions_plus:
+            if action == string:
+                return i
+            i += 1
 
     def action_to_text(self, string):
         if string == 'ask_p':
@@ -285,7 +316,10 @@ class Simulator(object):
 
     ######################################################################
     def get_full_request(self, cycletime):
-        print self.observations # debug
+        if self.print_flag:
+            print self.observations # debug
+        
+        print "QUESTION: How can I help you?"
         user_utterances = self.get_user_input()
         parses_list = []
         unmapped_list = []
@@ -295,12 +329,12 @@ class Simulator(object):
             parses_list.append(parses)
             unmapped_list.append(unmapped)
         
-        #print parses_list,unmapped_list
-        #print "action list: ", self.actions
-        #print "selected: " + self.actions[self.a]
         patient = None
         recipient = None
-        print "PARSES LIST: ",parses_list
+
+        if self.print_flag:
+            print "PARSES LIST: ",parses_list
+
         for parses in parses_list:
             for parse,score in parses:
                 for word in str(parse).split():
@@ -309,39 +343,69 @@ class Simulator(object):
                     match = re.search('\w*(?=:it.*)', word)
                     if match:
                         patient = match.group(0)
-                        print "Patient: " + patient
+                        if self.print_flag:
+                            print "Patient: " + patient
                     match = None
                     match = re.search('\w*(?=:pe.*)', word)
                     if match:
                         recipient = match.group(0)
-                        print "Recipient: " + recipient
+                        if self.print_flag:
+                            print "Recipient: " + recipient
 
         if patient:
             # get action from key
             self.a = self.get_action('ask_p')
-
+            self.a_plus = self.get_action_plus('ask_p')
             # get observation from patient
-            ind = self.known_words_to_number[patient]
-            self.o = next(i for i in range(len(self.observations)) \
-                if self.observations[i] == ind)
-
-            # update for patient observation
+            self.observe(patient)
             self.update(cycletime)
+            # update for b+
+            self.update_plus(cycletime)
+        else:
+            self.a = self.get_action('ask_p')
+            self.a_plus = self.get_action_plus('ask_p')
+            # random/unknown observation
+            self.observe(None)
+            self.update(cycletime)
+            self.update_plus(cycletime)
+            
 
         if recipient:
             # get action from key
             self.a = self.get_action('ask_r')
-
+            self.a_plus = self.get_action_plus('ask_r')
             # get observation from patient
-            ind = self.known_words_to_number[recipient]
-            self.o = next(i for i in range(len(self.observations)) \
-                if self.observations[i] == ind)
-
+            self.observe(recipient)
             # update for recipient observation
             self.update(cycletime)
+            # update for b+
+            self.update_plus(cycletime)
+        else:
+            self.a = self.get_action('ask_r')
+            self.a_plus = self.get_action_plus('ask_r')
+            self.observe(None)
+            self.update(cycletime)
+            self.update_plus(cycletime)
 
-        print "Unmapped: ",unmapped_list
+        #print "Unmapped: ",unmapped_list
+##########################################################
+    def reinit_belief(self, added_type):
+        m = self.num_patient + 1
+        n = self.num_recipient + 1
+        if added_type == 'p':
+            for i in range(m):
+                self.b_plus[(n * i + (n - 1))] = 0
+        elif added_type == 'r':
+            for i in range(n):
+                self.b_plus[(n * (m - 1) + i)] = 0
 
+        b_sum = sum(self.b_plus)
+
+        # renormalize
+        for i in range(len(self.b_plus)):
+            self.b_plus[i] = self.b_plus[i]/b_sum
+
+    
     def add_new(self, raw_str):
         print "DEBUG: adding new"
         #file_init_train = open(os.path.join(self.path_to_experiment,'data','fold0_init_train.ccg'),'a')
@@ -353,19 +417,25 @@ class Simulator(object):
         file_geo_consts_write = open(os.path.join(self.path_to_experiment,'resources','geo.consts.ont'),'w')
         file_geo_consts_write.writelines([item for item in lines[:-1]])
 
-        if self.actions[self.a] == 'ask_p':
+        #if self.actions[self.a] == 'ask_p':
+        belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, self.num_patient+1, self.num_recipient+1)
+        if belief_pm > belief_rn:
+            self.reinit_belief('p')
             self.num_patient += 1
             self.known_words_to_number[raw_str] = 'p'+str(self.num_patient - 1)
             file_seed.write(raw_str + " :- NP : " + raw_str + ":it\n")
             file_nplist.write(raw_str + " :- NP : " + raw_str + ":it\n")            
             file_geo_consts_write.write(raw_str + ":it\n")
-
-        elif self.actions[self.a] == 'ask_r':
+            
+        #elif self.actions[self.a] == 'ask_r':
+        else:
+            self.reinit_belief('r')
             self.num_recipient += 1
             self.known_words_to_number[raw_str] = 'r'+str(self.num_recipient - 1)
             file_seed.write(raw_str + " :- NP : " + raw_str + ":pe\n")
             file_nplist.write(raw_str + " :- NP : " + raw_str + ":pe\n")
             file_geo_consts_write.write(raw_str + ":pe\n")
+            
 
         file_geo_consts_write.write(")\n")
         self.write_known_words_to_number()
@@ -378,64 +448,106 @@ class Simulator(object):
         file_seed.close()
         self.retrain_parser()
 
-        #self.generate_new_model()
+        self.num_patient += 1
+        self.num_recipient += 1
+        self.b = self.b_plus
+        self.states = self.states_plus
+        self.actions = self.actions_plus
+        self.s = self.s_plus
+        self.observations = self.observations_plus
+        self.trans_mat = self.trans_mat_plus
+        self.obs_mat = self.obs_mat_plus
+        self.reward_mat = self.reward_mat_plus
+        self.policy = self.policy_plus
+
+        # generate new plus model
+        #self.generate_model(self.num_task, self.num_patient+1, self.num_recipient+1, self.pomdp_file_plus, True)
+        #self.read_plus_model()
 
     #######################################################################
-    def observe(self, ind):
+    def observe(self, raw_str):
         self.o = None
 
-        if self.auto_observations:
-            # not functional right now
-            sys.exit("Error: Auto observation not implemented")
-        else:
-            # main part
-            ind = self.get_observation_from_name(ind)
+        ind = self.get_observation_from_name(raw_str)
 
-            if ind == None:
+        if ind == None:
+            if self.print_flag:
                 print "DEBUG: Not found in list of observations"
-                rand = numpy.random.random_sample()
-                acc = 0.0
-                for i in range(len(self.observations)):
-                    acc += self.obs_mat[self.a, self.s, i]
-                    if acc > rand:
-                        self.o = i
-                        break
-                if self.o == None:
-                    sys.exit('Error: observation is not properly sampled')
-            else:
-                self.o = next(i for i in range(len(self.observations)) \
-                    if self.observations[i] == ind)
+
+            q_type = str(self.actions[self.a][-1])
+
+            domain = [self.observations.index(o) for o in self.observations if q_type in o]
+            #print domain
+            self.o = numpy.random.choice(domain)
+        else:
+            for i in range(len(self.observations)):
+                if self.observations[i] == ind:
+                    self.o = i
 
 
     #######################################################################
     def update(self,cycletime):
-
         new_b = numpy.dot(self.b, self.trans_mat[self.a, :])
-
         new_b = [new_b[i] * self.obs_mat[self.a, i, self.o] for i in range(len(self.states))]
-
-        # print 'sum of belief: ',sum(new_b)
-
         self.b = (new_b / sum(new_b)).T
 
-        if cycletime == self.trigger and self.use_plog and (self.md == 'sad' or self.fl == False):
-
-            if self.b[len(self.tablelist)] == 1:
-                return
-            # print '\n',self.b
-            #belief = self.plog.cal_belief(mood = self.md, foll = self.fl, pdpDist = self.b, curr_table = self.ct, prev_table = self.pt).split(',')
-            # belief = self.plog.cal_belief(mood = 'sad', pdpDist = self.b, curr_table = self.ct).split(',')
-            for i in range(len(belief)):
-                belief[i] = float(belief[i].strip())
-            self.b = numpy.array(belief)
-            self.b = self.b/ sum(self.b)
 
     #######################################################################
+    #######################################################################
+    def update_plus(self,cycletime):
+        #print self.actions_plus[self.a_plus]
+        if self.actions_plus[self.a_plus] == "ask_r" or self.actions_plus[self.a_plus] == "ask_p":
+            return
+
+        new_b_plus = numpy.dot(self.b_plus, self.trans_mat_plus[self.actions_plus.index(self.actions[self.a]), :])
+        new_b_plus = [new_b_plus[i] * self.obs_mat_plus[self.actions_plus.index(self.actions[self.a]), i, self.observations_plus.index(self.observations[self.o]),] for i in range(len(self.states_plus))]
+
+        # print 'sum of belief: ',sum(new_b)
+        self.b_plus = (new_b_plus / sum(new_b_plus)).T
+
+
+    def entropy_check(self, entropy):
+        if entropy > (0.40358 * self.num_patient + 0.771449):
+            return True
+
+        return False
+
+
+    # for this domain n = num_patients, m = num_patients in the belief distribution
+    def get_marginal_edges(self, b, n, m):
+        belief_rn = 0
+        for i in range(m):
+            belief_rn += b[n * i + n - 1]
+
+        belief_pm = 0
+        for i in range(n):
+            belief_pm += b[n * (m - 1) + i]
+
+        return belief_rn, belief_pm
+
+
+    def belief_check(self):
+        n = self.num_recipient + 1
+        m = self.num_patient + 1
+
+        belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, n, m)
+
+        if self.print_flag:
+            print "DEBUG: Marginal rn = ",belief_rn
+            print "DEBUG: Marginal pm = ",belief_pm
+
+        if belief_rn > self.belief_threshold or belief_pm > self.belief_threshold:
+            return True
+
+        return False
+
+
     def run(self):
         self.retrain_parser()
 
         cost = 0.0
         self.init_belief()
+        self.init_belief_plus()
 
         reward = 0.0
         overall_reward = 0.0
@@ -445,44 +557,69 @@ class Simulator(object):
         current_entropy = float("inf")
         old_entropy = float("inf")
         inc_count = 0
+        added = False
 
         while True:
             cycletime += 1
 
             # print self.b
 
-            if self.print_flag:
-                print('\tstate:\t' + self.states[self.s] + ' ' + str(self.s))
-                print('\tcost so far:\t' + str(cost))
+            ##if self.print_flag:
+                ##print('\tstate (plus):\t' + self.states_plus[self.s_plus] + ' ' + str(self.s_plus))
+                ##print('\tcost so far:\t' + str(cost))
 
             # select action
             # entropy
             old_entropy = current_entropy
             current_entropy = stats.entropy(self.b)
-            print "DEBUG: Entropy = ",current_entropy
+            current_entropy_plus = stats.entropy(self.b_plus)
+            
+            if self.print_flag:
+                print "DEBUG: Entropy = ",current_entropy
+                print "DEBUG: Entropy_plus = ",current_entropy_plus
+            
             # check if entropy increased
             if (old_entropy < current_entropy):
                 inc_count += 1
-                print "DEBUG: entropy increased"
+                if self.print_flag:
+                    print "DEBUG: entropy increased"
 
-            if(current_entropy > 2.3):
+            if (self.entropy_check(current_entropy)):
                 self.get_full_request(cycletime)
+                if self.print_flag:
+                    print('\nbelief:\t' + str(self.b))
+                    print('\nbelief+:\t' + str(self.b_plus))
             else:
+                done = False
                 self.a = int(self.policy.select_action(self.b))
+                self.a_plus = self.actions_plus.index(self.actions[self.a])
             
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
-                    # uncomment this later
-                    try:
-                        print('QUESTION: ' + self.action_to_text(self.actions[self.a]))
-                    except:
-                        print('self.action_to_text is None, maybe this line needs to be fixed')
-                raw_str = raw_input("Input observation: ")
+                    
+                    print 'num_recipients', self.num_recipient
+                    print 'num_patients', self.num_patient
+
+                question = self.action_to_text(self.actions[self.a])
+                if question:
+                    print('QUESTION: ' + question)
+                elif ('go' in self.actions[self.a]):
+                    print('EXECUTE: ' + self.actions[self.a])
+                    done = True
+
+
+                if done == True:
+                    break
+
+                raw_str = raw_input("ANSWER (enter a word): ")
 
                 # check entropy increases arbitrary no of times for now
-                if (inc_count > 2):
-                    print "--- new item/person ---"
-                    self.add_new(raw_str)
+                if (added == False):
+                    if(inc_count > self.ent_threshold or self.belief_check()):
+                        if (self.actions[self.a] == "ask_p" or self.actions[self.a] == "ask_r"):
+                            print "--- new item/person ---"
+                            added = True
+                            self.add_new(raw_str)
 
                 self.observe(raw_str)
                 if self.print_flag:
@@ -490,76 +627,140 @@ class Simulator(object):
 
                 self.update(cycletime)
                 if self.print_flag:
-                    print('\nbelief:\t' + str(self.b))
+                    print('\n\tbelief: ' + str(self.b))
+
+                self.update_plus(cycletime)
+                if self.print_flag:
+                    print('\n\tbelief+: ' + str(self.b_plus))
 
 
-            overall_reward += self.reward_mat[self.a, self.s]
+            ## overall_reward += self.reward_mat_plus[self.a_plus, self.s_plus]
             # print('current cost: ' + str(self.reward_mat[self.a, self.s]))
             # print('overall cost: ' + str(overall_reward))
             # print self.actions[self.a]
 
-            if 'go' in self.actions[self.a]:
+            if self.a_plus == None:
+                continue
+
+            if 'go' in self.actions_plus[self.a_plus]:
                 # print '--------------------',
-                if self.print_flag is True:
-                    print('\treward: ' + str(self.reward_mat[self.a, self.s]))
-                reward += self.reward_mat[self.a, self.s]
+                ##if self.print_flag is True:
+                    ##print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
+                ##reward += self.reward_mat_plus[self.a_plus, self.s_plus]
                 break
-            else:
-                cost += self.reward_mat[self.a, self.s]
+            ##else:
+                ##cost += self.reward_mat_plus[self.a_plus, self.s_plus]
 
             if cycletime == 20:
-                cost += self.reward_mat[self.a, self.s]
+                ##cost += self.reward_mat_plus[self.a_plus, self.s_plus]
                 break
 
-        return reward, cost, overall_reward
+        ##return reward, cost, overall_reward, added
+        return
 
     #######################################################################
+    '''
     def run_numbers_of_trials(self):
 
         cost_list = []
         success_list = []
         reward_list = []
         overall_reward_list = []
+        
+        # for new item or person
+        true_positives = 0.0
+        false_positives = 0.0
+        true_negatives = 0.0
+        false_negatives = 0.0
 
         string_i = ''
         string_p = ''
         string_r = ''
+
+        # save initial values to reset before next run
+        initial_num_recipient = self.num_recipient
+        initial_num_patient = self.num_patient
+        initial_states = self.states
+        initial_actions = self.actions
+        initial_observations = self.observations
+        initial_trans_mat = self.trans_mat
+        initial_obs_mat = self.obs_mat
+        initial_reward_mat = self.reward_mat
+        initial_policy = self.policy
+
         
         bar = Bar('Processing', max=self.trials_num)
 
         for i in range(self.trials_num):
 
+            # seed random for experiments
+            numpy.random.seed(i+9309)
+
             # get a sample as the current state, terminal state exclusive
             if self.auto_state:
-                self.s = numpy.random.randint(low=0, high=len(self.states)-1,
-                    size=(1))[0]
-                tuples = self.states[self.s].split('_')
-                ids = [int(tuples[0][1]),int(tuples[1][1]),int(tuples[2][1])]
-                self.ct = numpy.random.randint(low=0, high=len(self.tablelist),size=(1))[0] ###curr table
-                self.pt = self.ct - 1 if self.ct != 0 else len(self.tablelist)-1
-                self.md = 'happy'
-                self.fl = True
-                # print self.tablelist[self.ct], ids
-                if self.tablelist[self.ct][0] != ids[0] and self.tablelist[self.ct][1] != ids[1] and self.tablelist[self.ct][2] != ids[2]:
-                     self.md = 'sad'
-                if self.tablelist[self.pt][0] == ids[0] and self.tablelist[self.pt][1] == ids[1] and self.tablelist[self.pt][2] == ids[2]:
-                     self.fl = False
+                # 50% chance fixed to select unknown state
+                unknown_state = numpy.random.choice([True, False])
+
+                if unknown_state == False:
+                    self.s = numpy.random.randint(low=0, high=len(self.states)-1, size=(1))[0]
+                    tuples = self.states[self.s].split('_')
+                    ids = [int(tuples[0][1]),int(tuples[1][1]),int(tuples[2][1])]
+                    self.s_plus = self.states_plus.index(self.states[self.s])
+                else:
+                    unknown_set = set(self.states_plus) - set(self.states)
+                    unknown_set = list(unknown_set)
+                    selected = numpy.random.choice(unknown_set)
+                    self.s_plus = self.states_plus.index(selected)
+
             else:
-                self.s = int(input("Please specify the index of state: "))
+                self.s_plus = int(input("Please specify the index of state: "))
+
+            #!!! important note: State self.s not used as goal anymore, since we need new items to be possible as well,
+            #instead self.s_plus is used to compare 
+
+            #self.s_plus = self.states_plus.index(self.states[self.s])
+            print self.states_plus[self.s_plus]
+            print self.states
+            if str(self.states_plus[self.s_plus]) in self.states:
+                is_new = False
+            else:
+                is_new = True
 
             # run this episode and save the reward
-            reward, cost, overall_reward = self.run()
+            reward, cost, overall_reward, added = self.run()
             reward_list.append(reward)
             cost_list.append(cost)
             overall_reward_list.append(overall_reward)
+ 
 
-            guide_index = int(self.a - (3 + self.num_task + self.num_patient \
-                + self.num_recipient))
-
-            if guide_index == int(self.s):
+            # use string based checking of success for now
+            if (str(self.states_plus[self.s_plus]) in self.actions[self.a]) and (is_new == added):
                 success_list.append(1.0)
             else:
                 success_list.append(0.0)
+
+            if is_new == True and added == True:
+                true_positives += 1
+            elif is_new == True and added == False:
+                false_negatives += 1
+            elif is_new == False and added == True:
+                false_positives += 1
+            elif is_new == False and added == False:
+                true_negatives += 1
+
+            # reset for next run
+
+            self.num_patient = initial_num_patient
+            self.num_recipient = initial_num_recipient
+            self.num_recipient = initial_num_recipient
+            self.num_patient = initial_num_patient
+            self.states = initial_states
+            self.actions = initial_actions
+            self.observations = initial_observations
+            self.trans_mat = initial_trans_mat
+            self.obs_mat = initial_obs_mat
+            self.reward_mat = initial_reward_mat
+            self.policy = initial_policy
 
             bar.next()
 
@@ -579,32 +780,47 @@ class Simulator(object):
         print('average overall reward: ' + str(numpy.mean(overall_reward_arr)) + \
             ' with std ' + str(numpy.std(overall_reward_arr)))
 
+        print('True positives (%):' + str(true_positives))
+        print('False positives (%):' + str(false_positives))
+        print('True negatives (%):' + str(true_negatives))
+        print('False negatives (%):' + str(false_negatives))
+
+        precision = true_positives/(true_positives + false_positives)
+        recall = true_positives/(true_positives + false_negatives)
+        print('Precision:' + str(precision))
+        print('Recall:' + str(recall))
+
         return (numpy.mean(cost_arr), numpy.mean(success_arr), \
-            numpy.mean(reward_arr))
+            numpy.mean(overall_reward_arr), precision, recall)
+    '''
+
 
 def main():
     # the number of variables are stored in this file for now
     f = open("./data/num_config.txt")
     num = f.readline().split()
-    print num
 
     s = Simulator(uniform_init_belief = True, 
         auto_state = True, 
         auto_observations = False, # was true
-        print_flag = True, 
-        use_plog = False,
-        policy_file = '333_new.policy', 
-        pomdp_file =  '333_new.pomdp',
-        trials_num = 10,
+        print_flag = False, 
+        policy_file = 'main_new.policy', 
+        pomdp_file =  'main_new.pomdp',
+        policy_file_plus = 'main_plus_new.policy',
+        pomdp_file_plus = 'main_plus_new.pomdp',
+        trials_num = 1,
         num_task = int(num[0]), 
         num_patient = int(num[1]), 
-        num_recipient = int(num[2]))
+        num_recipient = int(num[2]),
+        belief_threshold = 0.4,
+        ent_threshold = 2)
  
     if not s.uniform_init_belief:   
         print('note that initial belief is not uniform\n')
 
-    s.run_numbers_of_trials()
-    #s.generate_new_model()
+    ##s.run_numbers_of_trials()
+    s.run()
+
 if __name__ == '__main__':
     main()
 
