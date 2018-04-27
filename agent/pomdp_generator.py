@@ -416,13 +416,17 @@ class PomdpGenerator(object):
         print 'Training for '+ str(timeout)+' seconds'
 
         pomdpsol_path = None
-        file_path = open('config/sarsop_path','r')
-        if file_path.mode == 'r':
-            pomdpsol_path = file_path.read()
+
+        try:
+            file_path = open('config/sarsop_path','r')
+            pomdpsol_path = file_path.read().strip()
             file_path.close()
-        else:
-            print "Error: could not open pomdp solver path file 'config/sarsop_path'"
+        except IOError:
+            print "Error: enter correct path in config/sarsop_path"
+            file_path = open('config/sarsop_path','w')
+            file_path.close()
             exit(1)
+        #pomdpsol_path = '~/catkin_ws/src/dialog_manager_language_learning/agent/sarsop/src/pomdpsol'
 
         if os.path.isfile(pomdpsol_path):
             pomdpsol = pomdpsol_path
