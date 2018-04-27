@@ -1,0 +1,74 @@
+
+identity={alice,bob,carol}. 
+college={engineering,education,bussiness}.
+years={seventies,eighties,nineties}.
+
+mood={happy,sad}. 
+following={yes,no}. 
+
+#domain identity(I;I1).
+#domain college(C;C1).
+#domain years(Y;Y1). 
+
+#domain mood(M). 
+#domain following(F). 
+
+
+table(alice,engineering,seventies). 
+table(alice,education,eighties). 
+table(bob,education,nineties). 
+table(carol,bussiness,nineties). 
+
+interest_m: mood. 
+interest_f: following. 
+
+interest_i: identity. 
+interest_c: college. 
+interest_y: years. 
+
+
+[rm] random(interest_m).
+[rf] random(interest_f). 
+
+[ri] random(interest_i). 
+[rc] random(interest_c). 
+[ry] random(interest_y). 
+
+invalid :- interest_i=I, interest_c=C, interest_y=Y, not table(I,C,Y). 
+invalid :- curr_table(I,C,Y), not table(I,C,Y). 
+invalid :- last_table(I,C,Y), not table(I,C,Y). 
+invalid=false :- not invalid. 
+
+curr_table(I,C,Y)=false :- not curr_table(I,C,Y). 
+last_table(I,C,Y)=false :- not last_table(I,C,Y). 
+
+curr_known :- curr_table(I,C,Y). 
+curr_known=false :- not curr_known. 
+
+[ri] pr(interest_i=I | curr_table(I,C,Y), interest_m=sad) = 2/10.
+[rc] pr(interest_c=C | curr_table(I,C,Y), interest_m=sad) = 2/10.
+[ry] pr(interest_y=Y | curr_table(I,C,Y), interest_m=sad) = 2/10.
+
+[ri] pr(interest_i=I | last_table(I,C,Y), interest_f=no, curr_known=false) = 8/10.
+[rc] pr(interest_c=C | last_table(I,C,Y), interest_f=no, curr_known=false) = 8/10.
+[ry] pr(interest_y=Y | last_table(I,C,Y), interest_f=no, curr_known=false) = 8/10.
+
+best_t(I,C,Y) :- interest_i=I, interest_c=C, interest_y=Y. 
+best_t(I1,C1,Y1)=false :- best_t(I,C,Y), I<>I1. 
+best_t(I1,C1,Y1)=false :- best_t(I,C,Y), C<>C1. 
+best_t(I1,C1,Y1)=false :- best_t(I,C,Y), Y<>Y1. 
+
+%?{best_t(alice,engineering,seventies)} | obs(invalid=false), obs(interest_m=sad), do(curr_table(carol,bussiness,nineties)), do(last_table(bob,education,nineties)). 
+%?{best_t(alice,education,eighties)} | obs(invalid=false), obs(interest_m=sad), do(curr_table(carol,bussiness,nineties)), do(last_table(bob,education,nineties)). 
+%?{best_t(bob,education,nineties)} | obs(invalid=false), obs(interest_m=sad), do(curr_table(carol,bussiness,nineties)), do(last_table(bob,education,nineties)). 
+%?{best_t(carol,bussiness,nineties)} | obs(invalid=false), obs(interest_m=sad), do(curr_table(carol,bussiness,nineties)), do(last_table(bob,education,nineties)). 
+
+%?{best_t(alice,engineering,seventies)} | obs(invalid=false), obs(best_t(bob,education,nineties)=false), do(last_table(bob,education,nineties)). 
+%?{best_t(alice,education,eighties)} | obs(invalid=false), obs(best_t(bob,education,nineties)=false), do(last_table(bob,education,nineties)). 
+%?{best_t(bob,education,nineties)} | obs(invalid=false), obs(best_t(bob,education,nineties)=false), do(last_table(bob,education,nineties)). 
+?{best_t(carol,bussiness,nineties)} | obs(invalid=false), obs(best_t(bob,education,nineties)=false), do(last_table(bob,education,nineties)). 
+
+%?{best_t(alice,engineering,seventies)} | obs(invalid=false), obs(interest_f=no), do(last_table(bob,education,nineties)). 
+%?{best_t(alice,education,eighties)} | obs(invalid=false), obs(interest_f=no), do(last_table(bob,education,nineties)). 
+%?{best_t(bob,education,nineties)} | obs(invalid=false), obs(interest_f=no), do(last_table(bob,education,nineties)). 
+%?{best_t(carol,bussiness,nineties)} | obs(invalid=false), obs(interest_f=no), do(last_table(bob,education,nineties)). 

@@ -1,0 +1,21 @@
+[P1T2] ============ (Job load_and_test started)
+[P1T2] 1 : ==================
+[P1T2] bring to james
+(lambda $0:e $0)
+[P1T2] Test parsing time 0.06
+[P1T2] no parses
+[P1T2] EXACT stats -- recording no parse
+[P1T2] [EXACT stats]  Record failure.
+[P1T2] EMPTY Parsing time 0.044000
+[P1T2] no parses
+[P1T2] EXACT stats -- recording no parse with skipping
+[P1T2] [EXACT stats]  Record sloppy failure.
+[P1T2] === EXACT statistics:
+Recall: 0.0/1.0 = 0.0
+Precision: 0.0/0.0 = 0.0
+F1: 0.0
+SKIP Recall: 0.0/1.0 = 0.0
+SKIP Precision: 0.0/0.0 = 0.0
+SKIP F1: 0.0
+[P1T2] Total run time 0.1080 seconds
+[P1T2] ============ (Job load_and_test completed)

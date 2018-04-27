@@ -1,0 +1,1379 @@
+LPARSE VERSION HISTORY
+
+1.1.2 (8.3.10)
+	Cleaned the code so that it compiles with no problems with new g++
+	versions and tweaked configure script so that you may now define
+	the compiler tools with command line options CC, BISON, and LEX.
+
+1.1.1  (10.10.07)
+    Fixed a bunch of small memory errors. Added a workaround skipping
+    a possible bug in g++ 4.1.2's STL implementation. 
+	
+	Range definitions of the form foo(1..n, 1..m) got broken in the
+	change as did negative weights.
+
+    Added a couple of new examples.  
+
+1.1.0 (3.10.07)
+
+    New version for a too long time. This version contains quite a bit
+    of internal chances to make the source code to better conform with
+    the C++ standard. As a part of that I got rid of the automake
+    scripts that were causing more problems than solving. 
+
+    These major changes mean that it is possible that something got
+    broken in the way. So, it is probable that there will soon be
+	a new version.
+
+1.0.17 (13.10.05)
+
+    Bugfixes. When using the option '-d all' some rules were printed
+    twice. Another problem was that a choice rule with an empty head
+    got passed to smodels that didn't like it. Now, the user has two
+    choices. The default is that such rules are always dropped out
+    from the input (as they are trivially true). However, if the
+    command line option '--empty-choices' is set, they are printed but
+    with the atom '_false' occuring as the only atom in the choice.
+
+1.0.16 (30.09.05)
+
+    Added support for including debugging data to lparse output. This
+    is used by the exteremely experimental 'smdebug' debugger. Debug
+    information is printed if the command line option
+
+        --debug
+
+    is included. 
+
+    There is now also a (again, very experimental) static typechecker
+    'typecheck' available that uses the #type and #predicate
+    declarations that were added in the last version. 
+
+    Both 'smdebug' and 'typecheck' are included in the lparse
+    distribution in the new directory 'tools'.
+
+1.0.15 (30.05.05)
+
+    This version is basically a bugfix that removes three memory
+    errors. There are two new features. Firs is the declaration:
+
+	   #nondomain a(X) 
+
+    That defines 'a/1' to be a non-domain predicate even if it would
+    syntactically be a domain predicate. 
+
+    There is also a new command line option
+
+        --only-facts
+  
+    Setting it causes lparse to output only the domain predicates of
+    the program and the non-domain part is not instantiated.
+
+    The syntax also recognizes two new declarations that are not yet
+    fully implemented:
+
+        #type 
+        #predicate
+
+    these will be used to implement strong type checking but right
+    now they do nothing. 
+
+1.0.14 (2.5.05)
+
+     This version changed the handling of '--dlp' option. Now, in the
+     choice rules and disjunctive rules are handled differently in
+     both input and output. When using only '--dlp', you can't mix the
+     two, but mixing is allowed when using the option '--dlp-choice'.
+     (If you mix them, make certain that your solver understands
+     both). The possible special head types are now:
+
+         { a, b, c } :- body.        % choice rule.
+         2 { a(X) : d(X) } 2:- body. % choice rule. 
+
+    ->   a | b | c :- body.          % disjunctive rule
+    ->   | a(X) : d(X) | :- body.    % disjunctive rule  
+      
+         1 [ a(X) : b(X) = X ] 2.    % weight rule
+
+         a x b x c :- body.          % ordered disjunction
+
+     In the textual output disjunctive rules are denoted by having
+     a '|' separate the atoms in the head. Thus, the program
+
+         d(1..3).
+         | a(X) : d(X) |.
+  
+     instantiates to:
+
+         a(1) | a(2) | a(3).
+
+     When outputting the smodels format, a disjunction has the rule
+     identifier '8' and it is otherwise similar to a choice rule, so
+     the above rule becomes:
+
+        8 3 1 2 3 0 0
+
+     There is another change in the language in that negative
+     literals are no longer allowed in choice rule heads. This
+     change was made because the semantics was not really
+     well-defined and especially it wasn't what the user would
+     reasonably expect. 
+
+     The default command line behavior is now to output all
+     warnings. The warnings may be surpressed with command line
+     options if desired (-W none turns warnings off and adding '~' in
+     front of a warning turns off that particular one). 
+
+     There are now several new command line options:
+
+         --dlp-choice    --- allow mixing disjunctive and choice
+                             rules. 
+         --all-symbols   --- output all atom names, even internal
+                             ones. 
+         --dependency-graph 
+                         --- print the dependency graph of the
+                             program in the form of logic programming
+                             facts. 
+         --debug         --- output debugging information for rules.
+                             This functionality is not yet complete. 
+         --strict        --- enable strong typing. This does not work
+                             yet. 
+         --check-tightness 
+                         --- check whether it is completely certain
+                             that the outputted portion of the
+                             program is tight, and include the result
+                             at the very end of the program. Note that
+                             this analyses only the non-ground program
+                             and it is possible that the program is
+                             tight even though this check misses it. 
+
+      This version also contains lots of small bugfixes.
+
+
+1.0.13 (19.6.03)
+      Empty programs are now again handled gracefully. The option
+      `--dlp' produced few irrelevant rules. Warnings for using
+      general constraint literals together with `--dlp' weren't
+      printed. 
+
+1.0.12 (26.3.03)
+      Fixed a typo in error.cc. Added few missing declarations. Also,
+      empty rules now produce unsatisfiable programs.
+
+
+1.0.11 (30.9.02)
+      Changed the behavior of `-d all' switch. Now, the domain facts
+      that are derived using rules of the form:
+       
+    a(1..2)
+    b(X) :- a(X).
+    
+      are no longer explicitly added to the output as facts. 
+
+      Fixed a bug with '#domain' declaration that occurred when using
+      rules of the form:
+ 
+    #domain d(X).
+    a :- 1 { nd(X) }.
+      
+
+1.0.10 (17.6.02)
+      Added support for preference programming using ordered
+      disjunctions. They work with 'psmodels' modification of smodels
+      proper. The relevant arguments are:
+
+        --priorities --- enable ordered disjunction priorities
+        --cardinality-optimal --- use cardinality preference semantics 
+        --inclusion-optimal --- use inclusion preference semantics
+                                (default) 
+        --pareto-optimal --- use pareto-optimality criterion in
+                             priorities
+        --interactive-priorities --- generate rules for interctive
+                                     priority resolution 
+      
+      The accepted syntax is:
+ 
+          a x b.   % Define a choice over a and b, a preferred. 
+       r: a x b.   % As above, but give the name 'r' to the choice
+       q: b x a.   % And again, name 'q'
+          priority(r, q).  % define that it is more important to satisfy
+                           % 'r' than it is to satisfy 'q'.
+
+      The differences between the semantics are explained in Brewka,
+      Niemelä, Syrjänen: "Implementing Ordered Disjunctions",
+      JELIA-02. Note that psmodels doesn't support interactive
+      definition of meta-priorities, yet, no matter what lparse source
+      might imply.
+
+      Fixed few bugs: sometimes when domain predicates were defined in
+      the end of a program, lparse would fail to identify them. Also,
+      error messages when undefined constants were used were rather
+      cryptic. 
+
+
+1.0.9 (12.9.01)
+      The `#domain' declaration didn't work correctly always for all
+      variables occuring in rules. 
+
+      Cleaned up code for `-Wunsat' a little and now there's less
+      spurious warnings. 
+
+1.0.8 (30.8.01)
+      A host of bugs fixed. First, there was a problem with compute
+      statements containing domain predicates when `-d none'
+      command-line option was used.
+
+      Next, the option `--true-negation' and hide declarations didn't
+      work correctly together and constraints of the form:
+
+        :- b, -b.
+ 
+      were usually left out when b was hidden. (At least for now `hide
+      b.' will hide both `b' and `-b' at the same time.)
+
+      Also, if an empty hide declaration was given, then the names of
+      symbolic functions would be garbled.
+
+1.0.7 (17.8.01)
+      There was a rather embarassing bug in code handling 0-ary atoms
+      that could cause some rules to be lost. In particular, the
+      following construction didn't work correctly:
+
+         a :- b. 
+     b :- a. 
+     a.
+     c :- a, b.
+      
+      There are now two more internal functions: exponentation a**b
+      and a norm-function ||d(X)|| that finds out the size of the
+      extension of a domain predicate d(X). The latter makes it
+      possible to write code like:
+
+        { choose(X) : option(X) }. % option(X) defined in other file
+    number( 0.. ||option(X)||).
+    count_chosen_options(I) :- I { choose(X) : option(X) } I,
+                                   number(I).
+
+      So, in effect you can now count things a little easier. However,
+      be careful when domains are large since it is quite easy to get
+      an exponential blowup using this. 
+
+1.0.6 (25.6.01)
+      Three more bugs squashed, all memory bugs this time. Lparse
+      segfaulted sometimes trying to ground 0-ary predicates. The
+      warning -Wsimilar also potentially caused problems. Third, using
+      hide statements on transitive domain predicates with textual
+      output could crash the program. 
+
+1.0.5 (4.6.01)
+      Fixed several bugs. First, lparse sometimes ended in an infinite
+      loop if there were rules of the form:
+ 
+         a(X) :- d1(X), d2(X+1).
+
+      where both `d1' and `d2' were domain predicates.
+
+      Second, there were two bugs with warnings. Lparse would
+      segmentation fault with some warning combinations if the warning
+      level was defined using the #option statement:
+
+         #option -Wall
+
+      The other problem was that there were incorrect warnings about
+      different const declarations when there shouldn't have been. 
+
+      Finally, rules of the form:
+
+        a(X) :- b(X+1).
+
+      got through the domain-restriction check only to cause a
+      combination of a runtime error and an internal error later. (A
+      rule: a(X-1) :- b(X) works well). 
+
+1.0.4 (21.3.01)
+      Fixed one more bug from symbolic functions. This time things
+      went awry when symbolic functions were used in
+      recursively-defined domain predicates.
+
+1.0.3 (13.3.01)
+      The class of domain predicates was extended significantly. See
+      the User's Manual for details.
+
+      There's a new syntax for statements available. It adds the `#'
+      character in front of keywords. For example
+
+        hide a(X), b(X).
+
+      can be written as:
+
+          #hide a(X), b(X). 
+
+      Two new statements were added:
+
+          #option foo bar baz.
+      #domain a(X).
+      
+      The option statement can be used to define lparse command line
+      options directly from source code. The domain statement is a
+      notational shortcut that assigns a fixed domain to a set of
+      variables. For example, given the above domain statement, the
+      rule:
+
+          b(X) :- not c(X).
+
+      will be expanded to:
+
+          b(X) :- a(X), not c(X). 
+
+      The error and warning messages were tidied. The length of some
+      static buffers was way too short in Windows binaries. There was
+      also a bug that messed up things if there were nested symbolic
+      functions in wrong places. 
+
+1.0.2 (5.2.01)
+        A bug sometimes caused lparse to instantiate rules incorrectly
+        when there were negative numbers in the index variables of
+        domain predicates.
+
+1.0.1 (10.1.01)
+        Added a new internal function, `weight' to the language. It
+        takes one basic literal as its (only) argument and returns its
+        weight. For example, in the program:
+
+        weight a = 10.
+        b :- weight(a) > 5.
+
+    The atom `b' is true since the weight of `a' is 10. 
+
+    Four bugs were squashed. The most severe caused lparse to
+    either dump core or produce incomplete grounding if an input
+    of the following form was given:
+
+        d(-2 .. 2).
+            e(0..2).
+            b(X) :- d(X), e(X). 
+
+    The bug occurs only when the larger domain predicate (`d') has
+    some negative integer values (< -1) defined for it. In most
+    cases lparse would dump core when seeing this occur, but on
+    some cases it would silently discard the negative integers
+    from the grounding. 
+
+    When using the `-g' option, lparse identified some predicates
+    incorrectly. 
+
+    Lparse also grounded some rules of the form:
+
+        foo :- not bar(X) : baz(X). 
+
+    incorrectly. 
+
+    Optimize statements with negative weights generated malformed
+    rules that smodels rejected. 
+
+1.0 (12.12.2000)
+    I decided to make the current version of lparse the official
+    version 1.0. 
+
+0.99.62 
+    Command line constant definitions now override the const
+    declarations in the programs. 
+
+    A new option `--version' was added because it is a pretty much
+    standard option. 
+
+    Several bugfixes. The `-1' option works once more and some
+    problems with the partial model translation were fixed. 
+
+
+    Few minor tweaks to get lparse compile easier under Windows. 
+
+0.99.61 (23.11.2000)
+    Negative literals are now allowed in choice rule heads, as in:
+
+         1 { not b, not c } 1.
+    
+    Also, the semantics of weights of negative literals was
+    tweaked a bit. Now, as default, the weight of a negative
+    literal will be the same as the weight of the corresponding
+    positive literal, if no weight is defined for the negative
+    literal. So, given the following statements:
+
+         weight a = 2.
+         weight not a = 3.
+         weight b = 5
+        
+    The weight of `a' is 2, of `not a' is 3, and both `b' and 
+    `not b' have weights of 5. This defaulting can be turned off
+    with the command line argument `--separate-weight-definitions'. 
+
+    One new warnings have been added. Lparse now warns if the same
+    constant is used as both numeric and symbolic constant. This
+    will catch mistakes like: 
+
+         foo(parameter).
+         const parameter = 5.
+     
+        where the number is used before it is defined. This warning
+    is added behind the `-W similar' argument. 
+
+    A number of bugs relating to weight and constraint literals
+    were fixed. First, lparse assigned a wrong weight to a
+    non-ground literal if different instantiations of the literal
+    used different weight definitions.
+
+    Second, there was a bug that sometimes caused constraint and
+    weight rules that had conditions in negative literals to be
+    grounded incorrectly (namely, one negative literal was flipped
+    over to be positive). 
+
+    There was a memory error that caused segmentation faults if
+    the abs-operator || was used with non-ground argument. 
+    
+0.99.60 (8.11.2000)
+    Lparse's handling of quoted strings caused problems when the
+    atoms were handled by other programs. For this reason the
+    constants `"foo"' and `foo' are now different. Lparse warns of
+    mixed usage given an argument `-W similar'. The old behavior
+    (dropping quotes when possible) is available with a new
+    command line option `--drop-quotes'. 
+
+    Another change is that now positive and negative literals are
+    handled separately in the weight definitions. For example, in 
+
+             weight a = 5.
+             weight not a = 10.
+
+              :- 6 [ a, not a].
+
+        the weight of `a' is 5 and of `not a' is 10. 
+
+
+0.99.59 (15.10.2000)
+    An earlier fix had broken rules of the form:
+
+       1 { foo(X,Y) : bar(X) } 1 :- baz(Y).
+
+    Additionally, there was still one problem with symbolic
+    functions that resulted in some programs having a pretty
+    strange behavior.
+
+0.99.58 (14.9.2000)
+    Expressions in constraint and weight literals now work more
+    intuitively. For example, rules like:
+
+      a(X,Y) :- 1 { X + Y == 0, Y < X } 1,
+               foo(X,Y).
+
+        work now as expected. (That is, in this case a(X,Y) is true
+        when precisely one of the conditions hold. 
+
+    An empty condition is now everywhere considered to be an
+    unsatisfied literal. This is because the older behavior would
+    sometimes cause unintuitive behavior.
+
+    Few other bugs were fixed. First, isolated variables in rule
+    bodies caused segmentation faults. (as in: a :- X.) This was
+    fixed by disallowing them altogether. Second, lparse didn't
+    realize when a constant in a range definition was actually a
+    symbolic constant. Third, lparse would sometimes crash if
+    there were too many variables inside a constraint literal.
+
+0.99.57 (18.8.2000)
+    Lparse now (again) supports classical negation. The rules with
+    classical negations are transformed into rules without them. A
+    classical negation of an atom foo(X) is denoted with:
+
+          -foo(X).
+
+    Note that there may be no space between the minus sign and the
+    atom name. Correspondingly, expressions where `-' denotes the
+    arithmetic minus function have to be written with a space if
+    it is followed by something that looks like an atom:
+
+          1 - bar.
+
+    For each classically negated atom -a that appears in the
+    grounded program, a rule of the form:
+
+         :- a, -a. 
+
+    is added to the program. This behavior is enabled with the
+    command line switch `--true-negation'.
+
+    You may now write two-part command line arguments without a
+    space between the parts. For example, 
+
+             lparse -Wall -dnone foo.lp
+         
+    is now a valid command line. 
+
+    There was a bug that caused the lower bound in rules of the
+    form:
+
+      1 [ foo(X) : bar(X) = X ] 4.
+
+    to be counted incorrectly. 
+          
+    Also, there were a few cases where negative weights would
+    cause problems in the output. The rules were grounded
+    correctly but the output routine sometimes printed out weights
+    with wrong signs. 
+
+    There was also a minor glich with warnings that caused wrong
+    alarms when using the `-W arity' switch. 
+
+0.99.56 (31.7.2000)
+    There were a few nasty bugs in the code that handled negative
+    weights that caused invalid code to be emitted sometime.
+    Smodels would then die trying to read it. 
+
+    Another bug that was found and fixed was that the results
+    could change if the program was put through lparse more than
+    once. For example, the following command line could cause
+    problems:
+
+       lparse -t foo.lp | lparse | smodels 
+    
+
+0.99.55 (26.6.2000)
+    Lparse should now compile well under Windows with Borland C++
+    version 5.5. It may also work with other compilers but they
+    are not tested. The dynamical linking of user-defined
+    functions does not work well, and for now they should be
+    linked statically to lparse binaries. (For example, by writing
+    the code of the functions directly to the end of `library.cc'
+    and by adding corresponding `function_table->Register' calls
+    in the beginning of the file). 
+
+    It is now possible to use variables in bounds for constraint
+    and weight rules. For example:
+
+      foo :- X { bar, baz }, bound(X). 
+
+    The syntax of optimize statements was made to be consistent
+    with constraint and weight rules. Now, if you want to use
+    weights in optimize statements, use square brackets.
+
+      minimize { a, b, c }. % all literals weight 1
+      minimize [ a=2, b=3, c ]. % the literal c may use global
+                                 % weight declaration
+
+        It is now also possible to define the weight of a literal
+        in terms of another literal:
+
+      weight a(X) = b(X). 
+
+    defines a(X) to have the weight that the literal b(X) would
+    have at the point. 
+
+    Arity restrictions are now kind of back. You may still have as
+    many arguments as you want in predicates but functions are now
+    limited to 64 arguments. 
+               
+        Three old bugs were also fixed:
+        
+        Lparse tried to used $HOME environmental variable even when no
+    user-defined functions were needed causing problems when the
+    variable was not initialized. 
+
+    Weight rules of the form
+       a :- [ foo, bar ] 3.
+        behaved incorrectly sometimes. 
+
+    Also, ranges didn't work correctly if they were started from a
+        negative number.
+
+lparse-0.99.54 (22.5.2000)
+    All declarations now allow more than one literal in the
+    declaration. For example, the following lines are now legal
+    declarations:
+
+        hide a(X), b(X), c(X).
+            weight a(X) = X, a(b) = 10.
+            external a(X), b(X). 
+
+    In addition, a new declaration was added, namely, the show
+    declaration:
+
+            show a(X). 
+
+        A show declaration is the opposite of a hide declaration as it
+        marks that a predicate should be shown always. By default, all
+        predicates are shown but an empty hide declaration of the
+        form: 
+
+        hide .
+
+    states that only predicates that are explicitly shown are
+    printed. 
+
+    There is now one more experimental command line argument to be
+    used when grounding a program in two stages. The argument
+    
+    --atom-file file-name
+    
+    states that the names of the atoms in the program should be
+    diverted to the file `file-name'. For example, given a
+    program foo.lp:
+
+        a(X) :- b(X), not c(X).
+        c(X) :- b(X), not a(X).
+        b(1). 
+        compute { not c(1) }.
+
+    and the lparse command line
+
+        lparse --atom-file foo foo.lp
+
+    the output in stdout is 
+
+        1 1 1 1 2  
+        1 3 0 0 
+        1 2 1 1 1  
+        1 4 2 1 4 1 
+    
+    that is the smodels internal representation for the grounded
+    rules and the file foo contains:
+
+        1 c(1)
+        2 a(1)
+        3 b(1)
+
+    Unfortunately, it is not enough that you just catenate the two
+    outputs together and send them to smodels but you have to add
+    some glue to it. There will be some nice method to do this
+    with time but for now the missing parts have to be added by
+    hand. 
+
+    Note that there are four rules in the program instead of the
+    normal three. The final rule is generated for the compute
+    statement and it is of the form
+
+           _cant_be_true :- not _cant_be_true, c(1). 
+
+        In effect, the rule states that there is a contradiction if
+        not c(1) is false and c(1) is true. 
+
+    There was a nasty bug that caused a segmentation fault
+    sometimes when functions were used as arguments inside
+    conditions. The constructs of the form:
+
+            1 { foo(X) : bar(X) : baz(X+1) }
+
+    were affected. 
+
+    Lparse should now work faster when reading large programs. 
+
+lparse-0.99.53
+    A logic program can now be grounded in two stages. To make
+    this property useful I defined a new class of domain
+    predicates, that is, external predicates. In the first stage,
+    the external predicates are used to generate the Herbrand
+    instantiation of the program but they are not included in
+    facts in the program. In the next stage, the extensions of the
+    external atoms are combined to the program that was generated
+    in the first stage. Intuitively, in the first stage we tell
+    what atoms are possibly true and in the next stage we tell
+    what atoms are actually true. 
+
+    For example, the program:
+
+        external a(X).
+        a(1..2).
+        b(X) :- a(X).
+
+    is first grounded to:
+
+        b(1) :- a(1).
+        b(2) :- a(2).
+
+    In the next stage the user gives the domain for a.
+
+    Suppose that the first program is stored in a file foo.lp and
+    bar.lp contains only the fact a(1). Then, the following
+    command sequence calculates the models for the combined
+    program:
+
+        % lparse foo.lp > tmp_out
+        % lparse -g tmp_out bar.lp | smodels 
+            smodels version 2.25. Reading...done
+            Answer: 1
+        Stable Model: b(1) a(1) 
+        True
+
+        This feature is useful when the grounding of a program takes a
+        lot of time and there are many similar queries for the
+        program. 
+
+    The '-g' option is used to tell lparse that the following file
+    is already grounded. It is possible to use more than one
+    grounded file but you have to be certain that both have
+    exactly the same set of atoms and in exactly same order.
+    Lparse notices some of these errors but not all.
+
+    Note that lparse doesn't try to reconstruct a grounded program
+    in any way. For example, adding an atom a(3) to bar.lp in the
+    example above doesn't add the atom b(3) to the model. 
+
+    This feature is still quite experimental and its behavior may
+    possibly change in the future. Also, there are probably bugs
+    left in the code.
+
+    There was a bug that caused conditions to work incorrectly
+    sometimes when they were used in tails of domain predicates.
+    In particular, the construct:
+
+           foo(X) :- bar(X), never_satisfied(X, Y) : domain(Y). 
+
+
+lparse-0.99.52 (7.4.00)
+    Minor problem with output when using --partial. 
+
+lparse-0.99.51 (6.4.00)
+    Modified the behavior of --dlp and -r switches. Added a switch
+    --partial that behaves in the sameway as -r. 
+
+    A bug caused constraints of the form
+
+               :- body.
+
+        to fail to work correctly if option '-d none' was used and
+        there were only domain predicates in the body. 
+
+    Another bug caused problems with rules like:
+
+    { a(X), b(X+1) } :foo (X). 
+
+lparse-0.99.50 (25.3.00)
+    Lparse didn't always handle conditions correctly in weight
+    rules. In particular, rules of the form
+
+             1 [ foo(X) : bar(X, W) = W ] 2
+
+    didn't work. Sometimes the results were plain wrong and
+    sometimes lparse crashed. 
+
+lparse-0.99.49 (1.3.00)
+    Lparse mangled compute statements when smodels 1.x output was
+    used.
+
+lparse-0.99.48 (22.2.00)
+    There was a little bug introduced in 0.99.46 that caused some
+    rules to be left out of the program even with '-d all' option.
+
+    Fixed a bug that messed with optimize statements when atoms of
+    the form a("something-quoted") were used. 
+
+lparse-0.99.47 (3.2.00)
+    Added a simple API that allows the user-defined functions to
+    access symbolic constants. The details are in the manual.
+
+    Fixed a bug that once again caused internal errors sometimes
+    when nested symbolic functions were used. 
+
+lparse-0.99.46 (21.1.00)
+    Updated the "-d all" switch to include ground rules for domain
+    predicates as well as the facts.
+
+lparse-0.99.45 (18.1.00)
+    There was a bug that range definitions did not always notice
+    differencies between symbolic and numeric constants.
+
+lparse-0.99.44 (14.1.00)
+    Lparse now handles correctly the cases where there are more
+    than one relational operator in the row. However, you may use
+    only one operator in the expression.
+
+    There was a bug with '-d all' option that sometimes caused
+    incorrect atoms to be added to the model. 
+
+lparse-0.99.43 (5.1.00)
+    Changed the modulo function to work with normal mathematical
+    semantics instead of C programming language semantics (that
+    is, the modulo is now always positive).
+    
+    Also, noticed the bug that functions of the form
+
+          A < B < C
+          
+    do not work correctly. This will be fixed in next release,
+    meanwhile the construct
+
+         lt(A,B,C)
+
+    works. 
+
+lparse-0.99.42 (4.1.00)
+    Lparse messed up the symbolic functions in the rule tails if
+    the nesting depth was too large. This version fixes it and
+    additionally allows now assignments in the rule bodies to be
+    in any order (as long as there are no cycles).
+
+    There was also a bug that messed up conditions that were too
+    deep.
+    
+    Finally, a literal with symbolic functions was sometimes
+    dropped from compute and optimize statements. 
+
+lparse-0.99.41 (30.11.99)
+    If a function was used in a extended rule tail, lparse could
+    mess up the dependency graph of the program. 
+
+lparse-0.99.40 (12.11.99)
+    A typo on yesterday's fix broke the conditions from working
+    within choice rule heads. 
+
+lparse-0.99.39 (11.11.99)
+        There was a missing 'break' in a switch statement that crashed
+        the program sometimes when there were more than one function
+        argument in a literal. 
+
+    If all literals in a constraint or weight rule had functions
+    with global arguments, the lparse dropped the rule from the
+    output.
+
+lparse-0.99.38 (5.11.99)
+        There was a bug that caused a numerical constant to be treated
+        as a normal constant when they appeared as sole arguments. 
+
+lparse-0.99.37 
+    Fixed a bug where lparse didn't count the number of
+    domain predicates in a rule correctly which confused smodels.
+
+    Added a new command-line option:
+     --dlp  
+      Use disjunctive logic program semantics for separator '|',
+      ie translate rule of the form
+               a1 | ... | an :- foo
+          into 
+              { a1, ..., an } :- foo
+          instead of
+              1 { a1, ..., an } 1 :- foo
+
+lparse-0.99.36 (13.10.1999)
+    Fixed an error where an assertion failed when printing an
+    error message. 
+
+lparse-0.99.35 (12.10.1999)
+    There was a bug in range restriction checking code that failed
+    with constructions like:
+         
+         1 { foo(bar(X,Y)) : domain(X,Y) } :- ... .
+
+    Another bug in the grounding code caused lparse to hang
+    sometimes if it encountered a constructs of the form:
+  
+         not foo(X+2), or
+             not foo(Y) : X = Y + 2
+
+
+lparse-0.99.34 (28.9.1999)
+    Yesterday's fix for empty conditions broke the semantics, so I
+    had to rewrite that portion of code. 
+
+    Now empty conditions behave in following way:
+        a :- b : c.
+    becomes:
+        a :- b. 
+    if 'c' is true, or
+        a.
+    if 'c' is not true. 
+
+    In constraint and weight rules a literal with empty condition
+    doesn't count against bounds. This is because it allows rules
+    of the form:
+
+          foo :-  1 { chosen(X) : version(X) : X >= 10 }.
+      
+    where the set 'version(X) and X >= 10' is possibly empty and
+    'foo' should only be true when at leas one of 'chosen(X)' is
+    in the model. 
+
+    If there is a choice rule head with empty condition, the rule
+    is dropped from the program. 
+
+    Patched the configure script somewhat. Now it should detect
+    correctly if c++ compiler doesn't implement exceptions. 
+
+lparse-0.99.33 (27.9.1999)
+    There was a serious bug in lexer that caused it to
+    misinterpret numeric constants as atoms sometimes. 
+
+    Before lparse would happily accept code of the form:
+    { a(X) : b(X) }.
+    where b(X) was empty, and generate incorrect code for it.
+    Now lparse generates a new unsatisfiable literal in place of
+    a(X) if this happens. 
+
+    Fixed a segmentation fault from error display code. Now the
+    parser recovers from parse errors to check the rest ofcode and
+    gives a little more intuitive error messages. 
+
+    Fixed an error checking code that had its test backwards
+    (indicated error when memory allocation actually succeeded). 
+    There was a bug that sometimes caused an internal error if
+    symbolic functions were used in normal rule heads. 
+
+lparse-0.99.32 (14.9.1999)
+    Cleaned error and warning messages. Now they show also
+    filename in addition to the line number. In addition, if there
+    were multiple input files and one of them ended with a comment
+    line without a terminating newline then the first line of the
+    next file was discarded as a comment. 
+
+lparse-0.99.31 (11.9.1999)
+        A hard disk crash destroyed the changes for versions 0.99.29
+        and 0.99.30, so I had to rewrite them.
+
+    Changes: multiple compute statements didn't work correctly,
+    and constraints were dropped when the program was of the form
+
+       :- only, domain, predicates, here.
+       1 { some, atoms } 1.
+
+        and the body of the first rule was false. 
+
+lparse-0.99.28 (2.9.1999)
+    Fixed a bug that prevented expressions from working
+    inside symbolic functions. (This bug was first inroduced in
+    0.99.15, fixed in 0.99.16, and then reintroduced in 0.99.26.
+    There is now a test case to ensure that it will not come back
+    again).
+
+    Fixed a bug in smodels-mode.el which prevented using  'M-x
+    smodels-mode' directly. 
+
+lparse-0.99.27 (1.9.1999)
+    The relational operators can now be used to compare symbolic
+    constants. Additionally, non-alphanumeric characters can be
+    used with constants by enclosing the constants with double
+    quotes.    For example:
+
+       "quoted constant-1"
+
+    is now a legal constant. The comparison operators put the
+    constants into lexicographic order. 
+
+lparse-0.99.26 (31.8.1999)
+    I simplified the use of global weight declarations. I found
+    out that there was a nasty bug that caused weights to have
+    wrong values sometimes (for example, definition 'weight
+    a(X)=X.' was lost if it was later applied to a(Y) ). Fixing
+    this bug resulted in having lots and lots of special cases, so
+    I decided to clean up the semantics. Now the latest matching
+    declaration is always used. For example, after declarations:
+
+       weight p(1)=5.
+       weight p(X)=X.
+
+    atom p(1) will have weight 1, not 5 as before. To get the same
+    behavior as before you have to reorder the declarations. 
+
+    Conditions are now allowed to have global variables. If a
+    condition doesn't have a global variable it works just as
+    before, but otherwise the global variables will be
+    instantiated before expanding the condition. For example,
+    rule: 
+
+       1 { chosen(X,Y) : edge(X,Y) } 1 :- node(X).
+
+        ensures that exactly one outgoing edge is chosen for each node.
+
+    The new behavior is _much_ slower than the old one because
+    the expansion happens at the innermost loop of lparse, so you
+    shouldn't use global variables unless you really need them. 
+    
+    Cleaned up the parser warnings. There are now five different
+    warning types that can be enabled at the command line. See
+    the User's Manual for details.
+
+    Added support for extended rules for the regular model
+    semantics translation. 
+
+        As a minor change I changed the default lower bound of weight
+    rules from 0 to -infinity to get cleaner semantics. 
+
+    In the process I fixed a couple of minor bugs that occured
+    when there were many literals and functions on the right side
+    of a condition. 
+
+    I also wrote a major-mode for editing smodels programs with
+    Emacs. It is located at src/smodels-mode.el. The instructions
+    on its use are in User's Manual. 
+
+lparse-0.99.25 (12.8.99)
+    Added three levels to regular model translation. They work now
+    as with default '2'
+        lparse -r [1 | 2 | 3]
+
+    Level one omits the integrity constraints from the program.
+    That is, rules of the form " :- b, not b'" are left out. This
+    option can be used to calculate alternating fixpoints of the
+    program. 
+
+    Level two performs just like the original regular model
+    translation.
+
+    Level three adds constraints of the form " :- b', not b" to
+    the model. The resulting program will have same stable models
+    than the untranslated program. 
+    
+
+lparse-0.99.24 (11.8.99)
+    Added preliminary support for regular model semantics. Given a
+    logic program and compute statement smodels can now find out
+    whether there is a regular model of the program where the
+    compute statement is true.
+
+    The support is enabled with option '-r'. The program in
+    question is transformed in the following way:
+
+    a :- not b.
+    b :- not a.
+    f :- not a, not f.
+    compute { a }.
+    
+    becomes
+
+    b :- not a'.
+    b' :- not a.
+    f :- not a', not f'.
+    f' :- not f, not a.
+    a :- not b'.
+    a' :- not b.
+     :- b, not b'.
+     :- a, not a'.
+     :- f, not f'.
+    compute { a }.
+
+    If atoms "p" and "p'" are in the model "p" is true in it, if
+    both are missing "p" is false. If only "p'" is in model "p" is
+    undefined in the model. 
+
+    The regular model semantics don't currently work with extended
+    rules. 
+
+    Fixed a memory bug that could corrupt the arena when there
+    were too many variables in extended rules. 
+
+lparse-0.99.23 (30.7.99)
+    Added a new warning option:
+              -W weight
+    This prints a warning if a default weight gets used somewhere.
+    This option is useful to catch typos when you have a lot of
+    weight definitions. 
+
+    Fixed a memory bug that sometimes crashed lparse when using
+    smodels 1.x format.
+
+    The arguments of form '-W nofoo' didn't work correctly, now
+    they do. 
+
+    Removed many possibly dangerous operations where
+    bit-pattern 0 was implicitly casted to a NULL pointer.
+
+    Cleaned out some unused code. 
+
+lparse-0.99.22 (22.7.99)
+    Added bitwise operators AND (&), OR (|), XOR (^), and NOT (~)
+    to internal functions.  
+
+    Removed the predicate and function call arity limits.
+
+    Changed the prototypes of used-defined functions to
+
+         long foo(int num_args, long *arg_array)
+
+    where 'arg_array' is an array of 'num_args' longs.
+
+
+lparse-0.99.21 (20.7.99)
+    Fixed an operator precedence bug.
+
+lparse-0.99.20 (8.7.99)
+    Removed two memory errors that caused lparse to crash in some 
+    circumstances (namely, when new internal variables were
+    introduced in wrong places). Fixed three small memory leaks
+    and one uninitialized variable. 
+
+lparse-0.99.19 (1.7.99)
+    Found and fixed a bug that caused atoms to be
+    lost when there were too many hash table collisions. Added an
+    optimization that reduces the memory usage. 
+
+    Fixed a typo that prevented compilation on older Debian Linux
+    systems.
+
+    Functions 'eq' and 'neq' didn't work correctly with symbolic
+    functions. 
+
+    Corrected a couple of minor errors from example file
+    'logistics.lp', and added two problem instance examples. 
+
+lparse-0.99.18
+    The user's manual is now up-to-date. It is distributed as a
+    texinfo source. To get a dvi-version of it type 'make dvi'. 
+
+    I reorganized the code structure to use autoconf and automake.
+    As this is my first try using them there are probably some
+    glitches left.
+
+    The code is now explicitly under GPL.     
+
+    A bug that caused misformed output when there was unsatisfied
+    ground domain literals in the rule body was fixed. Another bug
+    was that some rules were lost if all domain predicates were
+    printed. There was still one part of the code that supposed
+    that atom set is saved also for those predicates that don't
+    need it. Functions as tests didn't work if the whole rule was
+    ground. Function argument type checking didn't work always.
+    Weight definitions didn't work correctly with conditions.
+    Negative weights work now also within optimize statements.
+    
+    Register is no longer needed. I also removed '-f' option
+    because it was so closely tied with register.
+
+lparse.0.99.17
+    Changed the behavior of '-n' switch to override
+    compute-statements. I also removed the switch '-s' because it
+    didn't have any useful effect. 
+
+    Some earlier change had broken choice rules when conditions
+    were used. I fixed it. The more efficient data structures
+    broke the handling of domain literals without arguments. This
+    bug is also now fixed.
+
+
+
+lparse-0.99.16 (4.6.1999)
+    I fixed the command line argument handling code that
+    segmentation faulted some times. 
+
+    Also, I fixed a bug that caused nested function calls to
+    fail.
+
+    One more memory leak was found and eliminated.
+
+lparse-0.99.15 (3.6.1999)
+    For this version I rewrote the hash table codes almost from
+    scratch. The result is that the memory consumption dropped by
+    a third and in some cases the running times are now up to a
+    half faster than before. 
+
+    There is also a new feature in code, symbolic functions of
+    type: 
+          a(f(X,Y)) :- d1(X), d2(Y).
+    The above rule in conjunction with domain definitions
+    d1(1..2), d2(1..2) will be grounded as follows:
+          a(f(1,1)).
+          a(f(1,2)).
+          a(f(2,1)).
+          a(f(2,2)).
+
+    The symbolic functions have to be strongly range restricted.
+    The functions can be used also in domain predicates. Adding
+    the rule:
+          p(X,Y) :- a(X), d1(Y).
+        to the above program adds the atoms:
+          p(f(1,1),1). p(f(2,1),1).
+          p(f(1,2),1). p(f(2,2),1).
+          p(f(1,1),2). p(f(2,1),2).
+          p(f(1,2),2). p(f(2,2),2).
+    to the model. 
+
+    I fixed many little memory bugs (mainly leaks) from the code,
+    and it is possible that the fixes broke something else
+    somewhere, so version 0.99.14 may be more stable.
+
+lparse-0.99.14 (3.6.1999)
+    Fixed a couple of bugs affecting ranges and functions.
+
+lparse-0.99.13 (28.5.1999)
+    Added a new keyword 'hide'. The syntax for it is
+             hide p(X,Y).
+        This marks all ground atoms of predicate p/2 to be anonymous,
+    that is smodels 2.x doesn't print them in the models. 
+
+    Fixed a bug that caused choice rules to fail if there were
+    free variables in the heads. Also, smodels 1.x output format
+    works again. 
+
+lparse-0.99.12 (26.5.1999)
+    The minor fixes of version .11 introduced a major bug into
+    handling of negative literals. 
+
+
+lparse-0.99.11 (25.5.1999)
+    Fixed a lot of minor bugs from the code. I also clarified some
+    of the error messages a little.
+
+lparse-0.99.10 (23.5.1999)
+    Added support for weights in choice rules. Now it is possible
+    to use constructions like:
+        2 [ a(X):d(X)=X ] 5.
+    
+    Negative weights work now correctly. 
+
+lparse-0.99.9 
+    Changed the behavior of conditions. Now they are allowed also
+    within basic rules. It is now an error if a global variable is
+    used in condition. 
+
+    Removed support for conjunctive ranges, since conditions can
+    do everything that conjunctive ranges could do, and much more.
+    The rule:
+        foo :- bar(1,,3).
+    can now be encoded with two rules:
+        foo :- bar(X) : d(X).
+        d(1..3).
+
+    Fixed a bug which caused problems when functions were used as
+    arguments within special rules. Another bug that prevented
+    using functions like "abs(X)" was also removed. 
+
+    Added some optimizations to weight and constraint rules. Now
+    lparse notices if the domain literals have enough weight to
+    make the rule true. 
+
+    Added a little error detection code to the parser. 
+
+lparse-0.99.8 (9.5.1999)
+    Fixed a bug that caused atoms to be misinterpreted as
+    constants within weight rules.
+
+    The global definitions of the weights work now more
+    intuitively. It is now possible to define one literal as
+    having different weights at different parts of the program.
+    The weight used is either the latest definition for that
+    particular ground literal, or if that is not found, the
+    latest definition for unifiable literal. As the last resort a
+    global weight definition for the predicate is used.
+
+    It is now possible to define the default weight for literals
+    by using command line argument '-w'. 
+    
+    I added some optimizations to index selection process during
+    grounding. Now lparse tries to choose a constant value as an
+    index if possible. 
+    
+lparse-0.99.7 (5.5.1999)
+    Fixed a bug that caused range restriction checking to fail
+    if functions were used in special rules.
+
+    Found and fixed an uninitialized variable that caused problems
+    with choice rules. 
+
+lparse-0.99.6 (3.5.1999)
+    Removed a memory bug that affected (again) compute statements.
+    Removed a divide-by-zero problem.
+
+lparse-0.99.5 (14.4.1999)
+    Removed a bug which lost a choice rule if all variables
+    occuring in its head were in conditions. 
+
+lparse-0.99.4 (12.4.1999)
+    Removed the support for generate rules because of their weak
+    semantic foundation. The choice rules can now be used to
+    express exlusive-ors, as they now work more like constraint
+    rules: 
+
+       lower { a1, ... , an } upper :- body.
+
+    The rule means that if body is true in a stable model, then
+    the number of head literals of the rule that are true in the
+    model will be between 'lower' and 'upper', inclusive.
+
+    Internally, the rule will be translated into three rules:
+
+       { a1, ... an } :- body.
+        :- upper +1 { a1, ... an }, body.
+        :- n-lower+1 { not a1, ..., not an }, body.
+
+    The expression
+       a1 | a2 | ... | an :- body.
+    is now an alias for
+       1 { a1, ..., an } 1 :- body. 
+                
+        Fixed a problem    that caused lparse output misformed rules when
+        there were only negative literals inside a constraint rule.
+        The upper bounds for constraint and weight rules are now
+        inclusive as they should be. 
+
+    Also, earlier bugfix didn't fix all problems with compute
+        statements, this takes care of those problems.
+
+lparse-0.99.3 (7.4.1999)
+    Conditions and negative literals in the compute statement now
+    work as advertised. Also, fixed a bug that caused ground
+    special rules to fail in certain conditions.
+
+    Changed the behavior of -d none -- flag. If there are any
+    special rules in the program -d none now behaves like -d
+    facts, since otherwise lparse might lose models when there are
+    domain predicates in special tail sections. 
+
+lparse-0.99.2 (6.4.1999)
+    Fixed a couple of memory bugs, a bug which caused smodels
+    to calculate wrong number of models, and a bug which broke
+    conditions in optimize statements. Also updated SYNTAX to
+    reflect the fact that global weights may also have variables. 
+
+lparse-0.99.1 (29.3.1999)
+    Fixed two bugs, one that caused a segmentation fault when a
+        special rule had an empty head, and one error in lexer, which
+        mixed constants with identifiers.
+
+lparse-0.99.0 (24.3.1999)
+
+    Includes support for new smodels 2.x rule types, declarations
+    can now be anywhere in the program file, and constant valued
+    expressions may be used everywhere where numerical constants
+    may be used.
+
+    This is (hopefully) the final beta version, and this will be
+    elevated to version 1.0 when most of the new bugs are
+    eliminated.
+    
+    The manual is not updated yet, the changes are described in
+    file SYNTAX.
+
+lparse-0.9.25 (8.3.1999)
+        Fixed a bug that messed with unsatisfied ground predicates in
+        otherwise non-ground bodies.
+
+        Option -t now also prints the compute statement.
+
+lparse-0.9.24 (15.2.1999)
+    Fixed a bug in predicate argument handling code.
+
+lparse-0.9.23 (12.2.1999)
+    Fixed a bug which caused lparse fail when presented with rules
+    of the form:
+              a :- not b.
+    where b was a domain predicate.
+
+lparse-0.9.22 (9.2.1999)
+    Fixed support to multiple argument lists. Rules of the form
+          foo(a;b;c).
+    work again as expected.
+
+lparse-0.9.21 (8.2.1999)
+    Fixed a few bugs in range checking code. Thanks to Neil Moore
+    for pointing them out.
+
+lparse-0.9.19 (10.11.1998)
+    Allow now rules of the form:
+          a | b :- 2 { c, d, e }, f.
+    Corrected a few errors in lparse.ps
+
+lparse-0.9.18 (6.11.1998)
+    Rules of the form a | b . now work corerctly.
+    Fixed a memory bug.
+
+lparse-0.9.17 (28.10.1998)
+    Fixed the handling of variable-free rules having non-true
+    bodies.
+
+lparse-0.9.16 (23.10.1998)
+    First official beta version
