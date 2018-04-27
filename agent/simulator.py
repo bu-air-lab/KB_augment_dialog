@@ -611,7 +611,7 @@ class Simulator(object):
                 if question:
                     print('QUESTION: ' + question)
                     if self.print_file:
-                        file_out.write(question)
+                        self.file_out.write(question)
 
                 elif ('go' in self.actions[self.a]):
                     print('EXECUTE: ' + self.actions[self.a])
