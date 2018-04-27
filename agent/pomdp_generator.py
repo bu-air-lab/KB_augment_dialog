@@ -427,7 +427,7 @@ class PomdpGenerator(object):
         if os.path.isfile(pomdpsol_path):
             pomdpsol = pomdpsol_path
         else:
-            print "Error: pomdpsol not installed..."
+            print "Error: pomdpsol not installed. Current path: ", pomdpsol_path
             exit(1)
 
         subprocess.check_output([pomdpsol, self.filename, \
