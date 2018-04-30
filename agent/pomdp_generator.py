@@ -418,7 +418,7 @@ class PomdpGenerator(object):
         pomdpsol_path = None
 
         try:
-            file_path = open('config/sarsop_path','r')
+            file_path = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'config/sarsop_path'),'r')
             pomdpsol_path = file_path.read().strip()
             file_path.close()
         except IOError:
