@@ -18,7 +18,7 @@ class DialogManager(Simulator):
 
 def main():
     # the number of variables are stored in this file for now
-    f = open("./data/num_config.txt")
+    f = open("../agent/data/num_config.txt")
     num = f.readline().split()
 
     s = DialogManager(uniform_init_belief = True, 
