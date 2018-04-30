@@ -470,7 +470,6 @@ class Simulator(object):
         self.b = self.b_plus
         self.states = self.states_plus
         self.actions = self.actions_plus
-        self.s = self.s_plus
         self.observations = self.observations_plus
         self.trans_mat = self.trans_mat_plus
         self.obs_mat = self.obs_mat_plus
