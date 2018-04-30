@@ -15,6 +15,11 @@ class DialogManager(Simulator):
         response = handle(2, question, [], 60)
         return response.text
 
+    def print_message(self, message):
+        rospy.wait_for_service('question_dialog')
+        handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
+        response = handle(0, message, [], 60)
+
 
 def main():
     # the number of variables are stored in this file for now
