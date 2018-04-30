@@ -262,6 +262,10 @@ class Simulator(object):
         print "QUESTION: " + question
         return raw_input()
 
+    def print_message(self, message):
+        # this method can be overriden when needed
+        print message
+
     #######################################################################
     def get_user_input(self, question, useFile=False):
         if useFile:
@@ -317,7 +321,16 @@ class Simulator(object):
         match = re.search('(?<=confirm_)\w*', string)
         if match:
             obsname = match.group(0)
-            return "confirm " + self.get_name_from_observation(obsname)
+            if 'p' in obsname:
+                return "Do you want me to deliver " + self.get_name_from_observation(obsname) + "?"
+            elif 'r' in obsname:
+                return "Is this delivery for " + self.get_name_from_observation(obsname) + "?"
+
+        if 'go' in string:
+            parts = string.split('_')
+            return self.get_name_from_observation(parts[1]) + " " \
+                 + self.get_name_from_observation(parts[2]) + " for " \
+                 + self.get_name_from_observation(parts[3])
 
     ######################################################################
     def get_full_request(self, cycletime):
@@ -604,14 +617,11 @@ class Simulator(object):
                     print 'num_recipients', self.num_recipient
                     print 'num_patients', self.num_patient
 
-                quetion = None
-                question = self.action_to_text(self.actions[self.a])
-
-                if question:
-                    raw_str = self.get_string(question)
-                elif ('go' in self.actions[self.a]):
-                    print('EXECUTE: ' + self.actions[self.a])
+                if ('go' in self.actions[self.a]):
+                    self.print_message('EXECUTE: ' + self.action_to_text(self.actions[self.a]))
                     done = True
+                else:
+                    raw_str = self.get_string(self.action_to_text(self.actions[self.a]))
 
                 if done == True:
                     break
