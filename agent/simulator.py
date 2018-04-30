@@ -658,9 +658,6 @@ class Simulator(object):
                 ##cost += self.reward_mat_plus[self.a_plus, self.s_plus]
                 break
 
-        self.file_out.close()
-        self.file_in.close()
-
         ##return reward, cost, overall_reward, added
         return
 
