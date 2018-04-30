@@ -40,8 +40,7 @@ class Simulator(object):
         num_patient=1,
         num_recipient=1,
         belief_threshold=0.4,
-        ent_threshold=2,
-        print_file=False):
+        ent_threshold=2):
 
         # print(pomdp_file)
         # print(policy_file)
@@ -57,14 +56,10 @@ class Simulator(object):
         self.trials_num = trials_num
         self.belief_threshold = belief_threshold
         self.ent_threshold = ent_threshold
-        self.print_file = print_file
         self.num_task = num_task
         self.num_patient = num_patient
         self.num_recipient = num_recipient
         self.tablelist = conf.tablelist
-
-        self.file_out = open('data/output', 'w')
-        self.file_in = open('data/input', 'r')
 
         # to read the pomdp model
         model = pomdp_parser.Pomdp(filename=pomdp_file, parsing_print_flag=False)
@@ -262,11 +257,17 @@ class Simulator(object):
         os.system('java -jar '+self.path_to_spf+' '+os.path.join(self.path_to_experiment,'init_train.exp'))
 
     #######################################################################
-    def get_user_input(self, useFile=False):
+    def get_string(self, question):
+        # this method can be overriden when needed (eg. use a gui wrapper)
+        print "QUESTION: " + question
+        return raw_input()
+
+    #######################################################################
+    def get_user_input(self, question, useFile=False):
         if useFile:
             user_input = "Test string"
         else:
-            user_input = raw_input()
+            user_input = self.get_string(question)
 
         user_input = user_input.strip().lower()
         user_input = user_input.replace("'s"," s")
@@ -278,7 +279,7 @@ class Simulator(object):
         f.write("\t".join(["USER",user_input])+"\n")
         f.close()
 
-        return [[user_input,0]] #full confidence value (log-probability) returned with text
+        return [[user_input,0]]
 
     ######################################################################
     def get_observation_from_name(self, string):
@@ -322,12 +323,8 @@ class Simulator(object):
     def get_full_request(self, cycletime):
         if self.print_flag:
             print self.observations # debug
-        
-        print "QUESTION: How can I help you?"
-        if self.print_file:
-            self.file_out.write("How can I help you?")
 
-        user_utterances = self.get_user_input()
+        user_utterances = self.get_user_input("How can I help you?")
         parses_list = []
         unmapped_list = []
 
@@ -607,20 +604,17 @@ class Simulator(object):
                     print 'num_recipients', self.num_recipient
                     print 'num_patients', self.num_patient
 
+                quetion = None
                 question = self.action_to_text(self.actions[self.a])
-                if question:
-                    print('QUESTION: ' + question)
-                    if self.print_file:
-                        self.file_out.write(question)
 
+                if question:
+                    raw_str = self.get_string(question)
                 elif ('go' in self.actions[self.a]):
                     print('EXECUTE: ' + self.actions[self.a])
                     done = True
 
                 if done == True:
                     break
-
-                raw_str = raw_input("ANSWER (enter a word): ")
 
                 # check entropy increases arbitrary no of times for now
                 if (added == False):
@@ -825,8 +819,7 @@ def main():
         num_patient = int(num[1]), 
         num_recipient = int(num[2]),
         belief_threshold = 0.4,
-        ent_threshold = 2,
-        print_file= True)
+        ent_threshold = 2)
  
     if not s.uniform_init_belief:   
         print('note that initial belief is not uniform\n')
