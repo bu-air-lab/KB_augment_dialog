@@ -572,7 +572,8 @@ class Simulator(object):
 
 
     def entropy_check(self, entropy):
-        if entropy > (0.40358 * self.num_patient + 0.771449):
+        x = self.num_recipient * self.num_patient
+        if entropy > ((-0.00104921 * (x ** 2)) + (0.0916123 * x) + 1.21017):
             return True
 
         return False
