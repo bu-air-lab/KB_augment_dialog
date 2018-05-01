@@ -262,6 +262,7 @@ class Simulator(object):
         print "QUESTION: " + question
         return raw_input()
 
+
     def print_message(self, message):
         # this method can be overriden when needed
         print message
@@ -322,9 +323,9 @@ class Simulator(object):
         if match:
             obsname = match.group(0)
             if 'p' in obsname:
-                return "Do you want me to deliver " + self.get_name_from_observation(obsname) + "?"
+                return "Do you want me to deliver " + self.get_name_from_observation(obsname) + "? (yes/no)"
             elif 'r' in obsname:
-                return "Is this delivery for " + self.get_name_from_observation(obsname) + "?"
+                return "Is this delivery for " + self.get_name_from_observation(obsname) + "? (yes/no)"
 
         if 'go' in string:
             parts = string.split('_')
@@ -405,6 +406,50 @@ class Simulator(object):
             self.update_plus(cycletime)
 
         #print "Unmapped: ",unmapped_list
+
+    def get_partial(self, question):
+        if 'confirm' in self.actions[self.a]:
+            return self.get_string(question)
+
+        user_utterances = self.get_user_input(question)
+        parses_list = []
+        unmapped_list = []
+
+        for utterance,score in user_utterances:
+            parses,unmapped = self.parse_utterance(utterance)
+            parses_list.append(parses)
+            unmapped_list.append(unmapped)
+        
+        patient = 'unmapped'
+        recipient = 'unmapped'
+
+        if self.print_flag:
+            print "PARSES LIST: ",parses_list
+
+        for parses in parses_list:
+            for parse,score in parses:
+                for word in str(parse).split():
+                    match = None
+                    #print word
+                    match = re.search('\w*(?=:it.*)', word)
+                    if match:
+                        patient = match.group(0)
+                        if self.print_flag:
+                            print "Patient: " + patient
+                    match = None
+                    match = re.search('\w*(?=:pe.*)', word)
+                    if match:
+                        recipient = match.group(0)
+                        if self.print_flag:
+                            print "Recipient: " + recipient
+
+        if self.actions[self.a] == 'ask_r':
+            return recipient
+        elif self.actions[self.a] == 'ask_p':
+            return patient
+
+
+
 ##########################################################
     def reinit_belief(self, added_type):
         m = self.num_patient + 1
@@ -631,7 +676,8 @@ class Simulator(object):
                     self.print_message('EXECUTE: ' + self.action_to_text(self.actions[self.a]))
                     done = True
                 else:
-                    raw_str = self.get_string(self.action_to_text(self.actions[self.a]))
+                    #raw_str = self.get_string(self.action_to_text(self.actions[self.a]))
+                    raw_str = self.get_partial(self.action_to_text(self.actions[self.a]))
 
                 if done == True:
                     break
