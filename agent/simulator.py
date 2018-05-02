@@ -420,8 +420,8 @@ class Simulator(object):
             parses_list.append(parses)
             unmapped_list.append(unmapped)
         
-        patient = 'unmapped'
-        recipient = 'unmapped'
+        patient = None
+        recipient = None
 
         if self.print_flag:
             print "PARSES LIST: ",parses_list
@@ -444,9 +444,15 @@ class Simulator(object):
                             print "Recipient: " + recipient
 
         if self.actions[self.a] == 'ask_r':
-            return recipient
+            if recipient:
+                return recipient
+            else:
+                return utterance
         elif self.actions[self.a] == 'ask_p':
-            return patient
+            if patient:
+                return patient
+            else:
+                return utterance
 
 
 
