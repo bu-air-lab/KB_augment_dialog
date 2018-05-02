@@ -284,22 +284,28 @@ class Simulator(object):
         # print 'sum of belief: ',sum(new_b)
         self.b_plus = (new_b_plus / sum(new_b_plus)).T
 
-
+        '''
     def entropy_check(self, entropy):
         if entropy > (0.40358 * self.num_patient + 0.771449):
             return True
 
         return False
+    '''
+    def entropy_check(self, entropy):
+        x = self.num_recipient * self.num_patient
+        if entropy > ((-0.00104921 * (x ** 2)) + (0.0916123 * x) + 1.21017):
+            return True
 
+        return False
 
     def get_marginal_edges(self, b, n, m):
         belief_rn = 0
         for i in range(m):
-            belief_rn += self.b[n * i + n - 1]
+            belief_rn += b[n * i + n - 1]
 
         belief_pm = 0
         for i in range(n):
-            belief_pm += self.b[n * (m - 1) + i]
+            belief_pm += b[n * (m - 1) + i]
 
         return belief_rn, belief_pm
 
@@ -557,8 +563,16 @@ class Simulator(object):
         print('True negatives (%):' + str(true_negatives))
         print('False negatives (%):' + str(false_negatives))
 
-        precision = true_positives/(true_positives + false_positives)
-        recall = true_positives/(true_positives + false_negatives)
+        if true_positives + false_positives == 0:
+            precision = 1
+        else:
+            precision = true_positives/(true_positives + false_positives)
+        
+        if true_positives + false_negatives == 0:
+            recall == 1
+        else:        
+            recall = true_positives/(true_positives + false_negatives)
+        
         print('Precision:' + str(precision))
         print('Recall:' + str(recall))
 

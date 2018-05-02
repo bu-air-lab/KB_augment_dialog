@@ -262,6 +262,7 @@ class Simulator(object):
         print "QUESTION: " + question
         return raw_input()
 
+
     def print_message(self, message):
         # this method can be overriden when needed
         print message
@@ -322,9 +323,9 @@ class Simulator(object):
         if match:
             obsname = match.group(0)
             if 'p' in obsname:
-                return "Do you want me to deliver " + self.get_name_from_observation(obsname) + "?"
+                return "Do you want me to deliver " + self.get_name_from_observation(obsname) + "? (yes/no)"
             elif 'r' in obsname:
-                return "Is this delivery for " + self.get_name_from_observation(obsname) + "?"
+                return "Is this delivery for " + self.get_name_from_observation(obsname) + "? (yes/no)"
 
         if 'go' in string:
             parts = string.split('_')
@@ -405,6 +406,50 @@ class Simulator(object):
             self.update_plus(cycletime)
 
         #print "Unmapped: ",unmapped_list
+
+    def get_partial(self, question):
+        if 'confirm' in self.actions[self.a]:
+            return self.get_string(question)
+
+        user_utterances = self.get_user_input(question)
+        parses_list = []
+        unmapped_list = []
+
+        for utterance,score in user_utterances:
+            parses,unmapped = self.parse_utterance(utterance)
+            parses_list.append(parses)
+            unmapped_list.append(unmapped)
+        
+        patient = 'unmapped'
+        recipient = 'unmapped'
+
+        if self.print_flag:
+            print "PARSES LIST: ",parses_list
+
+        for parses in parses_list:
+            for parse,score in parses:
+                for word in str(parse).split():
+                    match = None
+                    #print word
+                    match = re.search('\w*(?=:it.*)', word)
+                    if match:
+                        patient = match.group(0)
+                        if self.print_flag:
+                            print "Patient: " + patient
+                    match = None
+                    match = re.search('\w*(?=:pe.*)', word)
+                    if match:
+                        recipient = match.group(0)
+                        if self.print_flag:
+                            print "Recipient: " + recipient
+
+        if self.actions[self.a] == 'ask_r':
+            return recipient
+        elif self.actions[self.a] == 'ask_p':
+            return patient
+
+
+
 ##########################################################
     def reinit_belief(self, added_type):
         m = self.num_patient + 1
@@ -423,7 +468,7 @@ class Simulator(object):
             self.b_plus[i] = self.b_plus[i]/b_sum
 
     
-    def add_new(self, raw_str):
+    def add_new(self):
         print "DEBUG: adding new"
         #file_init_train = open(os.path.join(self.path_to_experiment,'data','fold0_init_train.ccg'),'a')
         file_seed = open(os.path.join(self.path_to_experiment,'resources','seed.lex'),'a')
@@ -435,8 +480,11 @@ class Simulator(object):
         file_geo_consts_write.writelines([item for item in lines[:-1]])
 
         #if self.actions[self.a] == 'ask_p':
-        belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, self.num_patient+1, self.num_recipient+1)
+        belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, self.num_recipient+1, self.num_patient+1)
+        print "marginal rn", belief_rn
+        print "marginal pm", belief_pm
         if belief_pm > belief_rn:
+            raw_str = self.get_string("It seems I do not know the item you are talking about.  Please write the name of the item so I can learn it.")
             self.reinit_belief('p')
             self.num_patient += 1
             self.known_words_to_number[raw_str] = 'p'+str(self.num_patient - 1)
@@ -446,6 +494,7 @@ class Simulator(object):
             
         #elif self.actions[self.a] == 'ask_r':
         else:
+            raw_str = self.get_string("It seems I do not know the person you are talking about.  Please write their name so I can learn it.")
             self.reinit_belief('r')
             self.num_recipient += 1
             self.known_words_to_number[raw_str] = 'r'+str(self.num_recipient - 1)
@@ -465,8 +514,8 @@ class Simulator(object):
         file_seed.close()
         self.retrain_parser()
 
-        self.num_patient += 1
-        self.num_recipient += 1
+        #self.num_patient += 1
+        #self.num_recipient += 1
         self.b = self.b_plus
         self.states = self.states_plus
         self.actions = self.actions_plus
@@ -523,7 +572,8 @@ class Simulator(object):
 
 
     def entropy_check(self, entropy):
-        if entropy > (0.40358 * self.num_patient + 0.771449):
+        x = self.num_recipient * self.num_patient
+        if entropy > ((-0.00104921 * (x ** 2)) + (0.0916123 * x) + 1.21017):
             return True
 
         return False
@@ -616,22 +666,22 @@ class Simulator(object):
                     print 'num_recipients', self.num_recipient
                     print 'num_patients', self.num_patient
 
+                # check entropy increases arbitrary no of times for now
+                if (added == False):
+                    if(inc_count > self.ent_threshold or self.belief_check()):
+                        print "--- new item/person ---"
+                        added = True
+                        self.add_new()
+
                 if ('go' in self.actions[self.a]):
                     self.print_message('EXECUTE: ' + self.action_to_text(self.actions[self.a]))
                     done = True
                 else:
-                    raw_str = self.get_string(self.action_to_text(self.actions[self.a]))
+                    #raw_str = self.get_string(self.action_to_text(self.actions[self.a]))
+                    raw_str = self.get_partial(self.action_to_text(self.actions[self.a]))
 
                 if done == True:
                     break
-
-                # check entropy increases arbitrary no of times for now
-                if (added == False):
-                    if(inc_count > self.ent_threshold or self.belief_check()):
-                        if (self.actions[self.a] == "ask_p" or self.actions[self.a] == "ask_r"):
-                            print "--- new item/person ---"
-                            added = True
-                            self.add_new(raw_str)
 
                 self.observe(raw_str)
                 if self.print_flag:
@@ -815,7 +865,7 @@ def main():
     s = Simulator(uniform_init_belief = True, 
         auto_state = True, 
         auto_observations = False, # was true
-        print_flag = False, 
+        print_flag = True, 
         policy_file = 'main_new.policy', 
         pomdp_file =  'main_new.pomdp',
         policy_file_plus = 'main_plus_new.policy',
