@@ -4,10 +4,13 @@ import ast
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import csv
 
 def plotgenerate(df,filelist,num):
+    ######################################### Uncomment: Plot all 5 in one figure ###############################################################33
+    '''
     fig=plt.figure(figsize=(3*len(list(df)),5))
-    
+    plt.suptitle('Increasing domain size', fontsize=14); 
     for count,metric in enumerate(list(df)):
         ax=plt.subplot(1,len(list(df)),count+1)
       
@@ -20,15 +23,68 @@ def plotgenerate(df,filelist,num):
         ax.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)
 
 
-        plt.xlabel('Patients/Patiens Num')
+        plt.xlabel('Knowledge size')
 
 
     #ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
     fig.tight_layout()
     plt.show()
     fig.savefig('Results_'+str(num)+'_trials')
+    '''
+    #################################################### Split 5 plots to 2 figures: (cost,success, reward) and (precision, recall) ##################################
+    #######################    Figure 1      ########################
+    f=plt.figure(1, figsize=(3*len(list(df)),6))
+    plt.suptitle('Increasing domain size, belief_threshold=0.7, entropy threshold=2', fontsize=14); 
+    for count,metric in enumerate(list(df)):
+        if count<3: 
+            ax=plt.subplot(1,len(list(df))-2,count+1)
+
+            l1 = plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+            #l1 = plt.plot(range(filelist[0],filelist[0]+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+            plt.ylabel(metric)
+            if metric=='Overall Success':
+                plt.ylim(0,1)
+            elif metric=='Overall Reward':
+                plt.ylim(0,30)
+            elif metric=='Overall Cost':
+                plt.ylim(-30,0) 
+            plt.xlim(2.5,6.5)
+            xleft , xright =ax.get_xlim()
+            ybottom , ytop = ax.get_ylim()
+            ax.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)
 
 
+            plt.xlabel('Knowledge size')
+
+
+    #ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
+    f.tight_layout()
+    plt.show()
+    f.savefig('Plots/cost_reward_success_'+str(num)+'_trials_domain_experiment_entropy_2_belief_07')
+
+    #######################    Figure 2      ########################
+    g=plt.figure(2, figsize=(3*len(list(df)),6))
+    plt.suptitle('Increasing domain size, belief_threshold=0.7, entropy threshold=2', fontsize=14); 
+    for count,metric in enumerate(['Precision','Recall']): 
+        ax=plt.subplot(1,2,count+1)
+
+        l1 = plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+        #l1 = plt.plot(range(filelist[0],filelist[0]+len(filelist)),df.loc[filelist[0]:filelist[-1],metric],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+        plt.ylabel(metric)
+        plt.xlim(2.5,6.5)
+        plt.ylim(0,1)
+        xleft , xright =ax.get_xlim()
+        ybottom , ytop = ax.get_ylim()
+        ax.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)
+
+
+        plt.xlabel('Knowledge size')
+
+
+    #ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
+    g.tight_layout()
+    plt.show()
+    g.savefig('Plots/precision_recall_'+str(num)+'_trials_domain_experiment_entropy_2_belief_07')
 
 
 def main():
@@ -72,6 +128,7 @@ def main():
         df.at[iterator,'Overall Reward']= c
         df.at[iterator,'Precision']= p
         df.at[iterator,'Recall']= r
+    df.to_csv("Plots_data/cost_reward_success_recall_precision"+str(num)+"_trials_domain_experiment_entropy_2_belief_0.7.csv", encoding='utf-8', index=True)
     print df
     plotgenerate(df,filelist,num)
 
