@@ -10,9 +10,8 @@ import time
 
 
 class DialogManager(Simulator):
-    def __init__(self):
-        super(DialogManager,self).__init__()
-        self.logfile = open("log.txt", w)
+    def start_log(self):
+        self.logfile = open("log.txt", 'w')
         self.counter = 0
 
     def get_string(self, question):
@@ -20,7 +19,7 @@ class DialogManager(Simulator):
         handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
         response = handle(2, question, [], 200)
         self.logfile.write("QUESTION: "+question+"\n")
-        self.logfile.write("ANSWER: "+response+"\n")
+        self.logfile.write("ANSWER: "+response.text+"\n")
         self.counter += 1
         return response.text
 
@@ -37,9 +36,10 @@ class DialogManager(Simulator):
     def check_success(self):
         rospy.wait_for_service('question_dialog')
         handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
+        choices = ['Yes','No']
         response = handle(1, "The Experiment is now over.  Thank you for participating. Please choose whether the robot chose the correct task to execute.",
-                    ['Yes', 'No'], 200)
-        self.logfile.write("SUCCESS: "+response+"\n")
+                    choices, 200)
+        self.logfile.write("SUCCESS: "+choices[response.index]+"\n")
 
 
 def main():
@@ -66,6 +66,7 @@ def main():
         print('note that initial belief is not uniform\n')
 
     ##s.run_numbers_of_trials()
+    s.start_log()
     s.run()
     time.sleep(5)
     s.check_success()
