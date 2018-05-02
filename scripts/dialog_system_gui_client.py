@@ -6,19 +6,40 @@ import sys
 from os.path import dirname, abspath
 sys.path.append(dirname(dirname(abspath(__file__))))
 from agent.simulator import Simulator
+import time
 
 
 class DialogManager(Simulator):
+    def __init__(self):
+        super(DialogManager,self).__init__()
+        self.logfile = open("log.txt", w)
+        self.counter = 0
+
     def get_string(self, question):
         rospy.wait_for_service('question_dialog')
         handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
-        response = handle(2, question, [], 60)
+        response = handle(2, question, [], 200)
+        self.logfile.write("QUESTION: "+question+"\n")
+        self.logfile.write("ANSWER: "+response+"\n")
+        self.counter += 1
         return response.text
 
     def print_message(self, message):
         rospy.wait_for_service('question_dialog')
         handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
-        response = handle(0, message, [], 60)
+        response = handle(0, message, [], 200)
+        self.logfile.write("MESSAGE: "+message+"\n")
+
+    def close_log(self):
+        self.logfile.write("\n Conversation Length: "+str(self.counter))
+        self.logfile.close()
+
+    def check_success(self):
+        rospy.wait_for_service('question_dialog')
+        handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
+        response = handle(1, "The Experiment is now over.  Thank you for participating. Please choose whether the robot chose the correct task to execute.",
+                    ['Yes', 'No'], 200)
+        self.logfile.write("SUCCESS: "+response+"\n")
 
 
 def main():
@@ -46,6 +67,9 @@ def main():
 
     ##s.run_numbers_of_trials()
     s.run()
+    time.sleep(5)
+    s.check_success()
+    s.close_log()
 
 if __name__ == '__main__':
     main()
