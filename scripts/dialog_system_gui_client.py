@@ -69,6 +69,8 @@ def main():
 
     ##s.run_numbers_of_trials()
     s.start_log()
+    s.print_message("I am a service robot that can deliver an item to someone.")
+    time.sleep(3)
     s.run()
     time.sleep(3)
     s.check_success()
