@@ -7,7 +7,7 @@ from os.path import dirname, abspath
 sys.path.append(dirname(dirname(abspath(__file__))))
 from agent.simulator import Simulator
 import time
-
+import datetime
 
 class DialogManager(Simulator):
     def start_log(self):
