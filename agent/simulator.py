@@ -260,7 +260,7 @@ class Simulator(object):
     def get_string(self, question):
         # this method can be overriden when needed (eg. use a gui wrapper)
         print "QUESTION: " + question
-        return raw_input()
+        return raw_input().lower()
 
 
     def print_message(self, message):
@@ -438,7 +438,6 @@ class Simulator(object):
 
     def get_partial(self, question):
 
-        print self.actions[self.a]
         if 'confirm' in self.actions[self.a]:
             raw_str = self.get_string(question)
             raw_str = self.resolve_synonym(raw_str)
@@ -483,11 +482,13 @@ class Simulator(object):
             if recipient:
                 return recipient
             else:
+                print utterance
                 return utterance
         elif self.actions[self.a] == 'ask_p':
             if patient:
                 return patient
             else:
+                print utterance
                 return utterance
 
 
