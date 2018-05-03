@@ -655,6 +655,8 @@ class Simulator(object):
 
 
     def run(self):
+        # seed random for experiments
+        numpy.random.seed()
         self.retrain_parser()
 
         cost = 0.0
