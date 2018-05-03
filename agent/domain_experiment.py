@@ -81,7 +81,7 @@ def plotgenerate(df,filelist,num):
 		plt.xlabel('Knowledge size')
 	'''
 	g=plt.figure(figsize=(15,8))
-	plt.suptitle('Increasing domain size, belief_threshold=0.7, entropy threshold=2', fontsize=18);
+	plt.suptitle('Increasing domain size, belief_threshold=0.7, entropy threshold=2, '+str(num)+ ' trials', fontsize=18);
 	plt.subplot(231)
 	plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
 	plt.xlim(2.5,6.5)
@@ -116,13 +116,13 @@ def plotgenerate(df,filelist,num):
 	#ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
 	#g.tight_layout()
 	plt.show()
-	g.savefig('Plots/precision_recall_'+str(num)+'_trials_domain_experiment_entropy_2_belief_07')
+	g.savefig('Plots/all_'+str(num)+'_trials_domain_experiment_entropy_2_belief_07')
 
 
 def main():
 
 
-	num=5                                        #number of trials
+	num=500                                       #number of trials
 	filelist=['133','144','155','166']                     #list of pomdp files
 	#filelist=['133']
 	entlist=[2,3,4,5,6,7]
@@ -160,7 +160,7 @@ def main():
 		df.at[iterator,'Overall Reward']= c
 		df.at[iterator,'Precision']= p
 		df.at[iterator,'Recall']= r
-	df.to_csv("Plots_data/cost_reward_success_recall_precision"+str(num)+"_trials_domain_experiment_entropy_2_belief_0.7.csv", encoding='utf-8', index=True)
+	df.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_2_belief_0.7.csv", encoding='utf-8', index=True)
 	print df
 	plotgenerate(df,filelist,num)
 

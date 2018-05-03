@@ -27,7 +27,7 @@ def plotgenerate(df,belieflist,num):
     fig.tight_layout()
     plt.show()
     fig.savefig('Results_'+str(num)+'_trials')
-    '''
+    
     #################################################### Split 5 plots to 2 figures: (cost,success, reward) and (precision, recall) ##################################
     #######################    Figure 1      ########################
     f=plt.figure(1, figsize=(3*len(list(df)),6))
@@ -52,12 +52,13 @@ def plotgenerate(df,belieflist,num):
 
 
             plt.xlabel('Number of entropy changes')
+    
 
-
+  
     #ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
-    f.tight_layout()
+    #g.tight_layout()
     plt.show()
-    f.savefig('Plots/cost_reward_success_'+str(num)+'_trials_entropy_experiment')
+    g.savefig('Plots/precision_recall_'+str(num)+'_trials_domain_experiment_entropy_2_belief_07')
 
     #######################    Figure 2      ########################
     g=plt.figure(2, figsize=(3*len(list(df)),6))
@@ -76,12 +77,46 @@ def plotgenerate(df,belieflist,num):
 
 
         plt.xlabel('Number of Entropy changes')
+    '''
+    g=plt.figure(figsize=(15,9))
+    plt.suptitle('Increasing entropy changes for fixed model 133 , belief threshold 0.7,'+str(num)+ ' trials', fontsize=18);
+    plt.subplot(231)
+    plt.plot(range(2,max(belieflist)+1),df.loc[belieflist[0]:belieflist[-1],'Overall Cost'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+    plt.xlim(1.5,max(belieflist)+1)
+    plt.ylim(-30,0)
+    plt.ylabel('Overall Cost')
+    plt.xlabel('Number of entropy changes')
 
+    plt.subplot(232)
+    plt.plot(range(2,max(belieflist)+1),df.loc[belieflist[0]:belieflist[-1],'Overall Success'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+    plt.xlim(1.5,max(belieflist)+1)
+    plt.ylabel('Overall Success')
+    plt.xlabel('Number of entropy changes')
 
+    plt.subplot(233)
+    plt.plot(range(2,max(belieflist)+1),df.loc[belieflist[0]:belieflist[-1],'Overall Reward'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+    plt.xlim(1.5,max(belieflist)+1)
+    plt.ylim(0,30)
+    plt.ylabel('Overall Reward')
+    plt.xlabel('Number of entropy changes')
+
+    plt.subplot(234)
+    plt.plot(range(2,max(belieflist)+1),df.loc[belieflist[0]:belieflist[-1],'Precision'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+    plt.xlim(1.5,max(belieflist)+1)
+    plt.ylim(0,1)
+    plt.ylabel('Precision')
+    plt.xlabel('Number of entropy changes')
+
+    plt.subplot(235)
+    plt.plot(range(2,max(belieflist)+1),df.loc[belieflist[0]:belieflist[-1],'Recall'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+    plt.xlim(1.5,max(belieflist)+1)
+    plt.ylim(0,1)
+    plt.ylabel('Recall')
+    plt.xlabel('Number of entropy changes')
     #ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
-    g.tight_layout()
+    #g.tight_layout()
     plt.show()
-    g.savefig('Plots/precision_recall_'+str(num)+'_trials_entropy_experiment_model_133')
+    g.savefig('Plots/all_'+str(num)+'_trials_entropy_experiment_model_133')
 
 def main():
     num=500                                        #number of trials
@@ -120,7 +155,7 @@ def main():
         df.at[iterator,'Precision']= p
         df.at[iterator,'Recall']= r
     print df
-    df.to_csv("Plots_data/cost_reward_success_recall_precision"+str(num)+"_trials_entropy_experiment_model_133.csv", encoding='utf-8', index=True)
+    df.to_csv("Plots_data/all"+str(num)+"_trials_entropy_experiment_model_133.csv", encoding='utf-8', index=True)
     plotgenerate(df,entropylist,num)
 
 if __name__ == '__main__':
