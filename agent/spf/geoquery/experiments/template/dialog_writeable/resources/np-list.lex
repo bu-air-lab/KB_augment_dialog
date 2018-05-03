@@ -12,6 +12,11 @@ jivko sinapov :- NP : jivko:pe
 stacy miller :- NP : stacy:pe
 piyush khandelwal :- NP : piyush:pe
 daniel urieli :- NP : daniel:pe
+alice anderson :- NP : alice:pe
+bob brown :- NP : bob:pe
+carol clark :- NP : carol:pe
+dennis davis :- NP : dennis:pe
+ellen edwards :- NP : ellen:pe
 3402 :- NP : l3_402:ro
 3404 :- NP : l3_404:ro
 3416 :- NP : l3_416:ro
@@ -39,3 +44,4 @@ cell phone :- NP : phone:it
 trashcan :- NP : trashcan:it
 calendar :- NP : calendar:it
 apple :- NP : apple:it
+soda :- NP : soda:it

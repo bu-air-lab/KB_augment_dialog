@@ -15,6 +15,11 @@ jivko:pe
 stacy:pe
 piyush:pe
 daniel:pe
+alice:pe
+bob:pe
+carol:pe
+dennis:pe
+ellen:pe
 l3_414a:ro
 l3_402:ro
 l3_404:ro
@@ -81,4 +86,6 @@ calendar:it
 coffeeshop:sh
 coffeecounter:sc
 apple:it
+soda:it
+
 )

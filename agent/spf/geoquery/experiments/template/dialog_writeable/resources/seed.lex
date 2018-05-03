@@ -15,8 +15,19 @@ where :- S/NP : (lambda $0:e $0)
 take :- (S/NP)/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1))))
 take :- (S/PP)/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a))))
 bring :- (S/NP)/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1))))
+bring :- (S/PP)/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a))))
 bring :- (S/NP) : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a))))
 bring :- (S/PP) : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) ($1 bring:a))))
+take :- (S/NP) : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a))))
+take :- (S/PP) : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) ($1 bring:a))))
+deliver :- (S/NP) : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a))))
+deliver :- (S/PP) : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) ($1 bring:a))))
+deliver :- (S/NP)/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1))))
+deliver :- (S/PP)/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a))))
+give :- (S/NP)/NP : (lambda $0:e (lambda $1:e (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) (actionpatient:<a,<e,t>> bring:a $1))))
+give :- (S/PP)/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a))))
+give :- (S/NP) : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a $0) ($1 bring:a))))
+give :- (S/PP) : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a $0) ($1 bring:a))))
 
 walk :- S/PP : (lambda $0:<a,t> (and:<t*,t> (action:<a,t> walk:a) ($0 walk:a)))
 go :- S/PP : (lambda $0:<a,t> (and:<t*,t> (action:<a,t> walk:a) ($0 walk:a)))
@@ -100,6 +111,11 @@ jivko sinapov :- NP : jivko:pe
 stacy miller :- NP : stacy:pe
 piyush khandelwal :- NP : piyush:pe
 daniel urieli :- NP : daniel:pe
+alice anderson :- NP : alice:pe
+bob brown :- NP : bob:pe
+carol clark :- NP : carol:pe
+dennis davis :- NP : dennis:pe
+ellen edwards :- NP : ellen:pe
 3402 :- NP : l3_402:ro
 3404 :- NP : l3_404:ro
 3416 :- NP : l3_416:ro
@@ -127,3 +143,4 @@ cell phone :- NP : phone:it
 trashcan :- NP : trashcan:it
 calendar :- NP : calendar:it
 apple :- NP : apple:it
+soda :- NP : soda:it

@@ -33,8 +33,8 @@ Created resources featLextemplate of type feat.lextemplate
 Created resources featRules of type feat.rules.count
 Created resources lexicon of type lexicon.factored
 Init Model :: lexicalFeatures=[LexicalFeatureSet:
-	{}, edu.uw.cs.lil.tiny.parser.ccg.factoredlex.features.LexicalTemplateFeatureSet@7fa3eaa8, edu.uw.cs.lil.tiny.parser.ccg.factoredlex.features.LexemeFeatureSet@6282fd0f]
-.... Model :: parseFeatures=[edu.uw.cs.lil.tiny.parser.ccg.features.lambda.LogicalExpressionCoordinationFeatureSet@5b41650, edu.uw.cs.lil.tiny.parser.ccg.features.basic.RuleUsageFeatureSet@7224e11c]
+	{}, edu.uw.cs.lil.tiny.parser.ccg.factoredlex.features.LexicalTemplateFeatureSet@d1faace, edu.uw.cs.lil.tiny.parser.ccg.factoredlex.features.LexemeFeatureSet@1a06c11d]
+.... Model :: parseFeatures=[edu.uw.cs.lil.tiny.parser.ccg.features.lambda.LogicalExpressionCoordinationFeatureSet@31706444, edu.uw.cs.lil.tiny.parser.ccg.features.basic.RuleUsageFeatureSet@49c6c5b7]
 .... Model :: lexiconClass=FactoredLexicon
 Created resources model of type model
 Created resources loggerModel of type logger.model
@@ -45,4 +45,4 @@ Created resources test of type data.single
 Init Tester:  size(testData)=1
 Created resources tester of type tester
 Created resources learningFilter of type filter.sentence.length
-Loading model (id=null) from: /home/sujay/context_aware_icorpp/spf/geoquery/experiments/template/dialog_writeable/rlg.model
+Loading model (id=null) from: /home/sujay/context_aware_icorpp/agent/spf/geoquery/experiments/template/dialog_writeable/rlg.model

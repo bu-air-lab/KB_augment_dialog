@@ -13,9 +13,149 @@ take coffee to peter stone
 take peter stone coffee
 (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a peter:pe) (actionpatient:<a,<e,t>> bring:a coffee:it))
 
-bring coffee to shiqi
-(and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a coffee:it) (actionrecipient:<a,<e,t>> bring:a shiqi:pe))
+take alice coffee
+(and:<t*,t> (actionpatient:<a,<e,t>> bring:a coffee:it) (actionrecipient:<a,<e,t>> bring:a alice:pe) (action:<a,t> bring:a))
+
+take alice anderson coffee
+(and:<t*,t> (actionpatient:<a,<e,t>> bring:a coffee:it) (actionrecipient:<a,<e,t>> bring:a alice:pe) (action:<a,t> bring:a))
+
+take coffee to alice
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a alice:pe) (actionpatient:<a,<e,t>> bring:a coffee:it))
+
+deliver apple to alice
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a alice:pe) (actionpatient:<a,<e,t>> bring:a apple:it))
+
+bring apple to alice
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a alice:pe) (actionpatient:<a,<e,t>> bring:a apple:it))
+
+deliver soda to bob
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a bob:pe) (actionpatient:<a,<e,t>> bring:a soda:it))
+
+deliver soda to bob brown
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a bob:pe) (actionpatient:<a,<e,t>> bring:a soda:it))
+
+deliver soda to carol
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a carol:pe) (actionpatient:<a,<e,t>> bring:a soda:it))
+
+deliver soda to carol clark
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a carol:pe) (actionpatient:<a,<e,t>> bring:a soda:it))
+
+bring soda to dennis
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a dennis:pe) (actionpatient:<a,<e,t>> bring:a soda:it))
+
+bring soda to dennis davis
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a dennis:pe) (actionpatient:<a,<e,t>> bring:a soda:it))
+
+take the soda to ellen
+soda:it
+
+take soda to ellen
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a ellen:pe) (actionpatient:<a,<e,t>> bring:a soda:it))
+
+take soda to ellen edwards
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a ellen:pe) (actionpatient:<a,<e,t>> bring:a soda:it))
+
+take alice fruit
+(and:<t*,t> (actionpatient:<a,<e,t>> bring:a apple:it) (actionrecipient:<a,<e,t>> bring:a alice:pe) (action:<a,t> bring:a))
+
+take alice apple
+(and:<t*,t> (actionpatient:<a,<e,t>> bring:a apple:it) (actionrecipient:<a,<e,t>> bring:a alice:pe) (action:<a,t> bring:a))
+
+bring fuji to alice
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a alice:pe) (actionpatient:<a,<e,t>> bring:a apple:it))
+
+bring apple to alice
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a alice:pe) (actionpatient:<a,<e,t>> bring:a apple:it))
+
+take red apple to alice
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a alice:pe) (actionpatient:<a,<e,t>> bring:a apple:it))
 
 bring coffee
-(and:<t*,t> (action:<a,t> bring:a) (actionpatient:<a,<e,t>> bring:a coffee:it))
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a bob:pe) (actionpatient:<a,<e,t>> bring:a coffee:it))
 
+bring coffee to bob
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a bob:pe) (actionpatient:<a,<e,t>> bring:a coffee:it))
+
+to bob
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a bob:pe) (actionpatient:<a,<e,t>> bring:a coffee:it))
+
+bring coffee to bob
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a bob:pe) (actionpatient:<a,<e,t>> bring:a coffee:it))
+
+the coffee
+coffee:it
+
+to bob
+bob:pe
+
+the coffee
+coffee:it
+
+decaf
+coffee:it
+
+the coffee
+coffee:it
+
+bring the burger to carol
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a carol:pe) (actionpatient:<a,<e,t>> bring:a hamburger:it))
+
+bring the hamburger to carol
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a carol:pe) (actionpatient:<a,<e,t>> bring:a hamburger:it))
+
+bring the burger to alice
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a alice:pe) (actionpatient:<a,<e,t>> bring:a hamburger:it))
+
+bring big mac to alice
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a alice:pe) (actionpatient:<a,<e,t>> bring:a hamburger:it))
+
+bring burger to alice
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a alice:pe) (actionpatient:<a,<e,t>> bring:a hamburger:it))
+
+to ellen
+ellen:pe
+
+burger
+hamburger:it
+
+the burger
+hamburger:it
+
+bring phone to bob
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a bob:pe) (actionpatient:<a,<e,t>> bring:a phone:it))
+
+bring cell phone to bob
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a bob:pe) (actionpatient:<a,<e,t>> bring:a phone:it))
+
+to bob
+bob:pe
+
+the phone
+phone:it
+
+bring smartphone to carol
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> walk:a carol:pe))
+
+bring smart phone to alice
+(and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a alice:pe) (actionpatient:<a,<e,t>> bring:a phone:it))
+
+the phone
+phone:it
+
+the phone
+phone:it
+
+the soda
+soda:it
+
+the pop
+soda:it
+
+the soda
+soda:it
+
+the soda
+soda:it
+
+the can of pop
+soda:it
