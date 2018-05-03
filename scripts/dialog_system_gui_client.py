@@ -18,15 +18,16 @@ class DialogManager(Simulator):
         rospy.wait_for_service('question_dialog')
         handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
         response = handle(2, question, [], 200)
+        def print_message("thinking...")
         self.logfile.write("QUESTION: "+question+"\n")
         self.logfile.write("ANSWER: "+response.text+"\n")
         self.counter += 1
-        return response.text
+        return response.text.lower()
 
     def print_message(self, message):
         rospy.wait_for_service('question_dialog')
         handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
-        response = handle(0, message, [], 200)
+        response = handle(0, message, [], 0)
         self.logfile.write("MESSAGE: "+message+"\n")
 
     def close_log(self):
@@ -39,6 +40,7 @@ class DialogManager(Simulator):
         choices = ['Yes','No']
         response = handle(1, "The Experiment is now over.  Thank you for participating. Please choose whether the robot chose the correct task to execute.",
                     choices, 200)
+        self.print_message("Thank you.")
         self.logfile.write("SUCCESS: "+choices[response.index]+"\n")
 
 
@@ -68,7 +70,7 @@ def main():
     ##s.run_numbers_of_trials()
     s.start_log()
     s.run()
-    time.sleep(5)
+    time.sleep(3)
     s.check_success()
     s.close_log()
 
