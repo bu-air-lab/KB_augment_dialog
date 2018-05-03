@@ -40,7 +40,7 @@ class DialogManager(Simulator):
         rospy.wait_for_service('question_dialog')
         handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
         choices = ['Yes','No']
-        response = handle(1, "The Experiment is now over.  Thank you for participating. Please choose whether the robot chose the correct task to execute.",
+        response = handle(1, "The trial is now over.  Thank you for participating.  Please choose whether the robot chose the correct task to execute.",
                     choices, 200)
         self.print_message("Thank you.")
         self.logfile.write("SUCCESS: "+choices[response.index]+"\n")
@@ -71,8 +71,8 @@ def main():
 
     ##s.run_numbers_of_trials()
     s.start_log()
-    s.print_message("I am a service robot that can deliver an item to someone.")
-    time.sleep(3)
+    s.print_message("Hi, I am a service robot.  I can carry out delivery tasks.  You can tell me to bring an item to someone.")
+    time.sleep(1)
     s.run()
     time.sleep(3)
     s.check_success()
