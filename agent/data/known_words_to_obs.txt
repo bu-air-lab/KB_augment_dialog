@@ -1,1 +1,1 @@
-{'coffee': 'p0', 'hamburger': 'p1', 'apple': 'p3', 'bring': 't0', 'no': 'no', 'shiqi': 'r0', 'yes': 'yes', 'cell phone': 'p2'}
+{'apple': 'p0', 'coffee': 'p1', 'hamburger': 'p2', 'phone': 'p3', 'soda': 'p4', 'alice': 'r0', 'bob': 'r1', 'carol': 'r2', 'dennis': 'r3', 'ellen': 'r4', 'no': 'no', 'yes': 'yes', 'bring': 't0'}
