@@ -219,8 +219,8 @@ class Simulator(object):
     # EXPERIMENTAL: Generate model
     # Saeid: this method is working fine now, only name of pomdp and policy files needs to be updated in future to avoid conflicts
     def generate_model(self, num_task, num_patient, num_recipient, file_name, is_plus):
-        r_max = 20.0
-        r_min = -20.0
+        r_max = 40.0
+        r_min = -40.0
 
         wh_cost = -1.5
         yesno_cost = -1.0
