@@ -333,6 +333,35 @@ class Simulator(object):
                  + self.get_name_from_observation(parts[2]) + " for " \
                  + self.get_name_from_observation(parts[3])
 
+
+    def resolve_synonym(self, string):
+        # only for experiment
+        # this is a workaround for the semantic parser not returning for single phrases
+        # this will be replaced/removed when we fix the parser or use a different one
+
+        synonym = {
+            'apple':['fruit', 'red apple', 'fuji', 'red delicious'],
+            'coffee':['cappuccino', 'java', 'decaf', 'cup', 'mug', 'caffeine'],
+            'hamburger':['burger', 'big mac', 'sandwich'],
+            'phone':['cell', 'cell phone', 'iphone', 'mobile', 'mobile phone'],
+            'soda':['pop','coke','can','drink','soft drink','cold drink'],
+            'alice':['Alice', 'Alice Anderson', 'alice anderson'],
+            'bob':['Bob', 'Bob Brown', 'bob brown'],
+            'carol':['Carol', 'Carol Clark', 'carol clark'],
+            'dennis':['Dennis', 'Dennis Davis', 'dennis davis'],
+            'ellen':['Ellen', 'Ellen Edwards', 'ellen edwards'],
+            'yes':['yup', 'yeah', 'thats right', 'correct'],
+            'no':['nope', 'nah', 'thats wrong', 'incorrect']
+        }
+
+        for key in synonym:
+            synlist = synonym[key]
+            if string in synlist:
+                return key
+
+        return string
+
+
     ######################################################################
     def get_full_request(self, cycletime):
         if self.print_flag:
@@ -408,8 +437,12 @@ class Simulator(object):
         #print "Unmapped: ",unmapped_list
 
     def get_partial(self, question):
+
+        print self.actions[self.a]
         if 'confirm' in self.actions[self.a]:
-            return self.get_string(question)
+            raw_str = self.get_string(question)
+            raw_str = self.resolve_synonym(raw_str)
+            return raw_str
 
         user_utterances = self.get_user_input(question)
         parses_list = []
@@ -442,6 +475,9 @@ class Simulator(object):
                         recipient = match.group(0)
                         if self.print_flag:
                             print "Recipient: " + recipient
+
+        # workaround for experiment only
+        utterance = self.resolve_synonym(utterance)
 
         if self.actions[self.a] == 'ask_r':
             if recipient:
@@ -545,8 +581,11 @@ class Simulator(object):
             if self.print_flag:
                 print "DEBUG: Not found in list of observations"
 
-            q_type = str(self.actions[self.a][-1])
+            if 'confirm' in self.actions[self.a]:
+                self.o = self.observations.index(numpy.random.choice(['yes', 'no']))
+                return
 
+            q_type = str(self.actions[self.a][-1])
             domain = [self.observations.index(o) for o in self.observations if q_type in o]
             #print domain
             self.o = numpy.random.choice(domain)
