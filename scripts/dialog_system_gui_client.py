@@ -7,11 +7,13 @@ from os.path import dirname, abspath
 sys.path.append(dirname(dirname(abspath(__file__))))
 from agent.simulator import Simulator
 import time
+import datetime
 
 
 class DialogManager(Simulator):
     def start_log(self):
-        self.logfile = open("log.txt", 'w')
+        now = datetime.datetime.now().strftime("%I_%M%p_%B_%d_%Y")
+        self.logfile = open("log_"+str(now)+".txt", 'w')
         self.counter = 0
 
     def get_string(self, question):

@@ -11,6 +11,8 @@ import time
 
 class DialogManager(Simulator):
     def start_log(self):
+        now = datetime.datetime.now().strftime("%I_%M%p_%B_%d_%Y")
+        self.logfile = open("log_"+str(now)+".txt", 'w')
         self.logfile = open("log.txt", 'w')
         self.counter = 0
 
