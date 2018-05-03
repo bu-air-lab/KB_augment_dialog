@@ -18,12 +18,11 @@ class DialogManager(Simulator):
         rospy.wait_for_service('question_dialog')
         handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
         response = handle(2, question, [], 200)
-        def print_message("thinking...")
+        self.print_message("thinking...")
         self.logfile.write("QUESTION: "+question+"\n")
         self.logfile.write("ANSWER: "+response.text+"\n")
         self.counter += 1
-        answer = response.text.lower()
-        return answer
+        return response.text.lower()
 
     def print_message(self, message):
         rospy.wait_for_service('question_dialog')
