@@ -6,6 +6,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 def plotgenerate(df,belieflist,num):
+    '''
     fig=plt.figure(figsize=(3*len(list(df)),5))
     
     for count, metric in enumerate(list(df)):
@@ -19,16 +20,56 @@ def plotgenerate(df,belieflist,num):
         ybottom,ytop = ax.get_ylim()
         ax.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)
         plt.xlabel('Belief Threshold')
-
-
+    
     #ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
     fig.tight_layout()
     plt.show()
     fig.savefig('Results_'+str(num)+'_trials')
+    '''
+    g=plt.figure(figsize=(15,9))
+    plt.suptitle('Increasing belief for fixed model 133 , fixed entropy changes =9, '+str(num)+ ' trials', fontsize=18);
+    plt.subplot(231)
+    plt.plot([0.3,0.4,0.5,0.6,0.7],df.loc[belieflist[0]:belieflist[-1],'Overall Cost'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+    plt.xlim(0,1)
+    plt.ylim(-30,0)
+    plt.ylabel('Overall Cost')
+    plt.xlabel('Belief threshold')
+
+    plt.subplot(232)
+    plt.plot([0.3,0.4,0.5,0.6,0.7],df.loc[belieflist[0]:belieflist[-1],'Overall Success'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+    plt.xlim(0,1)
+    plt.ylabel('Overall Success')
+    plt.xlabel('Belief threshold')
+
+    plt.subplot(233)
+    plt.plot([0.3,0.4,0.5,0.6,0.7],df.loc[belieflist[0]:belieflist[-1],'Overall Reward'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+    plt.xlim(0,1)
+    plt.ylim(0,30)
+    plt.ylabel('Overall Reward')
+    plt.xlabel('Belief threshold')
+
+    plt.subplot(234)
+    plt.plot([0.3,0.4,0.5,0.6,0.7],df.loc[belieflist[0]:belieflist[-1],'Precision'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+    plt.xlim(0,1)
+    plt.ylim(0,1)
+    plt.ylabel('Precision')
+    plt.xlabel('Belief threshold')
+
+    plt.subplot(235)
+    plt.plot([0.3,0.4,0.5,0.6,0.7],df.loc[belieflist[0]:belieflist[-1],'Recall'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+    plt.xlim(0,1)
+    plt.ylim(0,1)
+    plt.ylabel('Recall')
+    plt.xlabel('Belief threshold')
+    #ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
+    #g.tight_layout()
+    plt.show()
+    g.savefig('Plots/all_'+str(num)+'_trials_belief_experiment_model_133_ent_9')
+
 
 
 def main():
-    num=100                                        #number of trials
+    num=500                                        #number of trials
     belieflist=[0.3,0.4,0.5,0.6,0.7]
     #filelist = ['133', '144']
     df=pd.DataFrame() 
@@ -64,6 +105,7 @@ def main():
         df.at[iterator,'Precision']= p
         df.at[iterator,'Recall']= r
     print df
+    df.to_csv("Plots_data/all"+str(num)+"_trials_belief_experiment_model_133_ent_9.csv", encoding='utf-8', index=True)
     plotgenerate(df,belieflist,num)
 
 if __name__ == '__main__':
