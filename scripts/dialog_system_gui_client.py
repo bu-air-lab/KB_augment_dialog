@@ -22,7 +22,8 @@ class DialogManager(Simulator):
         self.logfile.write("QUESTION: "+question+"\n")
         self.logfile.write("ANSWER: "+response.text+"\n")
         self.counter += 1
-        return response.text.lower()
+        answer = response.text.lower()
+        return answer
 
     def print_message(self, message):
         rospy.wait_for_service('question_dialog')
