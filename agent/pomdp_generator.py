@@ -859,7 +859,7 @@ def main():
     	strategy = str(num_task) + str(num_patient) + str(num_recipient)
     	pomdpfile=strategy+'_new.pomdp'
     	pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        	wh_cost, yesno_cost,pomdpfile,timeout=20, is_plus=False )
+        	wh_cost, yesno_cost,pomdpfile,timeout=40, is_plus=False )
 
 if __name__ == '__main__':
 
