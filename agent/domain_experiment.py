@@ -1,4 +1,5 @@
 from simulator_noparser import Simulator
+from simulator_baseline import Baseline
 import pandas as pd
 import ast
 import matplotlib
@@ -151,10 +152,30 @@ def main():
 		if not s.uniform_init_belief:   
 			print('note that initial belief is not uniform\n')
 		s.read_model_plus()
+
+		b = Baseline(uniform_init_belief = True, 
+			auto_state = True, 
+			auto_observations = True, # was true
+			print_flag = True,
+			policy_file = name+'_new.policy',
+			pomdp_file =  name +'_new.pomdp',
+				pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.pomdp',
+				policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.policy',
+			trials_num = num,
+			num_task = int(name[0]), 
+			num_patient = int(name[1]), 
+			num_recipient = int(name[2]),
+			belief_threshold = 0.7,
+			ent_threshold = 2)
+	 
+		if not b.uniform_init_belief:   
+			print('note that initial belief is not uniform\n')
+		b.read_model_plus()
 		###Saving results in a dataframe and passing data frame to plot generate_function
 
 		#Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
 		a,b,c,p,r=s.run_numbers_of_trials()
+		
 		df.at[iterator,'Overall Cost']= a
 		df.at[iterator,'Overall Success']= b
 		df.at[iterator,'Overall Reward']= c
