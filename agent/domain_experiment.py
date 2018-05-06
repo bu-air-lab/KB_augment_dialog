@@ -153,7 +153,7 @@ def main():
 			print('note that initial belief is not uniform\n')
 		s.read_model_plus()
 
-		b = Baseline(uniform_init_belief = True, 
+		base = Baseline(uniform_init_belief = True, 
 			auto_state = True, 
 			auto_observations = True, # was true
 			print_flag = True,
@@ -168,13 +168,14 @@ def main():
 			belief_threshold = 0.7,
 			ent_threshold = 2)
 	 
-		if not b.uniform_init_belief:   
+		if not base.uniform_init_belief:   
 			print('note that initial belief is not uniform\n')
-		b.read_model_plus()
+		base.read_model_plus()
 		###Saving results in a dataframe and passing data frame to plot generate_function
 
 		#Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
 		a,b,c,p,r=s.run_numbers_of_trials()
+		base.run_numbers_of_trials()
 		
 		df.at[iterator,'Overall Cost']= a
 		df.at[iterator,'Overall Success']= b
