@@ -1,4 +1,21 @@
 from simulator_noparser import Simulator
+import sys
+import time
+import pomdp_generator
+import pomdp_parser
+import policy_parser
+import readline
+import numpy
+import random
+from scipy import stats
+from progress.bar import Bar
+import subprocess
+import conf
+import re
+import os
+import string
+import time
+import ast
 
 class Baseline(Simulator):
 
@@ -108,7 +125,7 @@ class Baseline(Simulator):
 
             if cycletime == 50:
                 cost += self.reward_mat_plus[self.a_plus, self.s_plus]
-                print "REACHED CYCLE TIME 50"
+                print "BASELINE: REACHED CYCLE TIME 50"
                 sys.exit(1)
                 break
 
