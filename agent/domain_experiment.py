@@ -7,7 +7,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import csv
 
-def plotgenerate(df,filelist,num):
+def plotgenerate(df1,df2,filelist,num):
 	######################################### Uncomment: Plot all 5 in one figure ###############################################################33
 	'''
 	fig=plt.figure(figsize=(3*len(list(df)),5))
@@ -84,37 +84,44 @@ def plotgenerate(df,filelist,num):
 	g=plt.figure(figsize=(15,8))
 	plt.suptitle('Increasing domain size, belief_threshold=0.7, entropy threshold=2, '+str(num)+ ' trials', fontsize=18);
 	plt.subplot(231)
-	plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='*',linestyle='-',label='Dual-track POMDPs')
+	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='o',linestyle='--',label='Baseline')
 	plt.xlim(2.5,6.5)
 	plt.ylabel('Overall Cost')
 	plt.xlabel('Knowledge size')
 
 	plt.subplot(232)
-	plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDPs')
+	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline')
+
 	plt.xlim(2.5,6.5)
 	plt.ylabel('Overall Success')
 	plt.xlabel('Knowledge size')
 
-	plt.subplot(233)
-	plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],'Overall Reward'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+	ax=plt.subplot(233)
+	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Overall Reward'],marker='*',linestyle='-',label='Dual-track POMDPs')
+	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Overall Reward'],marker='o',linestyle='--',label='Baseline')
 	plt.xlim(2.5,6.5)
 	plt.ylabel('Overall Reward')
 	plt.xlabel('Knowledge size')
 
 	plt.subplot(234)
-	plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],'Precision'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Precision'],marker='*',linestyle='-',label='Dual-track POMDPs')
+	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Precision'],marker='o',linestyle='--',label='Baseline')
 	plt.xlim(2.5,6.5)
 	plt.ylim(0,1)
 	plt.ylabel('Precision')
 	plt.xlabel('Knowledge size')
 
 	plt.subplot(235)
-	plt.plot(range(3,3+len(filelist)),df.loc[filelist[0]:filelist[-1],'Recall'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
+	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Recall'],marker='*',linestyle='-',label='Dual-track POMDPs')
+	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Recall'],marker='o',linestyle='--',label='Baseline')
+
 	plt.xlim(2.5,6.5)
 	plt.ylim(0,1)
 	plt.ylabel('Recall')
 	plt.xlabel('Knowledge size')
-	#ax.legend(loc='upper left', bbox_to_anchor=(-2.10, 1.35),  shadow=True, ncol=5)
+	ax.legend(loc='upper left', bbox_to_anchor=(-1.2, 1.15),  shadow=True, ncol=2)
 	#g.tight_layout()
 	plt.show()
 	g.savefig('Plots/all_'+str(num)+'_trials_domain_experiment_entropy_2_belief_07')
@@ -129,7 +136,8 @@ def main():
 	entlist=[2,3,4,5,6,7]
 	belieflist=[0.3,0.4,0.5,0.6,0.7]
 	#filelist = ['133', '144']
-	df=pd.DataFrame() 
+	df1=pd.DataFrame()
+	df2=pd.DataFrame() 
 	# just use for sth in somelist, not for sth in range(len(ssomelist))
 	for iterator in filelist:
 		name = iterator  # or name = iterator
@@ -175,16 +183,26 @@ def main():
 
 		#Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
 		a,b,c,p,r=s.run_numbers_of_trials()
-		base.run_numbers_of_trials()
+		ab,bb,cb,pb,rb= base.run_numbers_of_trials()
 		
-		df.at[iterator,'Overall Cost']= a
-		df.at[iterator,'Overall Success']= b
-		df.at[iterator,'Overall Reward']= c
-		df.at[iterator,'Precision']= p
-		df.at[iterator,'Recall']= r
-	df.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_2_belief_0.7.csv", encoding='utf-8', index=True)
-	print df
-	plotgenerate(df,filelist,num)
+		df1.at[iterator,'Overall Cost']= a
+		df1.at[iterator,'Overall Success']= b
+		df1.at[iterator,'Overall Reward']= c
+		df1.at[iterator,'Precision']= p
+		df1.at[iterator,'Recall']= r
+
+		df2.at[iterator,'Overall Cost']= ab
+		df2.at[iterator,'Overall Success']= bb
+		df2.at[iterator,'Overall Reward']= cb
+		df2.at[iterator,'Precision']= pb
+		df2.at[iterator,'Recall']= rb
+	df1.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_2_belief_0.7_pomdpdual.csv", encoding='utf-8', index=True)
+	df2.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_2_belief_0.7_baseline.csv", encoding='utf-8', index=True)
+	print 'Dual Track POMDP results'
+	print df1
+	print 'Baseline Results'
+	print df2
+	plotgenerate(df1,df2,filelist,num)
 
 
 if __name__ == '__main__':
