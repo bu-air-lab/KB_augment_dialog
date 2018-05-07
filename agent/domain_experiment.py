@@ -86,6 +86,7 @@ def plotgenerate(df1,df2,filelist,num):
 	plt.subplot(231)
 	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='*',linestyle='-',label='Dual-track POMDPs')
 	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='o',linestyle='--',label='Baseline')
+	matplotlib.pyplot.xticks([3,4,5,6])
 	plt.xlim(2.5,6.5)
 	plt.ylabel('Overall Cost')
 	plt.xlabel('Knowledge size')
@@ -93,7 +94,7 @@ def plotgenerate(df1,df2,filelist,num):
 	plt.subplot(232)
 	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDPs')
 	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline')
-
+	matplotlib.pyplot.xticks([3,4,5,6])
 	plt.xlim(2.5,6.5)
 	plt.ylabel('Overall Success')
 	plt.xlabel('Knowledge size')
@@ -102,6 +103,7 @@ def plotgenerate(df1,df2,filelist,num):
 	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Overall Reward'],marker='*',linestyle='-',label='Dual-track POMDPs')
 	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Overall Reward'],marker='o',linestyle='--',label='Baseline')
 	plt.xlim(2.5,6.5)
+	matplotlib.pyplot.xticks([3,4,5,6])
 	plt.ylabel('Overall Reward')
 	plt.xlabel('Knowledge size')
 
@@ -109,6 +111,7 @@ def plotgenerate(df1,df2,filelist,num):
 	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Precision'],marker='*',linestyle='-',label='Dual-track POMDPs')
 	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Precision'],marker='o',linestyle='--',label='Baseline')
 	plt.xlim(2.5,6.5)
+	matplotlib.pyplot.xticks([3,4,5,6])
 	plt.ylim(0,1)
 	plt.ylabel('Precision')
 	plt.xlabel('Knowledge size')
@@ -116,7 +119,7 @@ def plotgenerate(df1,df2,filelist,num):
 	plt.subplot(235)
 	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Recall'],marker='*',linestyle='-',label='Dual-track POMDPs')
 	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Recall'],marker='o',linestyle='--',label='Baseline')
-
+	matplotlib.pyplot.xticks([3,4,5,6])
 	plt.xlim(2.5,6.5)
 	plt.ylim(0,1)
 	plt.ylabel('Recall')
