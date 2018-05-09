@@ -104,6 +104,22 @@ class Simulator(object):
         
         self.known_words_to_number = {}
         self.get_known_words_to_number()
+
+        self.synonym = {
+            'apple':['fruit', 'red apple', 'fuji', 'red delicious'],
+            'coffee':['cappuccino', 'java', 'decaf', 'cup', 'mug', 'caffeine'],
+            'hamburger':['burger', 'big mac', 'sandwich'],
+            'phone':['cell', 'cell phone', 'iphone', 'mobile', 'mobile phone'],
+            'soda':['pop','coke','can','drink','soft drink','cold drink'],
+            'alice':['Alice', 'Alice Anderson', 'alice anderson'],
+            'bob':['Bob', 'Bob Brown', 'bob brown'],
+            'carol':['Carol', 'Carol Clark', 'carol clark'],
+            'dennis':['Dennis', 'Dennis Davis', 'dennis davis'],
+            'ellen':['Ellen', 'Ellen Edwards', 'ellen edwards'],
+            'yes':['yup', 'yeah', 'thats right', 'correct'],
+            'no':['nope', 'nah', 'thats wrong', 'incorrect']
+        }
+
         # to make the screen print simple 
         numpy.set_printoptions(precision=2)
 
@@ -339,23 +355,8 @@ class Simulator(object):
         # this is a workaround for the semantic parser not returning for single phrases
         # this will be replaced/removed when we fix the parser or use a different one
 
-        synonym = {
-            'apple':['fruit', 'red apple', 'fuji', 'red delicious'],
-            'coffee':['cappuccino', 'java', 'decaf', 'cup', 'mug', 'caffeine'],
-            'hamburger':['burger', 'big mac', 'sandwich'],
-            'phone':['cell', 'cell phone', 'iphone', 'mobile', 'mobile phone'],
-            'soda':['pop','coke','can','drink','soft drink','cold drink'],
-            'alice':['Alice', 'Alice Anderson', 'alice anderson'],
-            'bob':['Bob', 'Bob Brown', 'bob brown'],
-            'carol':['Carol', 'Carol Clark', 'carol clark'],
-            'dennis':['Dennis', 'Dennis Davis', 'dennis davis'],
-            'ellen':['Ellen', 'Ellen Edwards', 'ellen edwards'],
-            'yes':['yup', 'yeah', 'thats right', 'correct'],
-            'no':['nope', 'nah', 'thats wrong', 'incorrect']
-        }
-
-        for key in synonym:
-            synlist = synonym[key]
+        for key in self.synonym:
+            synlist = self.synonym[key]
             if string in synlist:
                 return key
 
@@ -528,22 +529,26 @@ class Simulator(object):
         print "marginal pm", belief_pm
         if belief_pm > belief_rn:
             raw_str = self.get_string("It seems I do not know the item you are talking about.  Please write the name of the item so I can learn it.")
+            first = raw_str.strip().split()[0]
             self.reinit_belief('p')
             self.num_patient += 1
-            self.known_words_to_number[raw_str] = 'p'+str(self.num_patient - 1)
-            file_seed.write(raw_str + " :- NP : " + raw_str + ":it\n")
-            file_nplist.write(raw_str + " :- NP : " + raw_str + ":it\n")            
-            file_geo_consts_write.write(raw_str + ":it\n")
+            self.known_words_to_number[first] = 'p'+str(self.num_patient - 1)
+            file_seed.write(raw_str + " :- NP : " + first + ":it\n")
+            file_nplist.write(raw_str + " :- NP : " + first + ":it\n")            
+            file_geo_consts_write.write(first + ":it\n")
+            self.synonym[first] = raw_str
             
         #elif self.actions[self.a] == 'ask_r':
         else:
             raw_str = self.get_string("It seems I do not know the person you are talking about.  Please write their name so I can learn it.")
+            first = raw_str.strip().split()[0]
             self.reinit_belief('r')
             self.num_recipient += 1
-            self.known_words_to_number[raw_str] = 'r'+str(self.num_recipient - 1)
-            file_seed.write(raw_str + " :- NP : " + raw_str + ":pe\n")
-            file_nplist.write(raw_str + " :- NP : " + raw_str + ":pe\n")
-            file_geo_consts_write.write(raw_str + ":pe\n")
+            self.known_words_to_number[first] = 'r'+str(self.num_recipient - 1)
+            file_seed.write(raw_str + " :- NP : " + first + ":pe\n")
+            file_nplist.write(raw_str + " :- NP : " + first + ":pe\n")
+            file_geo_consts_write.write(first + ":pe\n")
+            self.synonym[first] = raw_str
             
 
         file_geo_consts_write.write(")\n")
