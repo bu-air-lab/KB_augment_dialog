@@ -331,7 +331,6 @@ class Simulator(object):
         self.init_belief_plus()
 
         reward = 0.0
-        overall_reward = 0.0
 
         cycletime = 0
 
@@ -384,11 +383,13 @@ class Simulator(object):
                         print('QUESTION: ' + question)
                     elif ('go' in self.actions[self.a]):
                         print('EXECUTE: ' + self.actions[self.a])
+                        reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
+                        if self.print_flag is True:
+                            print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
                         done = True
 
 
                 if done == True:
-                    overall_reward += self.reward_mat_plus[self.a_plus, self.s_plus]
                     break
 
                 if self.auto_observations:
@@ -416,26 +417,19 @@ class Simulator(object):
                     print('\n\tbelief_plus:\t' + str(self.b_plus))
 
 
-            overall_reward += self.reward_mat_plus[self.a_plus, self.s_plus]
             # print('current cost: ' + str(self.reward_mat[self.a, self.s]))
             # print('overall cost: ' + str(overall_reward))
 
-            if 'go' in self.actions_plus[self.a_plus]:
-                # print '--------------------',
-                if self.print_flag is True:
-                    print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
-                reward += self.reward_mat_plus[self.a_plus, self.s_plus]
-                break
-            else:
+            if 'go' not in self.actions_plus[self.a_plus]:
                 cost += self.reward_mat_plus[self.a_plus, self.s_plus]
 
             if cycletime == 50:
-                cost += self.reward_mat_plus[self.a_plus, self.s_plus]
                 print "REACHED CYCLE TIME 50"
-                sys.exit(1)
+                reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
+        #        sys.exit(1)
                 break
 
-        return reward, cost, overall_reward, added
+        return reward, cost, added
 
     #######################################################################
     def run_numbers_of_trials(self):
@@ -505,17 +499,19 @@ class Simulator(object):
                 is_new = True
 
             # run this episode and save the reward
-            reward, cost, overall_reward, added = self.run()
+            reward, cost, added = self.run()
             reward_list.append(reward)
             cost_list.append(cost)
-            overall_reward_list.append(overall_reward)
- 
 
             # use string based checking of success for now
             if (str(self.states_plus[self.s_plus]) in self.actions[self.a]) and (is_new == added):
                 success_list.append(1.0)
+                overall_reward = reward + 50
             else:
                 success_list.append(0.0)
+                overall_reward = reward - 50
+
+            overall_reward_list.append(overall_reward)
 
             if is_new == True and added == True:
                 true_positives += 1
@@ -564,19 +560,19 @@ class Simulator(object):
         print('False negatives (%):' + str(false_negatives))
 
         if true_positives + false_positives == 0:
-            precision = 1
+            precision = 0
         else:
             precision = true_positives/(true_positives + false_positives)
         
         if true_positives + false_negatives == 0:
-            recall == 1
+            recall == 0
         else:        
             recall = true_positives/(true_positives + false_negatives)
         
         print('Precision:' + str(precision))
         print('Recall:' + str(recall))
 
-        return (numpy.mean(cost_arr), numpy.mean(success_arr), \
+        return (numpy.mean(reward_arr), numpy.mean(success_arr), \
             numpy.mean(overall_reward_arr), precision, recall)
 
 
