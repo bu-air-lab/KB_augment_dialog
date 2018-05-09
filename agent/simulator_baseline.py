@@ -25,7 +25,6 @@ class Baseline(Simulator):
         self.init_belief_plus()
 
         reward = 0.0
-        overall_reward = 0.0
 
         cycletime = 0
 
@@ -78,11 +77,13 @@ class Baseline(Simulator):
                         print('QUESTION: ' + question)
                     elif ('go' in self.actions[self.a]):
                         print('EXECUTE: ' + self.actions[self.a])
+                        if self.print_flag is True:
+                            print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
+                        reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
                         done = True
 
 
                 if done == True:
-                    overall_reward += self.reward_mat_plus[self.a_plus, self.s_plus]
                     break
 
                 if self.auto_observations:
@@ -92,6 +93,7 @@ class Baseline(Simulator):
 
                 # check entropy increases arbitrary no of times for now
                 if (added == False):
+                    print cycletime
                     if(cycletime > 15):
                         if (self.actions[self.a] == "ask_p" or self.actions[self.a] == "ask_r"):
                             print "--- new item/person ---"
@@ -110,23 +112,16 @@ class Baseline(Simulator):
                     print('\n\tbelief_plus:\t' + str(self.b_plus))
 
 
-            overall_reward += self.reward_mat_plus[self.a_plus, self.s_plus]
             # print('current cost: ' + str(self.reward_mat[self.a, self.s]))
             # print('overall cost: ' + str(overall_reward))
 
-            if 'go' in self.actions_plus[self.a_plus]:
-                # print '--------------------',
-                if self.print_flag is True:
-                    print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
-                reward += self.reward_mat_plus[self.a_plus, self.s_plus]
-                break
-            else:
+            if 'go' not in self.actions_plus[self.a_plus]:
                 cost += self.reward_mat_plus[self.a_plus, self.s_plus]
 
             if cycletime == 50:
-                cost += self.reward_mat_plus[self.a_plus, self.s_plus]
                 print "BASELINE: REACHED CYCLE TIME 50"
-                sys.exit(1)
+            #    sys.exit(1)
+                reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
                 break
 
-        return reward, cost, overall_reward, added
+        return reward, cost, added
