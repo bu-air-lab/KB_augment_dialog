@@ -18,6 +18,8 @@ import string
 import time
 import ast
 
+import matplotlib.pyplot as plt
+
 
 numpy.set_printoptions(suppress=True)
 
@@ -76,6 +78,10 @@ class Simulator(object):
         self.a_plus=None
         self.o = None
         self.o_plus= None
+
+        # for plotting entropy
+        self.entropy_list = []
+        self.added_point = None
         # self.dialog_turn = 0
 
         numpy.set_printoptions(precision=2)
@@ -356,6 +362,9 @@ class Simulator(object):
             print "DEBUG: Entropy = ",current_entropy
             print "DEBUG: Entropy_plus = ",current_entropy_plus
             # check if entropy increased
+
+            self.entropy_list.append(current_entropy)
+
             if (old_entropy < current_entropy):
                 inc_count += 1
                 print "DEBUG: entropy increased"
@@ -403,6 +412,7 @@ class Simulator(object):
                         if (self.actions[self.a] == "ask_p" or self.actions[self.a] == "ask_r"):
                             print "--- new item/person ---"
                             added = True
+                            self.added_point = (cycletime-1, current_entropy)
                             self.add_new(raw_str)
 
                 self.observe(raw_str)
@@ -500,6 +510,7 @@ class Simulator(object):
 
             # run this episode and save the reward
             reward, cost, added = self.run()
+
             reward_list.append(reward)
             cost_list.append(cost)
 
@@ -576,4 +587,55 @@ class Simulator(object):
             numpy.mean(overall_reward_arr), precision, recall)
 
 
+    def plot_entropy(self):
+        # plot the entropy
+        fig=plt.figure()
+        ax = fig.add_subplot(111)
+        plt.plot(self.entropy_list)
+        plt.ylabel('Entropy', fontsize=16)
+        plt.xlabel('Turn', fontsize=16)
+        plt.title('Entropy changes during a conversation')
 
+        if self.added_point:
+            x, y = self.added_point
+            textpoint = (x-0.5, y+0.5)
+            ax.annotate('new added', xy=self.added_point, 
+                arrowprops = dict(facecolor='black', shrink=0.05), xytext=textpoint)
+
+        #plt.grid()
+        fig.savefig('ent_thres_'+str(self.ent_threshold)+
+            'bel_thres_'+str(self.belief_threshold)+'.pdf')
+
+
+def run_one():
+    num=1                                        #number of trials
+    #filelist = ['133', '144']
+    # just use for sth in somelist, not for sth in range(len(ssomelist))
+    name = '133'  # or name = iterator
+
+    s = Simulator(uniform_init_belief = True, 
+        auto_state = True, 
+        auto_observations = True, # was true
+        print_flag = True, 
+        policy_file = name+'_new.policy',
+        pomdp_file =  name +'_new.pomdp',
+            pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.pomdp',
+            policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.policy',
+        trials_num = num,
+        num_task = int(name[0]), 
+        num_patient = int(name[1]), 
+        num_recipient = int(name[2]),
+        belief_threshold = 0.4,
+        ent_threshold = 4)
+ 
+    if not s.uniform_init_belief:   
+        print('note that initial belief is not uniform\n')
+    s.read_model_plus()
+    ###Saving results in a dataframe and passing data frame to plot generate_function
+
+    #Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
+    a,b,c,p,r=s.run_numbers_of_trials()
+    s.plot_entropy()
+
+if __name__ == '__main__':
+    run_one()
