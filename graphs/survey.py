@@ -42,8 +42,8 @@ legend_elements = [Patch(facecolor='firebrick', label='Strongly Disagree'),
                    Patch(facecolor='lightcoral', label='Neutral'),
                    Patch(facecolor='mistyrose', label='Agree'),
                    Patch(facecolor='gainsboro', label='Strongly Agree'),
-                   Patch(hatch='...', label='Our Method'),
-                   Patch(hatch='\\\\', label='Baseline')]
+                   Patch(facecolor='white', hatch='...', label='Our Method'),
+                   Patch(facecolor='white', hatch='\\\\', label='Baseline')]
 
 df1 = pd.DataFrame(data=d1, columns=cols, index=questions)
 df2 = pd.DataFrame(data=d2, columns=cols, index=questions)
@@ -52,11 +52,11 @@ fig, ax = plt.subplots(figsize=(9,6))
 df1.plot.barh(hatch='...', width=0.25, position=0, stacked=True, color=colors, ax=ax, edgecolor='black',  legend=False)
 df2.plot.barh(hatch='\\\\', width=0.25, position=1, stacked=True, color=colors, ax=ax, edgecolor='black', legend=False)
 
-ax.legend(handles=legend_elements, loc='2', bbox_to_anchor=(1.05,1), borderaxespad=0.)
+ax.legend(handles=legend_elements, bbox_to_anchor=(1.05,1), borderaxespad=0.)
 plt.yticks(clip_on=False)
 plt.xlabel('Participants (%)')
 plt.subplots_adjust(left=0.33, right=0.75)
 
 #plt.margins(0.5)
 plt.show()
-fig.savefig('survey.svg')
+fig.savefig('survey.pdf')
