@@ -331,6 +331,10 @@ class Simulator(object):
         return False
 
 
+    def sign(self, n):
+        return n/abs(n)
+
+
     def run(self):
         cost = 0.0
         self.init_belief()
@@ -342,6 +346,7 @@ class Simulator(object):
 
         current_entropy = float("inf")
         old_entropy = float("inf")
+        old_sign = 1
         inc_count = 0
         added = False
 
@@ -356,18 +361,21 @@ class Simulator(object):
 
             # select action
             # entropy
+            old_sign = self.sign(current_entropy - old_entropy)
             old_entropy = current_entropy
             current_entropy = stats.entropy(self.b)
             current_entropy_plus = stats.entropy(self.b_plus)
+            
             print "DEBUG: Entropy = ",current_entropy
             print "DEBUG: Entropy_plus = ",current_entropy_plus
             # check if entropy increased
 
             self.entropy_list.append(current_entropy)
 
-            if (old_entropy < current_entropy):
+            # if(old_entropy < current_entropy):
+            if (self.sign(current_entropy - old_entropy) != old_sign):
                 inc_count += 1
-                print "DEBUG: entropy increased"
+                print "DEBUG: entropy fluctuated"
 
             if(self.entropy_check(current_entropy)):
                 self.get_full_request(cycletime)
@@ -517,11 +525,10 @@ class Simulator(object):
             # use string based checking of success for now
             if (str(self.states_plus[self.s_plus]) in self.actions[self.a]) and (is_new == added):
                 success_list.append(1.0)
-                overall_reward = reward + 50
             else:
-                success_list.append(0.0)
-                overall_reward = reward - 50
+                success_list.append(0.0)                
 
+            overall_reward = reward
             overall_reward_list.append(overall_reward)
 
             if is_new == True and added == True:
@@ -583,7 +590,7 @@ class Simulator(object):
         print('Precision:' + str(precision))
         print('Recall:' + str(recall))
 
-        return (numpy.mean(reward_arr), numpy.mean(success_arr), \
+        return (numpy.mean(cost_arr), numpy.mean(success_arr), \
             numpy.mean(overall_reward_arr), precision, recall)
 
 

@@ -94,7 +94,7 @@ class Baseline(Simulator):
                 # check entropy increases arbitrary no of times for now
                 if (added == False):
                     print cycletime
-                    if(cycletime > 15):
+                    if(cycletime > 25):
                         if (self.actions[self.a] == "ask_p" or self.actions[self.a] == "ask_r"):
                             print "--- new item/person ---"
                             added = True

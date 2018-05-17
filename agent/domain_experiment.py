@@ -3,7 +3,7 @@ from simulator_baseline import Baseline
 import pandas as pd
 import ast
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import csv
 
@@ -82,7 +82,7 @@ def plotgenerate(df1,df2,filelist,num):
 		plt.xlabel('Knowledge size')
 	'''
 	g=plt.figure(figsize=(15,8))
-	plt.suptitle('Increasing domain size, belief_threshold=0.7, entropy threshold=2, '+str(num)+ ' trials', fontsize=18);
+	plt.suptitle('Increasing domain size, belief_threshold=0.4, entropy threshold=5, '+str(num)+ ' trials', fontsize=18);
 	plt.subplot(231)
 	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='*',linestyle='-',label='Dual-track POMDPs')
 	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='o',linestyle='--',label='Baseline')
@@ -127,17 +127,18 @@ def plotgenerate(df1,df2,filelist,num):
 	ax.legend(loc='upper left', bbox_to_anchor=(-1.2, 1.15),  shadow=True, ncol=2)
 	#g.tight_layout()
 	plt.show()
-	g.savefig('Plots/all_'+str(num)+'_trials_domain_experiment_entropy_2_belief_07')
+	g.savefig('Plots/all_'+str(num)+'_trials_domain_experiment_entropy_2_belief_0_3')
 
 
 def main():
 
 
-	num=500                                       #number of trials
+	num=500                                      #number of trials
 	filelist=['133','144','155','166']                     #list of pomdp files
 	#filelist=['133']
-	entlist=[2,3,4,5,6,7]
-	belieflist=[0.3,0.4,0.5,0.6,0.7]
+	entlist=[3,4,5,6]
+	belieflist=[0.4,0.4,0.3,0.2]
+	i=0
 	#filelist = ['133', '144']
 	df1=pd.DataFrame()
 	df2=pd.DataFrame() 
@@ -157,8 +158,8 @@ def main():
 			num_task = int(name[0]), 
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
-			belief_threshold = 0.7,
-			ent_threshold = 2)
+			belief_threshold = 0.4,
+			ent_threshold = 5)
 	 
 		if not s.uniform_init_belief:   
 			print('note that initial belief is not uniform\n')
@@ -176,8 +177,8 @@ def main():
 			num_task = int(name[0]), 
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
-			belief_threshold = 0.7,
-			ent_threshold = 2)
+			belief_threshold = 2,
+			ent_threshold = 999)
 	 
 		if not base.uniform_init_belief:   
 			print('note that initial belief is not uniform\n')
@@ -206,7 +207,7 @@ def main():
 	print 'Baseline Results'
 	print df2
 	plotgenerate(df1,df2,filelist,num)
-
+	i+=1
 
 if __name__ == '__main__':
 	main()
