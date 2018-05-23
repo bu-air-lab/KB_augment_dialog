@@ -874,8 +874,8 @@ def main():
     r_max = 30.0
     r_min = -50.0
 
-    wh_cost = -1.25
-    yesno_cost = -1.0
+    wh_cost = -0.75
+    yesno_cost = -0.5
     
     for i in range(3,10):
     	num_task = 1
@@ -893,9 +893,9 @@ def main():
     	pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
         	wh_cost, yesno_cost,pomdpfile,timeout=40, is_plus=False )
 
-        print("Generating 'Plus' files...")
-        pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-            wh_cost, yesno_cost,pomdpfile,timeout=40, is_plus=True )
+        #print("Generating 'Plus' files...")
+        #pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
+        #    wh_cost, yesno_cost,pomdpfile,timeout=40, is_plus=True )
 
 
 if __name__ == '__main__':
