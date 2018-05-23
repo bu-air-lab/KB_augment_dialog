@@ -403,10 +403,18 @@ class PomdpGenerator(object):
             reward_mat_float_negative_deliveries * reweight_factor
 
         # writing to files
-        self.filename = pomdpfile
+        if self.is_plus:
+            self.filename = strategy+'_new_plus.pomdp'
+        else:
+            self.filename = pomdpfile
+
         self.reward_mat = reward_mat_bin
         self.writeToFile()
-        self.policyfile=strategy+'_new.policy'
+
+        if self.is_plus:
+            self.policyfile=strategy+'_new_plus.policy'
+        else:
+            self.policyfile=strategy+'_new.policy'
         
         
         self.reward_mat = reward_mat_float
@@ -630,10 +638,16 @@ class PomdpGenerator(object):
                                             [observation.getIndex()]\
                                             = self.polar_tp_rate
                                     else:
-                                        obs_mat[action.getIndex()]\
-                                            [state.getIndex()]\
-                                            [observation.getIndex()]=\
-                                            1.0 - self.polar_tp_rate
+                                        if self.is_plus and state.getpatientIndex() == (num_patient - 1):
+                                            obs_mat[action.getIndex()]\
+                                                [state.getIndex()]\
+                                                [observation.getIndex()]= \
+                                                0
+                                        else:
+                                            obs_mat[action.getIndex()]\
+                                                [state.getIndex()]\
+                                                [observation.getIndex()]=\
+                                                1.0 - self.polar_tp_rate
                                 elif observation.getName() == 'no':
                                     if state.getpatientIndex() == \
                                         action.getpatientIndex():
@@ -642,10 +656,16 @@ class PomdpGenerator(object):
                                             [observation.getIndex()]= \
                                             1.0 - self.polar_tn_rate
                                     else:
-                                        obs_mat[action.getIndex()]\
-                                            [state.getIndex()]\
-                                            [observation.getIndex()]=\
-                                            self.polar_tn_rate
+                                        if self.is_plus and state.getpatientIndex() == (num_patient - 1):
+                                            obs_mat[action.getIndex()]\
+                                                [state.getIndex()]\
+                                                [observation.getIndex()]= \
+                                                1.0
+                                        else:
+                                            obs_mat[action.getIndex()]\
+                                                [state.getIndex()]\
+                                                [observation.getIndex()]=\
+                                                self.polar_tn_rate
                     elif action.var == 'recipient':
                         for state in self.state_set:
                             if state.isTerminal() == True:
@@ -659,10 +679,16 @@ class PomdpGenerator(object):
                                             [observation.getIndex()]\
                                             = self.polar_tp_rate
                                     else:
-                                        obs_mat[action.getIndex()]\
-                                            [state.getIndex()]\
-                                            [observation.getIndex()]=\
-                                            1.0 - self.polar_tp_rate
+                                        if self.is_plus and state.getrecipientIndex() == (num_recipient - 1):
+                                            obs_mat[action.getIndex()]\
+                                                [state.getIndex()]\
+                                                [observation.getIndex()]= \
+                                                0
+                                        else:
+                                            obs_mat[action.getIndex()]\
+                                                [state.getIndex()]\
+                                                [observation.getIndex()]=\
+                                                1.0 - self.polar_tp_rate
                                 elif observation.getName() == 'no':
                                     if state.getrecipientIndex() ==\
                                         action.getrecipientIndex():
@@ -671,10 +697,16 @@ class PomdpGenerator(object):
                                             [observation.getIndex()]= \
                                             1.0 - self.polar_tn_rate
                                     else:
-                                        obs_mat[action.getIndex()]\
-                                            [state.getIndex()]\
-                                            [observation.getIndex()]\
-                                            = self.polar_tn_rate
+                                        if self.is_plus and state.getrecipientIndex() == (num_recipient - 1):
+                                            obs_mat[action.getIndex()]\
+                                                [state.getIndex()]\
+                                                [observation.getIndex()]= \
+                                                1.0
+                                        else:
+                                            obs_mat[action.getIndex()]\
+                                                [state.getIndex()]\
+                                                [observation.getIndex()]\
+                                                = self.polar_tn_rate
 
         return obs_mat
 
@@ -839,10 +871,10 @@ class PomdpGenerator(object):
 
 def main():
 
-    r_max = 50.0
+    r_max = 30.0
     r_min = -50.0
 
-    wh_cost = -1.5
+    wh_cost = -1.25
     yesno_cost = -1.0
     
     for i in range(3,10):
@@ -860,6 +892,11 @@ def main():
     	pomdpfile=strategy+'_new.pomdp'
     	pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
         	wh_cost, yesno_cost,pomdpfile,timeout=40, is_plus=False )
+
+        print("Generating 'Plus' files...")
+        pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
+            wh_cost, yesno_cost,pomdpfile,timeout=40, is_plus=True )
+
 
 if __name__ == '__main__':
 
