@@ -120,6 +120,12 @@ class Simulator(object):
             'no':['nope', 'nah', 'thats wrong', 'incorrect']
         }
 
+        # to plot entropy
+        self.entropy_list = []
+        self.added_point = None
+        self.question_list = []
+        self.answer_list = []
+
         # to make the screen print simple 
         numpy.set_printoptions(precision=2)
 
@@ -276,7 +282,13 @@ class Simulator(object):
     def get_string(self, question):
         # this method can be overriden when needed (eg. use a gui wrapper)
         print "QUESTION: " + question
-        return raw_input().lower()
+        answer = raw_input().lower()
+
+        # to log or entropy plot
+        self.question_list.append(question)
+        self.answer_list.append(answer)
+
+        return answer
 
 
     def print_message(self, message):
@@ -689,6 +701,8 @@ class Simulator(object):
 
             # select action
             # entropy
+
+            old_sign = self.sign(current_entropy - old_entropy)
             old_entropy = current_entropy
             current_entropy = stats.entropy(self.b)
             current_entropy_plus = stats.entropy(self.b_plus)
@@ -696,12 +710,14 @@ class Simulator(object):
             if self.print_flag:
                 print "DEBUG: Entropy = ",current_entropy
                 print "DEBUG: Entropy_plus = ",current_entropy_plus
+
+            self.entropy_list.append(current_entropy)
             
             # check if entropy increased
-            if (old_entropy < current_entropy):
+            if (self.sign(current_entropy - old_entropy) != old_sign):
                 inc_count += 1
                 if self.print_flag:
-                    print "DEBUG: entropy increased"
+                    print "DEBUG: entropy fluctuated"
 
             if (self.entropy_check(current_entropy)):
                 self.get_full_request(cycletime)
@@ -724,6 +740,7 @@ class Simulator(object):
                     if(inc_count > self.ent_threshold or self.belief_check()):
                         print "--- new item/person ---"
                         added = True
+                        self.added_point = (cycletime-1, current_entropy)
                         self.add_new()
 
                 if ('go' in self.actions[self.a]):
@@ -771,6 +788,27 @@ class Simulator(object):
                 break
 
         ##return reward, cost, overall_reward, added
+        # entropy data to plot
+        f = open('entropy_plot/entropy.txt', 'w')
+        for item in self.entropy_list:
+            f.write("%s\n" % item)
+        d.close()
+
+        f = open('entropy_plot/question.txt', 'w')
+        for item in self.question_list:
+            f.write("%s\n" % item)
+        d.close()
+
+        f = open('entropy_plot/answer.txt', 'w')
+        for item in self.answer_list:
+            f.write("%s\n" % item)
+        d.close()
+
+        f = open('entropy_plot/added.txt', 'w')
+        f.write("%s\n" % self.added_point)
+        d.close()
+
+
         return
 
     #######################################################################
