@@ -874,10 +874,10 @@ def main():
     r_max = 30.0
     r_min = -50.0
 
-    wh_cost = -0.75
-    yesno_cost = -0.5
+    wh_cost = -1.25
+    yesno_cost = -1
     
-    for i in range(3,10):
+    for i in range(3,8):
     	num_task = 1
     	num_patient = i
     	num_recipient = i
