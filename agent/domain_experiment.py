@@ -81,32 +81,42 @@ def plotgenerate(df1,df2,filelist,num):
 
 		plt.xlabel('Knowledge size')
 	'''
-	g=plt.figure(figsize=(15,8))
-	plt.suptitle('Increasing domain size, belief_threshold=0.4, entropy threshold=5, '+str(num)+ ' trials', fontsize=18);
-	plt.subplot(231)
-	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='*',linestyle='-',label='Dual-track POMDPs')
-	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='o',linestyle='--',label='Baseline')
-	matplotlib.pyplot.xticks([3,4,5,6])
-	plt.xlim(2.5,6.5)
-	plt.ylabel('Overall Cost')
-	plt.xlabel('Knowledge size')
+	g=plt.figure(figsize=(15,5))
+	#plt.suptitle('Increasing domain size, belief_threshold=0.4, entropy threshold=5, '+str(num)+ ' trials', fontsize=18);
+	'''font = {'family' : 'normal',
+        'weight' : 'bold',
+        'size'   : 18}
 
-	plt.subplot(232)
-	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDPs')
-	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline')
-	matplotlib.pyplot.xticks([3,4,5,6])
-	plt.xlim(2.5,6.5)
-	plt.ylabel('Overall Success')
-	plt.xlabel('Knowledge size')
+	matplotlib.rc('font', **font)'''
+	font_size = 20
 
-	ax=plt.subplot(233)
-	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Overall Reward'],marker='*',linestyle='-',label='Dual-track POMDPs')
-	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Overall Reward'],marker='o',linestyle='--',label='Baseline')
-	plt.xlim(2.5,6.5)
-	matplotlib.pyplot.xticks([3,4,5,6])
-	plt.ylabel('Overall Reward')
-	plt.xlabel('Knowledge size')
+	plt.subplot(131)
+	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='*',linestyle='-',label='Dual-track POMDPs')
+	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='o',linestyle='--',label='Baseline')
+	plt.xlim(8,40)
+	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
+	plt.tick_params(labelsize=font_size)
+	plt.ylabel('Overall Cost', fontsize = font_size)
+	plt.xlabel('Knowledge size', fontsize = font_size)
 
+	plt.subplot(132)
+	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDPs')
+	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline')
+	plt.xlim(8,40)
+	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
+	plt.tick_params(labelsize=font_size)
+	plt.ylabel('Overall Success', fontsize = font_size)
+	plt.xlabel('Knowledge size', fontsize = font_size)
+
+	ax=plt.subplot(133)
+	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Reward'],marker='*',linestyle='-',label='Dual-track POMDPs')
+	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Reward'],marker='o',linestyle='--',label='Baseline')
+	plt.xlim(8,40)
+	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)	
+	plt.tick_params(labelsize=font_size)
+	plt.ylabel('Overall Reward', fontsize = font_size)
+	plt.xlabel('Knowledge size', fontsize = font_size)
+	'''
 	plt.subplot(234)
 	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Precision'],marker='*',linestyle='-',label='Dual-track POMDPs')
 	plt.plot(range(3,3+len(filelist)),df2.loc[filelist[0]:filelist[-1],'Precision'],marker='o',linestyle='--',label='Baseline')
@@ -124,10 +134,11 @@ def plotgenerate(df1,df2,filelist,num):
 	plt.ylim(0,1)
 	plt.ylabel('Recall')
 	plt.xlabel('Knowledge size')
-	ax.legend(loc='upper left', bbox_to_anchor=(-1.2, 1.15),  shadow=True, ncol=2)
+	'''
+	ax.legend(loc='upper left', bbox_to_anchor=(-1.5, 1.2),  shadow=True, ncol=2, fontsize=font_size)
 	#g.tight_layout()
 	plt.show()
-	g.savefig('Plots/all_'+str(num)+'_trials_domain_experiment_entropy_2_belief_0_3')
+	g.savefig('Plots/all_'+str(num)+'_trials_domain_experiment_entropy_5_belief_0_4')
 
 
 def main():
@@ -210,4 +221,13 @@ def main():
 	i+=1
 
 if __name__ == '__main__':
-	main()
+	
+	num=500
+	df1 = pd.read_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_2_belief_0.7_pomdpdual.csv", index_col=0)
+	print df1
+	df2 = pd.read_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_2_belief_0.7_baseline.csv", index_col=0)
+	print df2
+	filelist=['133','144','155','166']
+	plotgenerate(df1,df2,filelist,num)
+	
+	#main()
