@@ -78,36 +78,36 @@ def plotgenerate(df,belieflist,num):
 
         plt.xlabel('Number of Entropy changes')
     '''
-    g=plt.figure(figsize=(15,9))
+    g=plt.figure(figsize=(15,4))
     plt.suptitle('Increasing entropy changes for fixed model 133 , belief threshold 0.7,'+str(num)+ ' trials', fontsize=18);
-    plt.subplot(231)
+    plt.subplot(151)
     plt.plot(range(2,max(belieflist)+1),df.loc[belieflist[0]:belieflist[-1],'Overall Cost'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
     plt.xlim(1.5,max(belieflist)+1)
     plt.ylim(-30,0)
     plt.ylabel('Overall Cost')
     plt.xlabel('Number of entropy changes')
 
-    plt.subplot(232)
+    plt.subplot(152)
     plt.plot(range(2,max(belieflist)+1),df.loc[belieflist[0]:belieflist[-1],'Overall Success'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
     plt.xlim(1.5,max(belieflist)+1)
     plt.ylabel('Overall Success')
     plt.xlabel('Number of entropy changes')
 
-    plt.subplot(233)
+    plt.subplot(153)
     plt.plot(range(2,max(belieflist)+1),df.loc[belieflist[0]:belieflist[-1],'Overall Reward'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
     plt.xlim(1.5,max(belieflist)+1)
     plt.ylim(0,30)
     plt.ylabel('Overall Reward')
     plt.xlabel('Number of entropy changes')
 
-    plt.subplot(234)
+    plt.subplot(154)
     plt.plot(range(2,max(belieflist)+1),df.loc[belieflist[0]:belieflist[-1],'Precision'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
     plt.xlim(1.5,max(belieflist)+1)
     plt.ylim(0,1)
     plt.ylabel('Precision')
     plt.xlabel('Number of entropy changes')
 
-    plt.subplot(235)
+    plt.subplot(155)
     plt.plot(range(2,max(belieflist)+1),df.loc[belieflist[0]:belieflist[-1],'Recall'],marker='*',linestyle='-',label='Average of '+str(num)+ ' trials')
     plt.xlim(1.5,max(belieflist)+1)
     plt.ylim(0,1)
