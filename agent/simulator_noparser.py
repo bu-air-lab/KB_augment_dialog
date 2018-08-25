@@ -339,6 +339,9 @@ class Simulator(object):
 
 
     def sign(self, n):
+        if n == 0 or n == float("inf") or n == float("-inf"):
+            return 1
+
         return n/abs(n)
 
 
@@ -493,7 +496,7 @@ class Simulator(object):
         for i in range(self.trials_num):
 
             # seed random for experiments
-            numpy.random.seed(i+13)
+            #numpy.random.seed(i+20)
 
             # get a sample as the current state, terminal state exclusive
             if self.auto_state:
@@ -648,8 +651,8 @@ def run_one():
         num_task = int(name[0]), 
         num_patient = int(name[1]), 
         num_recipient = int(name[2]),
-        belief_threshold = 0.8,
-        ent_threshold = 4)
+        belief_threshold = 0.4,
+        ent_threshold = 2)
  
     if not s.uniform_init_belief:   
         print('note that initial belief is not uniform\n')
