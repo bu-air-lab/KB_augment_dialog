@@ -817,7 +817,7 @@ class PomdpGenerator(object):
 
         # first few lines
         s = ''
-        s += 'discount : 0.999999\n\nvalues: reward\n\nstates: '
+        s += 'discount : 0.999\n\nvalues: reward\n\nstates: '
 
         # section of states
         for state in self.state_set:
@@ -871,11 +871,11 @@ class PomdpGenerator(object):
 
 def main():
 
-    r_max = 30.0
-    r_min = -50.0
+    r_max = 100.0
+    r_min = -100.0
 
-    wh_cost = -1.25
-    yesno_cost = -1
+    wh_cost = -1.5
+    yesno_cost = -1.0
     
     for i in range(3,8):
     	num_task = 1

@@ -54,7 +54,7 @@ class Simulator(object):
         self.num_task = num_task
         self.num_patient = num_patient
         self.num_recipient = num_recipient
-        self.tablelist = conf.tablelist
+        #self.tablelist = conf.tablelist
 
         # to read the pomdp model
         model = pomdp_parser.Pomdp(filename=pomdp_file, parsing_print_flag=False)
@@ -82,6 +82,8 @@ class Simulator(object):
         # for plotting entropy
         self.entropy_list = []
         self.added_point = None
+        self.question_list = []
+        self.answer_list = []
         # self.dialog_turn = 0
 
         numpy.set_printoptions(precision=2)
@@ -162,6 +164,7 @@ class Simulator(object):
     def get_full_request(self, cycletime):
         print self.observations # debug
         print "DEBUG: Full request here"
+        self.question_list.append("Full request")
 
         # patient
         # get action from key
@@ -183,17 +186,15 @@ class Simulator(object):
         else:
             raw_str = raw_input("Input observation (patient/item): ")
 
-        ''' Note: Should we have a random observation for unknown here too
-        like we do for the later phases?  For now I have implemented it
-        that way, which is different from how we do it in the standard 
-        'simulator.py' file, where we just observe a known or we don't 
-        observe at all '''
+        answer = raw_str
 
         self.observe(raw_str)
         # update for patient observation
         self.update(cycletime)
         # for belief plus
         self.update_plus(cycletime)
+
+        raw_str = None
 
         # recipient
         # get action from key
@@ -214,6 +215,10 @@ class Simulator(object):
         else:
             raw_str = raw_input("Input observation (recipient/person): ")
         
+        answer = answer + " " + raw_str
+
+        self.answer_list.append(answer)
+        
         self.observe(raw_str)
         # update for recipient observation
         self.update(cycletime)
@@ -223,7 +228,7 @@ class Simulator(object):
 ##########################################################
 
     
-    def add_new(self, raw_str):
+    def add_new(self):
         print "DEBUG: adding new"
         self.num_patient += 1
         self.num_recipient += 1
@@ -250,6 +255,8 @@ class Simulator(object):
         
         if raw_str == None:
             sys.exit('Error: observation no sampled properly')
+
+        self.answer_list.append(raw_str)
 
         return raw_str
 
@@ -366,16 +373,18 @@ class Simulator(object):
             current_entropy = stats.entropy(self.b)
             current_entropy_plus = stats.entropy(self.b_plus)
             
-            print "DEBUG: Entropy = ",current_entropy
-            print "DEBUG: Entropy_plus = ",current_entropy_plus
+            if self.print_flag:
+                print "DEBUG: Entropy = ",current_entropy
+                print "DEBUG: Entropy_plus = ",current_entropy_plus
             # check if entropy increased
 
             self.entropy_list.append(current_entropy)
 
             # if(old_entropy < current_entropy):
             if (self.sign(current_entropy - old_entropy) != old_sign):
-                inc_count += 1
-                print "DEBUG: entropy fluctuated"
+                if old_entropy != float("inf"):
+                    inc_count += 1
+                    print "DEBUG: entropy fluctuated"
 
             if(self.entropy_check(current_entropy)):
                 self.get_full_request(cycletime)
@@ -395,43 +404,43 @@ class Simulator(object):
                     print 'num_recipients', self.num_recipient
                     print 'num_patients', self.num_patient
 
-                    question = self.action_to_text(self.actions[self.a])
-                    if question:
-                        print('QUESTION: ' + question)
-                    elif ('go' in self.actions[self.a]):
-                        print('EXECUTE: ' + self.actions[self.a])
-                        reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
-                        if self.print_flag is True:
-                            print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
-                        done = True
+                question = self.action_to_text(self.actions[self.a])
+                if question:
+                    print('QUESTION: ' + question)
+                    self.question_list.append(question)
+                elif ('go' in self.actions[self.a]):
+                    print('EXECUTE: ' + self.actions[self.a])
+                    if self.print_flag:
+                        print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
+                    
+                    self.question_list.append(self.actions[self.a])
+                    reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]     
+                    done = True
 
 
                 if done == True:
                     break
+
+                # check entropy increases arbitrary no of times for now
+                if (added == False):
+                    if(inc_count > self.ent_threshold or self.belief_check()):
+                        print "--- new item/person ---"
+                        added = True
+                        self.added_point = (cycletime-1, current_entropy)
+                        self.add_new()
 
                 if self.auto_observations:
                     raw_str = self.auto_observe()
                 else:
                     raw_str = raw_input("Input observation: ")
 
-                # check entropy increases arbitrary no of times for now
-                if (added == False):
-                    if(inc_count > self.ent_threshold or self.belief_check()):
-                        if (self.actions[self.a] == "ask_p" or self.actions[self.a] == "ask_r"):
-                            print "--- new item/person ---"
-                            added = True
-                            self.added_point = (cycletime-1, current_entropy)
-                            self.add_new(raw_str)
-
                 self.observe(raw_str)
+                self.update(cycletime)
+                self.update_plus(cycletime)
+
                 if self.print_flag:
                     print('\tobserve:\t'+self.observations[self.o]+' '+str(self.o))
-
-                self.update(cycletime)
-                if self.print_flag:
                     print('\n\tbelief:\t\t' + str(self.b))
-                self.update_plus(cycletime)
-                if self.print_flag:
                     print('\n\tbelief_plus:\t' + str(self.b_plus))
 
 
@@ -443,7 +452,7 @@ class Simulator(object):
 
             if cycletime == 50:
                 print "REACHED CYCLE TIME 50"
-                reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
+                reward = cost - 50
         #        sys.exit(1)
                 break
 
@@ -484,12 +493,14 @@ class Simulator(object):
         for i in range(self.trials_num):
 
             # seed random for experiments
-            numpy.random.seed(i+2)
+            numpy.random.seed(i+13)
 
             # get a sample as the current state, terminal state exclusive
             if self.auto_state:
                 # 50% chance fixed to select unknown state
                 unknown_state = numpy.random.choice([True, False])
+                # 100% chance to select unknown
+                #unknown_state = True
 
                 if unknown_state == False:
                     self.s = numpy.random.randint(low=0, high=len(self.states)-1, size=(1))[0]
@@ -572,10 +583,10 @@ class Simulator(object):
         print('average overall reward: ' + str(numpy.mean(overall_reward_arr)) + \
             ' with std ' + str(numpy.std(overall_reward_arr)))
 
-        print('True positives (%):' + str(true_positives))
-        print('False positives (%):' + str(false_positives))
-        print('True negatives (%):' + str(true_negatives))
-        print('False negatives (%):' + str(false_negatives))
+        print('True positives:' + str(true_positives))
+        print('False positives:' + str(false_positives))
+        print('True negatives:' + str(true_negatives))
+        print('False negatives:' + str(false_negatives))
 
         if true_positives + false_positives == 0:
             precision = 0
@@ -583,35 +594,40 @@ class Simulator(object):
             precision = true_positives/(true_positives + false_positives)
         
         if true_positives + false_negatives == 0:
-            recall == 0
+            recall = 0
         else:        
             recall = true_positives/(true_positives + false_negatives)
+
+        f1_score = 2 * precision * recall/(precision + recall)
         
         print('Precision:' + str(precision))
         print('Recall:' + str(recall))
+        print('F1:' + str(f1_score))
 
         return (numpy.mean(cost_arr), numpy.mean(success_arr), \
-            numpy.mean(overall_reward_arr), precision, recall)
+            numpy.mean(overall_reward_arr), precision, recall, f1_score)
 
 
     def plot_entropy(self):
-        # plot the entropy
-        fig=plt.figure()
-        ax = fig.add_subplot(111)
-        plt.plot(self.entropy_list)
-        plt.ylabel('Entropy', fontsize=16)
-        plt.xlabel('Turn', fontsize=16)
-        plt.title('Entropy changes during a conversation')
+        # entropy data to plot
+        f = open('entropy_plot/entropy.txt', 'w')
+        for item in self.entropy_list:
+            f.write("%s\n" % str(item))
+        f.close()
 
-        if self.added_point:
-            x, y = self.added_point
-            textpoint = (x-0.5, y+0.5)
-            ax.annotate('new added', xy=self.added_point, 
-                arrowprops = dict(facecolor='black', shrink=0.05), xytext=textpoint)
+        f = open('entropy_plot/question.txt', 'w')
+        for item in self.question_list:
+            f.write("%s\n" % str(item))
+        f.close()
 
-        #plt.grid()
-        fig.savefig('ent_thres_'+str(self.ent_threshold)+
-            'bel_thres_'+str(self.belief_threshold)+'.pdf')
+        f = open('entropy_plot/answer.txt', 'w')
+        for item in self.answer_list:
+            f.write("%s\n" % str(item))
+        f.close()
+
+        f = open('entropy_plot/added.txt', 'w')
+        f.write("%s\n" % str(self.added_point))
+        f.close()
 
 
 def run_one():
@@ -632,7 +648,7 @@ def run_one():
         num_task = int(name[0]), 
         num_patient = int(name[1]), 
         num_recipient = int(name[2]),
-        belief_threshold = 0.4,
+        belief_threshold = 0.8,
         ent_threshold = 4)
  
     if not s.uniform_init_belief:   
@@ -641,7 +657,7 @@ def run_one():
     ###Saving results in a dataframe and passing data frame to plot generate_function
 
     #Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
-    a,b,c,p,r=s.run_numbers_of_trials()
+    a,b,c,p,r,f=s.run_numbers_of_trials()
     s.plot_entropy()
 
 if __name__ == '__main__':

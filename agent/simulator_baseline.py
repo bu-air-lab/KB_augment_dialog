@@ -47,19 +47,17 @@ class Baseline(Simulator):
             old_entropy = current_entropy
             current_entropy = stats.entropy(self.b)
             current_entropy_plus = stats.entropy(self.b_plus)
-            print "DEBUG: Entropy = ",current_entropy
-            print "DEBUG: Entropy_plus = ",current_entropy_plus
+            if self.print_flag:
+                print "DEBUG: Entropy = ",current_entropy
+                print "DEBUG: Entropy_plus = ",current_entropy_plus
             # check if entropy increased
             if (old_entropy < current_entropy):
                 inc_count += 1
-                print "DEBUG: entropy increased"
 
             if(self.entropy_check(current_entropy)):
                 self.get_full_request(cycletime)
                 if self.print_flag:
                     print('\n\tbelief:\t\t' + str(self.b))
-
-                if self.print_flag:
                     print('\n\tbelief_plus:\t' + str(self.b_plus))
             else:
                 done = False
@@ -72,43 +70,40 @@ class Baseline(Simulator):
                     print 'num_recipients', self.num_recipient
                     print 'num_patients', self.num_patient
 
-                    question = self.action_to_text(self.actions[self.a])
-                    if question:
-                        print('QUESTION: ' + question)
-                    elif ('go' in self.actions[self.a]):
-                        print('EXECUTE: ' + self.actions[self.a])
-                        if self.print_flag is True:
-                            print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
-                        reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
-                        done = True
+                question = self.action_to_text(self.actions[self.a])
+                if question:
+                    print('QUESTION: ' + question)
+                elif ('go' in self.actions[self.a]):
+                    print('EXECUTE: ' + self.actions[self.a])
+                    if self.print_flag is True:
+                        print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
+                    reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
+                    done = True
 
 
                 if done == True:
                     break
+
+                # check entropy increases arbitrary no of times for now
+                if (added == False):
+                    print cycletime
+                    if(cycletime > 5):
+                        print "--- new item/person ---"
+                        added = True
+                        self.add_new()
 
                 if self.auto_observations:
                     raw_str = self.auto_observe()
                 else:
                     raw_str = raw_input("Input observation: ")
 
-                # check entropy increases arbitrary no of times for now
-                if (added == False):
-                    print cycletime
-                    if(cycletime > 25):
-                        if (self.actions[self.a] == "ask_p" or self.actions[self.a] == "ask_r"):
-                            print "--- new item/person ---"
-                            added = True
-                            self.add_new(raw_str)
-
                 self.observe(raw_str)
+                self.update(cycletime)
+                self.update_plus(cycletime)
+
                 if self.print_flag:
                     print('\tobserve:\t'+self.observations[self.o]+' '+str(self.o))
-
-                self.update(cycletime)
-                if self.print_flag:
                     print('\n\tbelief:\t\t' + str(self.b))
-                self.update_plus(cycletime)
-                if self.print_flag:
                     print('\n\tbelief_plus:\t' + str(self.b_plus))
 
 

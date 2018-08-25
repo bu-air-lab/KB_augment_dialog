@@ -91,31 +91,34 @@ def plotgenerate(df1,df2,filelist,num):
 	font_size = 20
 
 	plt.subplot(131)
-	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='*',linestyle='-',label='Dual-track POMDPs')
-	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Cost'],marker='o',linestyle='--',label='Baseline')
+	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'QA Cost'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'QA Cost'],marker='o',linestyle='--',label='Baseline Learning Agent')
 	plt.xlim(8,40)
 	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
 	plt.tick_params(labelsize=font_size)
-	plt.ylabel('Overall Cost', fontsize = font_size)
-	plt.xlabel('Knowledge size', fontsize = font_size)
+	plt.ylabel('QA Cost', fontsize = font_size)
+	plt.xlabel('KB Size', fontsize = font_size)
 
-	plt.subplot(132)
-	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDPs')
-	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline')
+	ax=plt.subplot(132)
+	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Dialog Reward'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Dialog Reward'],marker='o',linestyle='--',label='Baseline Learning Agent')
+	plt.xlim(8,40)
+	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)	
+	plt.tick_params(labelsize=font_size)
+	plt.ylabel('Dialog Reward', fontsize = font_size)
+	plt.xlabel('KB Size', fontsize = font_size)
+	#plt.ylim(-30, 30)
+	
+
+	plt.subplot(133)
+	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline Learning Agent')
 	plt.xlim(8,40)
 	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
 	plt.tick_params(labelsize=font_size)
 	plt.ylabel('Overall Success', fontsize = font_size)
-	plt.xlabel('Knowledge size', fontsize = font_size)
+	plt.xlabel('KB Size', fontsize = font_size)
 
-	ax=plt.subplot(133)
-	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Reward'],marker='*',linestyle='-',label='Dual-track POMDPs')
-	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Reward'],marker='o',linestyle='--',label='Baseline')
-	plt.xlim(8,40)
-	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)	
-	plt.tick_params(labelsize=font_size)
-	plt.ylabel('Overall Reward', fontsize = font_size)
-	plt.xlabel('Knowledge size', fontsize = font_size)
 	'''
 	plt.subplot(234)
 	plt.plot(range(3,3+len(filelist)),df1.loc[filelist[0]:filelist[-1],'Precision'],marker='*',linestyle='-',label='Dual-track POMDPs')
@@ -135,7 +138,7 @@ def plotgenerate(df1,df2,filelist,num):
 	plt.ylabel('Recall')
 	plt.xlabel('Knowledge size')
 	'''
-	ax.legend(loc='upper left', bbox_to_anchor=(-1.5, 1.2),  shadow=True, ncol=2, fontsize=font_size)
+	ax.legend(loc='upper left', bbox_to_anchor=(-1, 1.2),  shadow=True, ncol=2, fontsize=font_size)
 	#g.tight_layout()
 	plt.show()
 	g.savefig('Plots/all_'+str(num)+'_trials_domain_experiment_entropy_5_belief_0_4')
@@ -146,9 +149,9 @@ def main():
 
 	num=500                                      #number of trials
 	filelist=['133','144','155','166']                     #list of pomdp files
-	#filelist=['133']
-	entlist=[3,4,5,6]
-	belieflist=[0.4,0.4,0.3,0.2]
+	#filelist=['144']
+	entlist=[5,5,5,5]
+	belieflist=[0.35,0.20,0.18,0.15]
 	i=0
 	#filelist = ['133', '144']
 	df1=pd.DataFrame()
@@ -160,7 +163,7 @@ def main():
 		s = Simulator(uniform_init_belief = True, 
 			auto_state = True, 
 			auto_observations = True, # was true
-			print_flag = True,
+			print_flag = False,
 			policy_file = name+'_new.policy',
 			pomdp_file =  name +'_new.pomdp',
 				pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.pomdp',
@@ -169,7 +172,7 @@ def main():
 			num_task = int(name[0]), 
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
-			belief_threshold = 0.4,
+			belief_threshold = 0.35,
 			ent_threshold = 5)
 	 
 		if not s.uniform_init_belief:   
@@ -179,7 +182,7 @@ def main():
 		base = Baseline(uniform_init_belief = True, 
 			auto_state = True, 
 			auto_observations = True, # was true
-			print_flag = True,
+			print_flag = False,
 			policy_file = name+'_new.policy',
 			pomdp_file =  name +'_new.pomdp',
 				pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.pomdp',
@@ -188,7 +191,7 @@ def main():
 			num_task = int(name[0]), 
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
-			belief_threshold = 2,
+			belief_threshold = 999,
 			ent_threshold = 999)
 	 
 		if not base.uniform_init_belief:   
@@ -200,15 +203,15 @@ def main():
 		a,b,c,p,r=s.run_numbers_of_trials()
 		ab,bb,cb,pb,rb= base.run_numbers_of_trials()
 		
-		df1.at[iterator,'Overall Cost']= a
+		df1.at[iterator,'QA Cost']= a
 		df1.at[iterator,'Overall Success']= b
-		df1.at[iterator,'Overall Reward']= c
+		df1.at[iterator,'Dialog Reward']= c
 		df1.at[iterator,'Precision']= p
 		df1.at[iterator,'Recall']= r
 
-		df2.at[iterator,'Overall Cost']= ab
+		df2.at[iterator,'QA Cost']= ab
 		df2.at[iterator,'Overall Success']= bb
-		df2.at[iterator,'Overall Reward']= cb
+		df2.at[iterator,'Dialog Reward']= cb
 		df2.at[iterator,'Precision']= pb
 		df2.at[iterator,'Recall']= rb
 	df1.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_2_belief_0.7_pomdpdual.csv", encoding='utf-8', index=True)
