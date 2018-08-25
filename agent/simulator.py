@@ -811,6 +811,15 @@ class Simulator(object):
 
         return
 
+    def sign(self,x):
+
+        if x>0:
+            return 1
+        elif x<0:
+            return -1
+        else:
+            return 0
+
     #######################################################################
     '''
     def run_numbers_of_trials(self):
@@ -959,8 +968,8 @@ def main():
         print_flag = True, 
         policy_file = 'main_new.policy', 
         pomdp_file =  'main_new.pomdp',
-        policy_file_plus = 'main_plus_new.policy',
-        pomdp_file_plus = 'main_plus_new.pomdp',
+        policy_file_plus = 'main_plus_new_plus.policy',
+        pomdp_file_plus = 'main_plus_new_plus.pomdp',
         trials_num = 1,
         num_task = int(num[0]), 
         num_patient = int(num[1]), 
