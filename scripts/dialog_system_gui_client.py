@@ -35,7 +35,7 @@ class DialogManager(Simulator):
     def print_message(self, message):
         rospy.wait_for_service('question_dialog')
         handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
-        if 'Execute' in message:
+        if 'EXECUTE:' in message:
             command = message.split()
             item = command[2]
             person = command[4]
