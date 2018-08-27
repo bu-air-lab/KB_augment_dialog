@@ -8,6 +8,7 @@ sys.path.append(dirname(dirname(abspath(__file__))))
 from agent.simulator import Simulator
 import time
 import datetime
+import actionlib
 from actionlib_msgs.msg import *
 from geometry_msgs.msg import Twist
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
@@ -115,15 +116,16 @@ class DialogManager(Simulator):
 
     def demo_deliver(self):
         if self.deliver:
-            self.move_to(item_location)
+            self.move_to(self.item_location)
             self.wait_for_item_place()
-            self.move_to(person_location)
+            self.move_to(self.person_location)
             self.wait_for_item_pickup()
         else:
             print "Error in delivery.\n"
 
 
 def main():
+    rospy.init_node("delivery_demo")
     # the number of variables are stored in this file for now
     f = open("../agent/data/num_config.txt")
     num = f.readline().split()
@@ -153,9 +155,10 @@ def main():
     time.sleep(1)
     s.run()
     time.sleep(3)
-    s.check_success()
+    #s.check_success()
     s.close_log()
     s.demo_deliver()
+    rospy.spin()
 
 if __name__ == '__main__':
     main()
