@@ -11,6 +11,12 @@ import datetime
 
 
 class DialogManager(Simulator):
+    item = ''
+    person = ''
+    deliver = False
+    item_location = (0, 0) # item location (vending machine for eg)
+    person_location = (0, 0)  # delivery location
+
     def start_log(self):
         now = datetime.datetime.now().strftime("%I_%M%p_%B_%d_%Y")
         self.logfile = open("log_"+str(now)+".txt", 'w')
@@ -29,6 +35,13 @@ class DialogManager(Simulator):
     def print_message(self, message):
         rospy.wait_for_service('question_dialog')
         handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
+        if 'Execute' in message:
+            command = message.split()
+            item = command[2]
+            person = command[4]
+            deliver = True
+            print "item: ", item, " person: ", person
+
         response = handle(0, message, [], 0)
         self.logfile.write("MESSAGE: "+message+"\n")
 
@@ -44,6 +57,34 @@ class DialogManager(Simulator):
                     choices, 200)
         self.print_message("Thank you.")
         self.logfile.write("SUCCESS: "+choices[response.index]+"\n")
+
+    def move_to(self, location):
+        print "moving to position: ", location
+
+    def wait_for_item_place(self):
+        rospy.wait_for_service('question_dialog')
+        handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
+        choices = ['OK']
+        response = handle(1, "I need to deliver "+self.item+". Please place it on me and press 'OK'",
+                    choices, 200)
+        self.print_message("Thank you. Delivering.")
+
+    def wait_for_item_pickup(self):
+        rospy.wait_for_service('question_dialog')
+        handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
+        choices = ['OK']
+        response = handle(1, "I have "+self.item+" for "+self.person+". Please pick it up and press 'OK'",
+                    choices, 200)
+        self.print_message("Thank you. Delivery complete.")
+
+    def demo_deliver(self):
+        if self.deliver:
+            move_to(item_location)
+            wait_for_item_place()
+            move_to(person_location)
+            wait_for_item_pickup()
+        else:
+            print "Error in delivery.\n"
 
 
 def main():
@@ -77,6 +118,7 @@ def main():
     time.sleep(3)
     s.check_success()
     s.close_log()
+    s.demo_deliver()
 
 if __name__ == '__main__':
     main()
