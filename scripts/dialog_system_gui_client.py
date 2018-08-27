@@ -9,17 +9,18 @@ from agent.simulator import Simulator
 import time
 import datetime
 from actionlib_msgs.msg import *
-from geometry_msgs.msg import Point, PoseWithCovarianceStamped
 from geometry_msgs.msg import Twist
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
 
 class DialogManager(Simulator):
-    item = ''
-    person = ''
-    deliver = False
-    item_location = (0, 0) # item location (vending machine for eg)
-    person_location = (0, 0)  # delivery location
+    self.item = ''
+    self.person = ''
+    self.deliver = False
+    self.item_location.x = 0 # item location (vending machine for eg)
+    self.item_location.y = 0
+    self.person_location.x = 0  # delivery location
+    self.person_location.y = 0
 
     def start_log(self):
         now = datetime.datetime.now().strftime("%I_%M%p_%B_%d_%Y")
@@ -64,6 +65,28 @@ class DialogManager(Simulator):
 
     def move_to(self, location):
         print "moving to position: ", location
+        ac = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+
+        while not ac.wait_for_server(rospy.Duration.from_sec(5.0)):
+            rospy.loginfo("Waiting for move_base action server...")
+
+        goal = MoveBaseGoal()
+
+        #header
+        goal.target_pose.header.frame_id = 'map'
+        goal.target_pose.header.stamp = rospy.Time.now()
+
+        # point and orientation
+        goal.target_pose.pose.position.x = location.x
+        goal.target_pose.pose.position.y = location.y
+        goal.target_pose.pose.position.z = 0
+        goal.target_pose.pose.orientation.x = 0.0
+        goal.target_pose.pose.orientation.y = 0.0
+        goal.target_pose.pose.orientation.z = 0.0
+        goal.target_pose.pose.orientation.w = 1.0
+
+        rospy.loginfo("Sending Goal ...")
+        ac.send_goal(goal)
 
     def wait_for_item_place(self):
         rospy.wait_for_service('question_dialog')
