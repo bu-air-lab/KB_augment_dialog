@@ -8,6 +8,10 @@ sys.path.append(dirname(dirname(abspath(__file__))))
 from agent.simulator import Simulator
 import time
 import datetime
+from actionlib_msgs.msg import *
+from geometry_msgs.msg import Point, PoseWithCovarianceStamped
+from geometry_msgs.msg import Twist
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
 
 class DialogManager(Simulator):
@@ -37,9 +41,9 @@ class DialogManager(Simulator):
         handle = rospy.ServiceProxy('question_dialog', QuestionDialog)
         if 'EXECUTE:' in message:
             command = message.split()
-            item = command[2]
-            person = command[4]
-            deliver = True
+            self.item = command[2]
+            self.person = command[4]
+            self.deliver = True
             print "item: ", item, " person: ", person
 
         response = handle(0, message, [], 0)
