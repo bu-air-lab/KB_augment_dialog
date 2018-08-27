@@ -12,6 +12,11 @@ from actionlib_msgs.msg import *
 from geometry_msgs.msg import Twist
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
+class Position:
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+
 
 class DialogManager(Simulator):
 
@@ -19,8 +24,10 @@ class DialogManager(Simulator):
         self.item = ''
         self.person = ''
         self.deliver = False
+        self.item_location = Position()
         self.item_location.x = 0 # item location (vending machine for eg)
         self.item_location.y = 0
+        self.person_location = Position()
         self.person_location.x = 0  # delivery location
         self.person_location.y = 0
 
@@ -47,7 +54,7 @@ class DialogManager(Simulator):
             self.item = command[2]
             self.person = command[4]
             self.deliver = True
-            print "item: ", item, " person: ", person
+            print "item: ", self.item, " person: ", self.person
 
         response = handle(0, message, [], 0)
         self.logfile.write("MESSAGE: "+message+"\n")
@@ -108,10 +115,10 @@ class DialogManager(Simulator):
 
     def demo_deliver(self):
         if self.deliver:
-            move_to(item_location)
-            wait_for_item_place()
-            move_to(person_location)
-            wait_for_item_pickup()
+            self.move_to(item_location)
+            self.wait_for_item_place()
+            self.move_to(person_location)
+            self.wait_for_item_pickup()
         else:
             print "Error in delivery.\n"
 
