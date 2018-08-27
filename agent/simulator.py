@@ -789,6 +789,7 @@ class Simulator(object):
 
         ##return reward, cost, overall_reward, added
         # entropy data to plot
+        '''
         f = open('entropy_plot/entropy.txt', 'w')
         for item in self.entropy_list:
             f.write("%s\n" % item)
@@ -807,7 +808,7 @@ class Simulator(object):
         f = open('entropy_plot/added.txt', 'w')
         f.write("%s\n" % self.added_point)
         d.close()
-
+        '''
 
         return
 
