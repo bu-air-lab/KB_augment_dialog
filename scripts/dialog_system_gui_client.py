@@ -16,20 +16,20 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 class DialogManager(Simulator):
 
     def __init__(self):
-        super().__init__(uniform_init_belief, 
-        auto_state, 
-        auto_observations, # was true
-        print_flag, 
-        policy_file, 
-        pomdp_file,
-        policy_file_plus,
-        pomdp_file_plus,
-        trials_num,
-        num_task, 
-        num_patient, 
-        num_recipient,
-        belief_threshold,
-        ent_threshold)
+        super().__init__(uniform_init_belief = uniform_init_belief, 
+        auto_state = auto_state, 
+        auto_observations = auto_observations, # was true
+        print_flag = print_flag, 
+        policy_file = policy_file, 
+        pomdp_file =  pomdp_file,
+        policy_file_plus = policy_file_plus,
+        pomdp_file_plus = policy_file_plus,
+        trials_num = trials_num,
+        num_task = num_task, 
+        num_patient = num_patient, 
+        num_recipient = num_recipient,
+        belief_threshold = belief_threshold,
+        ent_threshold = ent_threshold)
 
         self.item = ''
         self.person = ''
