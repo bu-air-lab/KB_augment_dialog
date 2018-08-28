@@ -21,21 +21,21 @@ class DialogManager(Simulator):
         self.person = ''
         self.deliver = False
         self.item_location = MoveBaseGoal()
-        self.item_location.target_pose.pose.position.x = 4.668 # item location (vending machine for eg)
-        self.item_location.target_pose.pose.position.y = 82.872
+        self.item_location.target_pose.pose.position.x = 65.993 # item location (vending machine for eg)
+        self.item_location.target_pose.pose.position.y = -22.187
         self.item_location.target_pose.pose.position.z = 0
         self.item_location.target_pose.pose.orientation.x = 0
         self.item_location.target_pose.pose.orientation.y = 0
-        self.item_location.target_pose.pose.orientation.z = -0.045
-        self.item_location.target_pose.pose.orientation.w = 0.999
+        self.item_location.target_pose.pose.orientation.z = 0.020
+        self.item_location.target_pose.pose.orientation.w = 1.000
         self.person_location = MoveBaseGoal()
-        self.person_location.target_pose.pose.position.x = -11.060 # delivery location
-        self.person_location.target_pose.pose.position.y = 82.024
+        self.person_location.target_pose.pose.position.x = 22.452 # delivery location
+        self.person_location.target_pose.pose.position.y = -63.565
         self.person_location.target_pose.pose.position.z = 0
         self.person_location.target_pose.pose.orientation.x = 0
         self.person_location.target_pose.pose.orientation.y = 0
-        self.person_location.target_pose.pose.orientation.z = 0.999
-        self.person_location.target_pose.pose.orientation.w = -0.048
+        self.person_location.target_pose.pose.orientation.z = 0.001
+        self.person_location.target_pose.pose.orientation.w = 1.000
 
     def start_log(self):
         now = datetime.datetime.now().strftime("%I_%M%p_%B_%d_%Y")
