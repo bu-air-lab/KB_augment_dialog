@@ -13,11 +13,6 @@ from actionlib_msgs.msg import *
 from geometry_msgs.msg import Twist
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
-class Position:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-
 
 class DialogManager(Simulator):
 
@@ -25,12 +20,22 @@ class DialogManager(Simulator):
         self.item = ''
         self.person = ''
         self.deliver = False
-        self.item_location = Position()
-        self.item_location.x = 0 # item location (vending machine for eg)
-        self.item_location.y = 0
-        self.person_location = Position()
-        self.person_location.x = 0  # delivery location
-        self.person_location.y = 0
+        self.item_location = MoveBaseGoal()
+        self.item_location.target_pose.pose.position.x = 4.668 # item location (vending machine for eg)
+        self.item_location.target_pose.pose.position.y = 82.872
+        self.item_location.target_pose.pose.position.z = 0
+        self.item_location.target_pose.pose.orientation.x = 0
+        self.item_location.target_pose.pose.orientation.y = 0
+        self.item_location.target_pose.pose.orientation.z = -0.045
+        self.item_location.target_pose.pose.orientation.w = 0.999
+        self.person_location = MoveBaseGoal()
+        self.person_location.target_pose.pose.position.x = -11.060 # delivery location
+        self.person_location.target_pose.pose.position.y = 82.024
+        self.person_location.target_pose.pose.position.z = 0
+        self.person_location.target_pose.pose.orientation.x = 0
+        self.person_location.target_pose.pose.orientation.y = 0
+        self.person_location.target_pose.pose.orientation.z = 0.999
+        self.person_location.target_pose.pose.orientation.w = -0.048
 
     def start_log(self):
         now = datetime.datetime.now().strftime("%I_%M%p_%B_%d_%Y")
@@ -87,16 +92,12 @@ class DialogManager(Simulator):
         goal.target_pose.header.stamp = rospy.Time.now()
 
         # point and orientation
-        goal.target_pose.pose.position.x = location.x
-        goal.target_pose.pose.position.y = location.y
-        goal.target_pose.pose.position.z = 0
-        goal.target_pose.pose.orientation.x = 0.0
-        goal.target_pose.pose.orientation.y = 0.0
-        goal.target_pose.pose.orientation.z = 0.0
-        goal.target_pose.pose.orientation.w = 1.0
+        goal.target_pose.pose = location.target_pose.pose
 
         rospy.loginfo("Sending Goal ...")
         ac.send_goal(goal)
+        self.print_message("Moving ...")
+        ac.wait_for_result()
 
     def wait_for_item_place(self):
         rospy.wait_for_service('question_dialog')
@@ -156,8 +157,8 @@ def main():
     s.run()
     time.sleep(3)
     #s.check_success()
-    s.close_log()
     s.demo_deliver()
+    s.close_log()
     rospy.spin()
 
 if __name__ == '__main__':
