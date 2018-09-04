@@ -351,9 +351,9 @@ class Simulator(object):
         if match:
             obsname = match.group(0)
             if 'p' in obsname:
-                return "Do you want me to deliver " + self.get_name_from_observation(obsname) + "? (yes/no)"
+                return "Do you want me to deliver " + self.get_name_from_observation(obsname) + "?"
             elif 'r' in obsname:
-                return "Is this delivery for " + self.get_name_from_observation(obsname) + "? (yes/no)"
+                return "Is this delivery for " + self.get_name_from_observation(obsname) + "?"
 
         if 'go' in string:
             parts = string.split('_')
