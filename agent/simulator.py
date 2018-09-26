@@ -12,14 +12,11 @@ import random
 from scipy import stats
 #sys.path.append('/home/ludc/software/python_progress/progress-1.2')
 #sys.path.append('/home/szhang/software/python_progress/progress-1.2')
-from progress.bar import Bar
+#from progress.bar import Bar
 import subprocess
-import conf
 import re
-
 import os
 import string
-
 import ast
 
 numpy.set_printoptions(suppress=True)
@@ -45,7 +42,7 @@ class Simulator(object):
         # print(pomdp_file)
         # print(policy_file)
         # generate main model
-        self.generate_model(num_task, num_patient, num_recipient, pomdp_file, False)
+        self.generate_model(num_task, num_patient, num_recipient, pomdp_file,policy_file, False)
 
         self.pomdp_file_plus=pomdp_file_plus
         self.policy_file_plus=policy_file_plus
@@ -59,7 +56,7 @@ class Simulator(object):
         self.num_task = num_task
         self.num_patient = num_patient
         self.num_recipient = num_recipient
-        self.tablelist = conf.tablelist
+        
 
         # to read the pomdp model
         model = pomdp_parser.Pomdp(filename=pomdp_file, parsing_print_flag=False)
@@ -84,7 +81,8 @@ class Simulator(object):
         self.o_plus= None
         # self.dialog_turn = 0
 
-        self.generate_model(num_task, num_patient+1, num_recipient+1, pomdp_file_plus, True)
+        # Generating the plus model that considers one unknown item and one unknown person
+        self.generate_model(num_task, num_patient+1, num_recipient+1, pomdp_file_plus,policy_file_plus, False)
         self.read_plus_model()
 
         # for semantic parser
@@ -240,18 +238,15 @@ class Simulator(object):
     ######################################################################
     # EXPERIMENTAL: Generate model
     # Saeid: this method is working fine now, only name of pomdp and policy files needs to be updated in future to avoid conflicts
-    def generate_model(self, num_task, num_patient, num_recipient, file_name, is_plus):
+    def generate_model(self, num_task, num_patient, num_recipient, file_name,policy_file, is_plus):
         r_max = 40.0
         r_min = -40.0
 
         wh_cost = -1.5
         yesno_cost = -1.0
-
-        # This is weird compatibility thing so i dont have to edit pomdp generator (should be fixed later)
-        strategy = file_name[:-10]
-
+        strategy=str(num_task)+str(num_patient)+str(num_recipient)
         pg = pomdp_generator.PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-            wh_cost, yesno_cost,pomdpfile = file_name,timeout=40, is_plus=is_plus)
+            wh_cost, yesno_cost,pomdpfile = file_name,policyfile=policy_file,timeout=4, is_plus=is_plus)
 
         # to read the learned policy
         ##############################Saeid commented lines below ###################################
@@ -822,7 +817,7 @@ class Simulator(object):
             return 0
 
     #######################################################################
-    '''
+    
     def run_numbers_of_trials(self):
 
         cost_list = []
@@ -955,7 +950,7 @@ class Simulator(object):
 
         return (numpy.mean(cost_arr), numpy.mean(success_arr), \
             numpy.mean(overall_reward_arr), precision, recall)
-    '''
+    
 
 
 def main():
@@ -967,10 +962,10 @@ def main():
         auto_state = True, 
         auto_observations = False, # was true
         print_flag = True, 
-        policy_file = 'main_new.policy', 
-        pomdp_file =  'main_new.pomdp',
-        policy_file_plus = 'main_plus_new_plus.policy',
-        pomdp_file_plus = 'main_plus_new_plus.pomdp',
+        policy_file = '155.policy', 
+        pomdp_file =  '155.pomdp',
+        policy_file_plus = '166.policy',
+        pomdp_file_plus = '166.pomdp',
         trials_num = 1,
         num_task = int(num[0]), 
         num_patient = int(num[1]), 

@@ -1,7 +1,7 @@
 
 import numpy as np
 import time
-import conf
+
 import subprocess
 import os.path
 
@@ -316,7 +316,7 @@ class ObservationNone(Observation):
 class PomdpGenerator(object):
 
     def __init__(self, num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-        wh_cost, yesno_cost,pomdpfile,timeout=5,is_plus=False):
+        wh_cost, yesno_cost,pomdpfile,policyfile, timeout=5,is_plus=False):
         
 
         self.num_task = num_task
@@ -341,7 +341,7 @@ class PomdpGenerator(object):
         self.polar_tp_rate = 0.8
         self.polar_tn_rate = 0.8
 
-        #self.tablelist = conf.tablelist
+        
         self.tablelist = []
         self.tlist(num_task,num_patient,num_recipient)   
         print "Tablelist is :"
@@ -404,7 +404,7 @@ class PomdpGenerator(object):
 
         # writing to files
         if self.is_plus:
-            self.filename = strategy+'_new_plus.pomdp'
+            self.filename = strategy+'_plus.pomdp'
         else:
             self.filename = pomdpfile
 
@@ -412,10 +412,10 @@ class PomdpGenerator(object):
         self.writeToFile()
 
         if self.is_plus:
-            self.policyfile=strategy+'_new_plus.policy'
+            self.policyfile=strategy+'_plus.policy'
         else:
-            self.policyfile=strategy+'_new.policy'
-        
+            self.policyfile=policyfile
+            print self.policyfile
         
         self.reward_mat = reward_mat_float
         #self.reward_mat = reward_mat_float_negative_deliveries
@@ -441,7 +441,7 @@ class PomdpGenerator(object):
         else:
             print "Error: pomdpsol not installed. Current path: ", pomdpsol_path
             exit(1)
-
+        print 'HIII'
         subprocess.check_output([pomdpsol, self.filename, \
             '--timeout', str(timeout), '--output', self.policyfile])
         print 'Finished training'
@@ -889,7 +889,7 @@ def main():
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) + '_' + str(entry)
     # strategy = str(num_task) + str(num_patient) + str(num_recipient) + '_' + str(entry1) + str(entry2)
     	strategy = str(num_task) + str(num_patient) + str(num_recipient)
-    	pomdpfile=strategy+'_new.pomdp'
+    	pomdpfile=strategy+'.pomdp'
     	pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
         	wh_cost, yesno_cost,pomdpfile,timeout=40, is_plus=False )
 
