@@ -6,7 +6,8 @@
         * https://github.com/AdaCompNUS/sarsop
 * Install progress bar package in python
         * run: sudo pip install progress
-* Install JAVA compiler on your machine  
+* Install JAVA compiler on your machine
+* Install Scipy and Numpy libraries
 
 *Note:* Change the path in config/sarsop_path
 ~                                                  
