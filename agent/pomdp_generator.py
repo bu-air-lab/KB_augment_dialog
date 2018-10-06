@@ -344,8 +344,8 @@ class PomdpGenerator(object):
         
         self.tablelist = []
         self.tlist(num_task,num_patient,num_recipient)   
-        print "Tablelist is :"
-        print self.tablelist
+        #print "Tablelist is :"
+        #print self.tablelist
         self.state_set = []
         self.action_set = []
         self.observation_set = []
@@ -422,27 +422,17 @@ class PomdpGenerator(object):
         self.writeToFile()
 
         print 'Training for '+ str(timeout)+' seconds'
-
-        pomdpsol_path = None
-
-        try:
-            file_path = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'config/sarsop_path'),'r')
-            pomdpsol_path = file_path.read().strip()
-            file_path.close()
-        except IOError:
-            print "Error: enter correct path in config/sarsop_path"
-            file_path = open('config/sarsop_path','w')
-            file_path.close()
-            exit(1)
-        #pomdpsol_path = '~/catkin_ws/src/dialog_manager_language_learning/agent/sarsop/src/pomdpsol'
-
-        if os.path.isfile(pomdpsol_path):
-            pomdpsol = pomdpsol_path
-        else:
-            print "Error: pomdpsol not installed. Current path: ", pomdpsol_path
-            exit(1)
-        print 'HIII'
-        subprocess.check_output([pomdpsol, self.filename, \
+        applPath1 = '/home/saeid/software/sarsop/src/pomdpsol' 
+        pathlist=[applPath1]
+        appl=None
+        for p in pathlist:
+            if os.path.exists(p):
+                appl=p   
+            if appl==None:
+                print "ERROR: No path detected for pomdpsol"
+                exit(1)
+        
+        subprocess.check_output([appl, self.filename, \
             '--timeout', str(timeout), '--output', self.policyfile])
         print 'Finished training'
 

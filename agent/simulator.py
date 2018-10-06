@@ -18,6 +18,7 @@ import re
 import os
 import string
 import ast
+import datetime
 
 numpy.set_printoptions(suppress=True)
 
@@ -38,12 +39,13 @@ class Simulator(object):
         num_recipient=1,
         belief_threshold=0.4,
         ent_threshold=2):
-
+        devnull = open(os.devnull, 'wb')
         # print(pomdp_file)
         # print(policy_file)
         # generate main model
         self.generate_model(num_task, num_patient, num_recipient, pomdp_file,policy_file, False)
-
+        now = datetime.datetime.now().strftime("%I_%M%p_%B_%d_%Y")+"/"
+        subprocess.Popen(['cp','-r', 'spf/',now],stdout=devnull, stderr=devnull)
         self.pomdp_file_plus=pomdp_file_plus
         self.policy_file_plus=policy_file_plus
         self.auto_observations = auto_observations
@@ -72,7 +74,7 @@ class Simulator(object):
         # to read the learned policy
         self.policy = policy_parser.Policy(len(self.states), len(self.actions), 
             filename=policy_file)
-
+        self.spffolder=now
         self.b = None   
         self.b_plus = None   
         self.a = None
@@ -90,9 +92,9 @@ class Simulator(object):
         self.log_filename = os.path.join(self.path_to_main,'data','log','log.txt')
 
         #path to SPF jar
-        self.path_to_spf = os.path.join(self.path_to_main,'spf','dist','spf-1.5.5.jar')
+        self.path_to_spf = os.path.join(self.path_to_main,self.spffolder,'dist','spf-1.5.5.jar')
         #path to write-able experiment directory
-        self.path_to_experiment = os.path.join(self.path_to_main,'spf','geoquery','experiments','template','dialog_writeable')
+        self.path_to_experiment = os.path.join(self.path_to_main,self.spffolder,'geoquery','experiments','template','dialog_writeable')
         # known words and
         given_words,word_to_ontology_map = self.get_known_words_from_seed_files()
         self.known_words = given_words
@@ -157,7 +159,7 @@ class Simulator(object):
 
     def get_known_words_to_number(self):
         "DEBUG: getting known words to observation map"
-        file_known = open(os.path.join(self.path_to_main,'data','known_words_to_obs.txt'), 'r')
+        file_known = open(os.path.join(self.path_to_main,self.spffolder,'known_words_to_obs.txt'), 'r')
         s = file_known.read()
         self.known_words_to_number = ast.literal_eval(s)
         if self.print_flag:
@@ -166,7 +168,7 @@ class Simulator(object):
 
     def write_known_words_to_number(self):
         "DEBUG: saving known words to observations to file"
-        file_known = open(os.path.join(self.path_to_main,'data','known_words_to_obs.txt'), 'w+')
+        file_known = open(os.path.join(self.path_to_main,self.spffolder,'known_words_to_obs.txt'), 'w+')
         file_known.write(str(self.known_words_to_number))
         file_known.close()
 
@@ -246,7 +248,7 @@ class Simulator(object):
         yesno_cost = -1.0
         strategy=str(num_task)+str(num_patient)+str(num_recipient)
         pg = pomdp_generator.PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-            wh_cost, yesno_cost,pomdpfile = file_name,policyfile=policy_file,timeout=4, is_plus=is_plus)
+            wh_cost, yesno_cost,pomdpfile = file_name,policyfile=policy_file,timeout=40, is_plus=is_plus)
 
         # to read the learned policy
         ##############################Saeid commented lines below ###################################
