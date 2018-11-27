@@ -68,7 +68,7 @@ def plot_entropy():
             n+=1
 
         #plt.grid()
-        fig.savefig('entropy_plot.pdf')
+        fig.savefig('my_plot.pdf')
 
 
 if __name__ == '__main__':

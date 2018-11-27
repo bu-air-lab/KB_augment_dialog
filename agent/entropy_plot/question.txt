@@ -1,11 +1,28 @@
-How can I help?
-Who should I bring the item to?
-Confirm Apple?
+Full request
+confirm_r0
+confirm r0
+confirm_p0
+confirm p0
+ask_p
 What item should I bring?
+confirm_p0
+confirm p0
+ask_p
 What item should I bring?
-Who should I bring the item to?
-Who should I bring the item to?
-Confirm Phone?
-Confirm Hamburger?
-Confirm Coffee?
-Bring pop to Alice
+confirm_p2
+confirm p2
+ask_p
+What item should I bring?
+confirm_p3
+confirm p3
+confirm_r0
+confirm r0
+confirm_r0
+confirm r0
+confirm_r0
+confirm r0
+ask_p
+What item should I bring?
+ask_p
+What item should I bring?
+go_t0_p3_r0

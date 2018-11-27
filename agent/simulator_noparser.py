@@ -9,9 +9,9 @@ import readline
 import numpy
 import random
 from scipy import stats
-from progress.bar import Bar
+#from progress.bar import Bar
 import subprocess
-import conf
+#import conf
 import re
 import os
 import string
@@ -165,6 +165,7 @@ class Simulator(object):
         print self.observations # debug
         print "DEBUG: Full request here"
         self.question_list.append("Full request")
+
 
         # patient
         # get action from key
@@ -362,7 +363,7 @@ class Simulator(object):
 
         while True:
             cycletime += 1
-
+	    politeness = "I know I asked it already but could you "
             # print self.b
 
             if self.print_flag:
@@ -406,17 +407,21 @@ class Simulator(object):
 
                     print 'num_recipients', self.num_recipient
                     print 'num_patients', self.num_patient
-
+		# Count questio occurence, if it is > 1, add politeness word to head
                 question = self.action_to_text(self.actions[self.a])
+	        self.question_list.append(self.actions[self.a])
+                tmp = question
                 if question:
-                    print('QUESTION: ' + question)
+                    if(self.question_list.count(question) >= 1):
+		        tmp = politeness + question
+                    print('		QUESTION: ' + tmp)
                     self.question_list.append(question)
                 elif ('go' in self.actions[self.a]):
                     print('EXECUTE: ' + self.actions[self.a])
                     if self.print_flag:
                         print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
                     
-                    self.question_list.append(self.actions[self.a])
+                    
                     reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]     
                     done = True
 
@@ -459,7 +464,7 @@ class Simulator(object):
         #        sys.exit(1)
                 break
 
-        return reward, cost, added
+        return reward, abs(cost), added
 
     #######################################################################
     def run_numbers_of_trials(self):
@@ -491,7 +496,7 @@ class Simulator(object):
         initial_policy = self.policy
 
         
-        bar = Bar('Processing', max=self.trials_num)
+        #bar = Bar('Processing', max=self.trials_num)
 
         for i in range(self.trials_num):
 
@@ -568,9 +573,9 @@ class Simulator(object):
             self.reward_mat = initial_reward_mat
             self.policy = initial_policy
 
-            bar.next()
+            #bar.next()
 
-        bar.finish()
+        #bar.finish()
 
         cost_arr = numpy.array(cost_list)
         success_arr = numpy.array(success_list)
@@ -600,8 +605,10 @@ class Simulator(object):
             recall = 0
         else:        
             recall = true_positives/(true_positives + false_negatives)
-
-        f1_score = 2 * precision * recall/(precision + recall)
+	try:
+            f1_score = 2 * precision * recall/(precision + recall)
+	except:
+	    f1_score = 0
         
         print('Precision:' + str(precision))
         print('Recall:' + str(recall))
@@ -643,10 +650,10 @@ def run_one():
         auto_state = True, 
         auto_observations = True, # was true
         print_flag = True, 
-        policy_file = name+'_new.policy',
-        pomdp_file =  name +'_new.pomdp',
-            pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new_plus.pomdp',
-            policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new_plus.policy',
+        policy_file = name+'.policy',
+        pomdp_file =  name +'.pomdp',
+            pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.pomdp',
+            policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.policy',
         trials_num = num,
         num_task = int(name[0]), 
         num_patient = int(name[1]), 
@@ -661,6 +668,7 @@ def run_one():
 
     #Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
     a,b,c,p,r,f=s.run_numbers_of_trials()
+    print s.question_list
     s.plot_entropy()
 
 if __name__ == '__main__':

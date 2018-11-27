@@ -6,7 +6,7 @@ import matplotlib
 #matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import csv
-
+# abs(cost) makes cost values positive
 def plotgenerate(df1,df2,filelist,num):
 	######################################### Uncomment: Plot all 5 in one figure ###############################################################33
 	'''
@@ -141,7 +141,7 @@ def plotgenerate(df1,df2,filelist,num):
 	ax.legend(loc='upper left', bbox_to_anchor=(-1, 1.2),  shadow=True, ncol=2, fontsize=font_size)
 	#g.tight_layout()
 	plt.show()
-	g.savefig('Plots/all_'+str(num)+'_trials_domain_experiment_entropy_5_belief_0_4')
+	g.savefig('Plots/all_'+str(num)+'_trials_domain_experiment_entropy_5_belief_0_45_N_1')
 
 
 def main():
@@ -164,16 +164,16 @@ def main():
 			auto_state = True, 
 			auto_observations = True, # was true
 			print_flag = False,
-			policy_file = name+'_new.policy',
-			pomdp_file =  name +'_new.pomdp',
-				pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.pomdp',
-				policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.policy',
+			policy_file = name+'.policy',
+			pomdp_file =  name +'.pomdp',
+				pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.pomdp',
+				policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.policy',
 			trials_num = num,
 			num_task = int(name[0]), 
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
-			belief_threshold = 0.35,
-			ent_threshold = 5)
+			belief_threshold = 0.45, 
+			ent_threshold = 5) 
 	 
 		if not s.uniform_init_belief:   
 			print('note that initial belief is not uniform\n')
@@ -183,10 +183,10 @@ def main():
 			auto_state = True, 
 			auto_observations = True, # was true
 			print_flag = False,
-			policy_file = name+'_new.policy',
-			pomdp_file =  name +'_new.pomdp',
-				pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.pomdp',
-				policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.policy',
+			policy_file = name+'.policy',
+			pomdp_file =  name +'.pomdp',
+				pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.pomdp',
+				policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.policy',
 			trials_num = num,
 			num_task = int(name[0]), 
 			num_patient = int(name[1]), 
@@ -200,8 +200,8 @@ def main():
 		###Saving results in a dataframe and passing data frame to plot generate_function
 
 		#Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
-		a,b,c,p,r=s.run_numbers_of_trials()
-		ab,bb,cb,pb,rb= base.run_numbers_of_trials()
+		a,b,c,p,r,f=s.run_numbers_of_trials() #f to solve too many values to unpack err.
+		ab,bb,cb,pb,rb,fb= base.run_numbers_of_trials()
 		
 		df1.at[iterator,'QA Cost']= a
 		df1.at[iterator,'Overall Success']= b
@@ -214,8 +214,10 @@ def main():
 		df2.at[iterator,'Dialog Reward']= cb
 		df2.at[iterator,'Precision']= pb
 		df2.at[iterator,'Recall']= rb
-	df1.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_2_belief_0.7_pomdpdual.csv", encoding='utf-8', index=True)
-	df2.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_2_belief_0.7_baseline.csv", encoding='utf-8', index=True)
+	df1.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_5_belief_0.45_pomdpdual.csv", encoding='utf-8', index=True)
+	df2.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_5_belief_0.45_baseline.csv", encoding='utf-8', index=True)
+	df1.sort_values(by=['QA Cost'])
+	df2.sort_values(by=['QA Cost'])
 	print 'Dual Track POMDP results'
 	print df1
 	print 'Baseline Results'
@@ -224,7 +226,7 @@ def main():
 	i+=1
 
 if __name__ == '__main__':
-	
+	'''
 	num=500
 	df1 = pd.read_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_2_belief_0.7_pomdpdual.csv", index_col=0)
 	print df1
@@ -232,5 +234,6 @@ if __name__ == '__main__':
 	print df2
 	filelist=['133','144','155','166']
 	plotgenerate(df1,df2,filelist,num)
+	'''
 	
-	#main()
+	main()

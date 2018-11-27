@@ -8,9 +8,9 @@ import readline
 import numpy
 import random
 from scipy import stats
-from progress.bar import Bar
+#from progress.bar import Bar
 import subprocess
-import conf
+#import conf
 import re
 import os
 import string
@@ -87,7 +87,7 @@ class Baseline(Simulator):
                 # check entropy increases arbitrary no of times for now
                 if (added == False):
                     print cycletime
-                    if(cycletime > 5):
+                    if(cycletime > 5): # N equal 1
                         print "--- new item/person ---"
                         added = True
                         self.add_new()
@@ -119,4 +119,4 @@ class Baseline(Simulator):
                 reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
                 break
 
-        return reward, cost, added
+        return reward, abs(cost), added

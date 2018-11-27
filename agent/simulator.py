@@ -10,7 +10,7 @@ import readline
 import numpy
 import random
 from scipy import stats
-#sys.path.append('/home/ludc/software/python_progress/progress-1.2')
+#sys..append('/home/ludc/software/python_progress/progress-1.2')
 #sys.path.append('/home/szhang/software/python_progress/progress-1.2')
 #from progress.bar import Bar
 import subprocess
@@ -19,6 +19,13 @@ import os
 import string
 import ast
 import datetime
+
+
+from allennlp.predictors.predictor import Predictor
+from clyngor import ASP, solve
+import time
+
+
 
 numpy.set_printoptions(suppress=True)
 
@@ -45,8 +52,9 @@ class Simulator(object):
         # generate main model
         self.generate_model(num_task, num_patient, num_recipient, pomdp_file,policy_file, False)
         now = datetime.datetime.now().strftime("%I_%M%p_%B_%d_%Y")+"/"
-        subprocess.Popen(['cp','-r', 'spf/',now],stdout=devnull, stderr=devnull)
+        #subprocess.Popen(['cp','-r', 'spf/',now],stdout=devnull, stderr=devnull)
         self.pomdp_file_plus=pomdp_file_plus
+        self.known_words_path = '/home/cihangir/KB_augment_dialog/agent/data'
         self.policy_file_plus=policy_file_plus
         self.auto_observations = auto_observations
         self.auto_state = auto_state
@@ -74,7 +82,6 @@ class Simulator(object):
         # to read the learned policy
         self.policy = policy_parser.Policy(len(self.states), len(self.actions), 
             filename=policy_file)
-        self.spffolder=now
         self.b = None   
         self.b_plus = None   
         self.a = None
@@ -92,12 +99,12 @@ class Simulator(object):
         self.log_filename = os.path.join(self.path_to_main,'data','log','log.txt')
 
         #path to SPF jar
-        self.path_to_spf = os.path.join(self.path_to_main,self.spffolder,'dist','spf-1.5.5.jar')
+        #self.path_to_spf = os.path.join(self.path_to_main, 'spf', 'dist','spf-1.5.5.jar') ##EDIT
         #path to write-able experiment directory
-        self.path_to_experiment = os.path.join(self.path_to_main,self.spffolder,'geoquery','experiments','template','dialog_writeable')
+        #self.path_to_experiment = os.path.join(self.path_to_main,'spf','geoquery','experiments','template','dialog_writeable') ##EDIT
         # known words and
-        given_words,word_to_ontology_map = self.get_known_words_from_seed_files()
-        self.known_words = given_words
+        #given_words,word_to_ontology_map = self.get_known_words_from_seed_files() ##EDIT
+        #self.known_words = given_words
 
         # full request string
         self.full_request = ''
@@ -129,6 +136,29 @@ class Simulator(object):
         # to make the screen print simple 
         numpy.set_printoptions(precision=2)
 
+
+
+    #######################################################################
+    def solveKB(self):
+        answers = solve('rules.lp') #Return value is frozenset, thats the reason it is converted to predicate and entity lists.
+
+        self.entityList = list()
+        predicateList = list()
+
+        for answer in answers:
+            for line in answer:
+                predicateList.append(''.join(line[0]))
+                self.entityList.append(''.join(line[1]))
+
+
+        print("Predicate list of KB: ")
+        print(predicateList)
+        print()
+        print("Entity list of KB: ")
+        print(self.entityList)
+        
+        
+
     #######################################################################
     def init_belief(self):
 
@@ -159,7 +189,7 @@ class Simulator(object):
 
     def get_known_words_to_number(self):
         "DEBUG: getting known words to observation map"
-        file_known = open(os.path.join(self.path_to_main,self.spffolder,'known_words_to_obs.txt'), 'r')
+        file_known = open(os.path.join(self.path_to_main,self.known_words_path,'known_words_to_obs.txt'), 'r')
         s = file_known.read()
         self.known_words_to_number = ast.literal_eval(s)
         if self.print_flag:
@@ -168,74 +198,110 @@ class Simulator(object):
 
     def write_known_words_to_number(self):
         "DEBUG: saving known words to observations to file"
-        file_known = open(os.path.join(self.path_to_main,self.spffolder,'known_words_to_obs.txt'), 'w+')
+        file_known = open(os.path.join(self.path_to_main,self.known_words_path,'known_words_to_obs.txt'), 'w+')
         file_known.write(str(self.known_words_to_number))
         file_known.close()
 
     #######################################################################
-    def get_known_words_from_seed_files(self):
+    #def get_known_words_from_seed_files(self): ##Delete
 
-    	seed_words = {}
-    	word_to_ontology_map = {}
-    	for filename in ['np-list.lex','seed.lex']:
-    		f = open(os.path.join(self.path_to_experiment,'resources',filename))
-    		for line in f:
-    			if (len(line) <= 1 or line[:2] == "//"):
-    				continue
-    			[token_sequence,tag_and_grounding] = line.split(" :- ")
-    			to_add = tag_and_grounding.strip().split(" : ")
-    			if (filename == 'np-list.lex'): #only add to seed words those words which are already grounded (ie, no CCG tags)
-    				seed_words[token_sequence] = to_add
-    			word_to_ontology_map[to_add[1].split(":")[0].strip()] =to_add[1].split(":")[1].strip()
-    	return seed_words,word_to_ontology_map
+    	#seed_words = {}
+    	#word_to_ontology_map = {}
+    	#for filename in ['np-list.lex','seed.lex']:
+    		#f = open(os.path.join(self.path_to_experiment,'resources',filename))
+    		#for line in f:
+    			#if (len(line) <= 1 or line[:2] == "//"):
+    				#continue
+    			#[token_sequence,tag_and_grounding] = line.split(" :- ")
+    			#to_add = tag_and_grounding.strip().split(" : ")
+    			#if (filename == 'np-list.lex'): #only add to seed words those words which are already grounded (ie, no CCG tags)
+    				#seed_words[token_sequence] = to_add
+    			#word_to_ontology_map[to_add[1].split(":")[0].strip()] =to_add[1].split(":")[1].strip()
+    	#return seed_words,word_to_ontology_map
 	###########################################################################
 
     #! this is an experimental method !#
     #invoke SPF parser and get the semantic parse(s) of the sentence, as well as any new unmapped words in the utterance
-    def parse_utterance(self, user_utterance_text):
+    def parse_utterance(self, user_utterance_text): ##EDIT
 
-        f = open(os.path.join(self.path_to_experiment,'data','test.ccg'),'w')
-        f.write(user_utterance_text+"\n(lambda $0:e $0)\n")
-        f.close()
+
+        predictor = Predictor.from_path("./model.gz")
+        start_time = time.time()
+        predicted = predictor.predict(sentence=user_utterance_text)
+        print("\n--- %s seconds ---\n	" % (time.time() - start_time))	
+
+        KBActionList = ["task", "item", "recipient"]
+        KBDict = dict.fromkeys(KBActionList) #Initialize dict.
+
+        for key, value in predicted.items(): #Preparation of data for 'POS_Word' dict.
+            print(key, value)
+            if(key == 'words'): #Read space seperated words
+                valueList = predicted[key]
+            if(key == 'predicted_dependencies'): #Read dependency tags
+                keyList = predicted[key]
+
+
+        depWordList = list(zip(keyList, valueList)) #Zip two list and make another list. (CAN NOT BE DICT BECAUSE SAME POS TAG CAN OCCUR TWICE).
+
+        print()
+        for key, value in depWordList: #Creation of 'DepTag_Word' dict. (Because of the specific domain, we know POS tags for task, item and recipient.)
+            print(key, value)
+            if key == "root":
+                KBDict["task"] = value
+            if key == "dobj":
+                KBDict["item"] = value
+            if key == "pobj" or key == "xcomp":
+                KBDict["recipient"] = value
+
+
+        print("\nUtterance converted in a format compatible with KB: ")
+        print(KBDict)
+        print()
+        return KBDict
+
+
+        #f = open(os.path.join(self.path_to_experiment,'data','test.ccg'),'w')
+        #f.write(user_utterance_text+"\n(lambda $0:e $0)\n")
+        #f.close()
 
         #run parser and read output
-        os.system('java -jar '+self.path_to_spf+' '+os.path.join(self.path_to_experiment,'test.exp'))
-        f = open(os.path.join(self.path_to_experiment,'logs','load_and_test.log'),'r')
-        lines = f.read().split("\n")
-        parses = []
-        current_unmapped_sequence = None #[sequence, last_index]
-        unmapped_words_in_utterance = {}
-        for i in range(0,len(lines)):
-            if (' WRONG: ' in lines[i] or 'too many parses' in lines[i]): #found parses
-                if (' WRONG: ' in lines[i] and len(lines[i].split('WRONG: ')[1]) > 0 and 'parses' not in lines[i].split('WRONG: ')[1]): #one parse
-                    parses.append((lines[i].split('WRONG: ')[1],0))
-                else: #multiple parses
-                    j = 1 if ' WRONG: ' in lines[i] else 2
-                    while (' Had correct parses: ' not in lines[i+j]):
-                        if ('[S' not in lines[i+j]):
-                            p = lines[i+j][lines[i+j].index('[')+2:]
-                        else:
-                            p = lines[i+j].split(']')[2][1:]
-                        s = float(lines[i+j+1].split()[3])
-                        print s #DEBUG
-                        parses.append((p,s))
-                        j += 3
-            elif ('EMPTY' in lines[i] and len(lines[i].split()) >= 4 and lines[i].split()[3] == "EMPTY"): #found unmapped word
-                empty_token = lines[i].split()[1]
-                if (current_unmapped_sequence == None):
-                    current_unmapped_sequence = [empty_token,i]
-                elif (i-1 == current_unmapped_sequence[1]):
-                    current_unmapped_sequence[0] += " "+empty_token
-                    current_unmapped_sequence[1] = i
-                else:
-                    if (current_unmapped_sequence[0] not in self.known_words):
-                        unmapped_words_in_utterance[current_unmapped_sequence[0]] = {}
-                    current_unmapped_sequence = [empty_token,i]
-        if (current_unmapped_sequence != None and current_unmapped_sequence[0] not in self.known_words):
-            unmapped_words_in_utterance[current_unmapped_sequence[0]] = {}
-        f.close()
+        #os.system('java -jar '+self.path_to_spf+' '+os.path.join(self.path_to_experiment,'test.exp'))
+        #f = open(os.path.join(self.path_to_experiment,'logs','load_and_test.log'),'r')
+        #lines = f.read().split("\n")
+        #parses = []
+        #current_unmapped_sequence = None #[sequence, last_index]
+        #unmapped_words_in_utterance = {}
+        #for i in range(0,len(lines)):
+            #if (' WRONG: ' in lines[i] or 'too many parses' in lines[i]): #found parses
+                #if (' WRONG: ' in lines[i] and len(lines[i].split('WRONG: ')[1]) > 0 and 'parses' not in lines[i].split('WRONG: ')[1]): #one parse
+                    #parses.append((lines[i].split('WRONG: ')[1],0))
+                #else: #multiple parses
+                    #j = 1 if ' WRONG: ' in lines[i] else 2
+                    #while (' Had correct parses: ' not in lines[i+j]):
+                        #if ('[S' not in lines[i+j]):
+                            #p = lines[i+j][lines[i+j].index('[')+2:]
+                        #else:
+                            #p = lines[i+j].split(']')[2][1:]
+                        #s = float(lines[i+j+1].split()[3])
+                        #print(s) #DEBUG
+                        #parses.append((p,s))
+                        #j += 3
+            #elif ('EMPTY' in lines[i] and len(lines[i].split()) >= 4 and lines[i].split()[3] == "EMPTY"): #found unmapped word
+                #empty_token = lines[i].split()[1]
+                #if (current_unmapped_sequence == None):
+                    #current_unmapped_sequence = [empty_token,i]
+                #elif (i-1 == current_unmapped_sequence[1]):
+                    #current_unmapped_sequence[0] += " "+empty_token
+                    #current_unmapped_sequence[1] = i
+                #else:
+                    #if (current_unmapped_sequence[0] not in self.known_words):
+                        #unmapped_words_in_utterance[current_unmapped_sequence[0]] = {}
+                    #current_unmapped_sequence = [empty_token,i]
+        #if (current_unmapped_sequence != None and current_unmapped_sequence[0] not in self.known_words):
+            #unmapped_words_in_utterance[current_unmapped_sequence[0]] = {}
+        #f.close()
 
-        return parses,unmapped_words_in_utterance
+        #return parses,unmapped_words_in_utterance
 
     ######################################################################
     # EXPERIMENTAL: Generate model
@@ -248,7 +314,7 @@ class Simulator(object):
         yesno_cost = -1.0
         strategy=str(num_task)+str(num_patient)+str(num_recipient)
         pg = pomdp_generator.PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-            wh_cost, yesno_cost,pomdpfile = file_name,policyfile=policy_file,timeout=40, is_plus=is_plus)
+            wh_cost, yesno_cost,pomdpfile = file_name,policyfile=policy_file,timeout=50, is_plus=is_plus)
 
         # to read the learned policy
         ##############################Saeid commented lines below ###################################
@@ -271,15 +337,19 @@ class Simulator(object):
 
     ######################################################################
     # EXPERIMENTAL: Retrain parser:
-    def retrain_parser(self):
-        print "PARSER: retraining parser..."
-        os.system('java -jar '+self.path_to_spf+' '+os.path.join(self.path_to_experiment,'init_train.exp'))
+    #def retrain_parser(self): ##DELETE
+        #print "PARSER: retraining parser..."
+        #os.system('java -jar '+self.path_to_spf+' '+os.path.join(self.path_to_experiment,'init_train.exp'))
 
     #######################################################################
     def get_string(self, question):
         # this method can be overriden when needed (eg. use a gui wrapper)
-        print "QUESTION: " + question
-        answer = raw_input().lower()
+        politeness = "I know I asked it already but could you "
+        tmp = question
+        if(self.question_list.count(question) >= 1):
+            tmp = politeness + question
+        print ("QUESTION: " + tmp)
+        answer = input().lower()
 
         # to log or entropy plot
         self.question_list.append(question)
@@ -290,7 +360,7 @@ class Simulator(object):
 
     def print_message(self, message):
         # this method can be overriden when needed
-        print message
+        print (message)
 
     #######################################################################
     def get_user_input(self, question, useFile=False):
@@ -301,7 +371,7 @@ class Simulator(object):
 
         user_input = user_input.strip().lower()
         user_input = user_input.replace("'s"," s")
-        user_input = user_input.translate(string.maketrans("",""), string.punctuation)
+        #user_input = user_input.translate(string.maketrans("",""), string.punctuation)
 
         self.full_request = user_input
         #log
@@ -375,39 +445,63 @@ class Simulator(object):
     ######################################################################
     def get_full_request(self, cycletime):
         if self.print_flag:
-            print self.observations # debug
+            print (self.observations) # debug
 
         user_utterances = self.get_user_input("How can I help you?")
         parses_list = []
         unmapped_list = []
 
         for utterance,score in user_utterances:
-            parses,unmapped = self.parse_utterance(utterance)
+            parses = self.parse_utterance(utterance)
             parses_list.append(parses)
-            unmapped_list.append(unmapped)
+            #unmapped_list.append(unmapped)
         
         patient = None
         recipient = None
 
         if self.print_flag:
-            print "PARSES LIST: ",parses_list
+            print ("PARSES LIST: ",parses_list)
 
-        for parses in parses_list:
-            for parse,score in parses:
-                for word in str(parse).split():
-                    match = None
+
+        #if parses["item"].lower() not in self.entityList:
+            #print("I will add %s to KB!" % KBDict["item"])
+            #with open("rules.lp", "a") as KBFile:
+               # KBFile.write("item(%s).\n" % KBDict["item"])
+        #if parses["item"].lower() in self.entityList:
+        if parses["item"] in self.entityList:
+            patient = parses["item"]
+            if self.print_flag:
+                print ("Patient: " + patient)
+
+
+        #if parses["recipient"].lower() not in self.entityList:
+            #print("I will add %s to KB!" % KBDict["recipient"])
+            #with open("rules.lp", "a") as KBFile:
+                #KBFile.write("recipient(%s).\n" % KBDict["recipient"])
+        #if parses["recipient"].lower() in self.entityList:
+        if parses["recipient"] in self.entityList: #If entity not in KB, force random observation
+            recipient = parses["recipient"]
+            if self.print_flag:
+                print ("Recipient: " + recipient)
+
+   
+
+        #for parses in parses_list:
+            #for parse,score in parses:
+                #for word in str(parse).split():
+                   # match = None
                     #print word
-                    match = re.search('\w*(?=:it.*)', word)
-                    if match:
-                        patient = match.group(0)
-                        if self.print_flag:
-                            print "Patient: " + patient
-                    match = None
-                    match = re.search('\w*(?=:pe.*)', word)
-                    if match:
-                        recipient = match.group(0)
-                        if self.print_flag:
-                            print "Recipient: " + recipient
+                   # match = re.search('\w*(?=:it.*)', word)
+                    #if match:
+                        #patient = match.group(0)
+                        #if self.print_flag:
+                            #print "Patient: " + patient
+                    #match = None
+                    #match = re.search('\w*(?=:pe.*)', word)
+                    #if match:
+                        #recipient = match.group(0)
+                        #if self.print_flag:
+                            #print "Recipient: " + recipient
 
         if patient:
             # get action from key
@@ -458,32 +552,67 @@ class Simulator(object):
         unmapped_list = []
 
         for utterance,score in user_utterances:
-            parses,unmapped = self.parse_utterance(utterance)
+            parses = self.parse_utterance(utterance)
             parses_list.append(parses)
-            unmapped_list.append(unmapped)
+            #unmapped_list.append(unmapped)
         
         patient = None
         recipient = None
 
         if self.print_flag:
-            print "PARSES LIST: ",parses_list
+            print ("PARSES LIST: ",parses_list)
 
-        for parses in parses_list:
-            for parse,score in parses:
-                for word in str(parse).split():
-                    match = None
+        if question == "What item should I bring?":
+            if parses["task"] in self.entityList:
+                patient = parses["task"]
+                if self.print_flag and patient is not None:
+                    print("Patient: " + patient)
+        elif question == "Who should I bring the item to?":
+            if parses["task"] in self.entityList:
+                print("Matthew buraya girmemeli")
+                recipient = parses["task"]
+                if self.print_flag and recipient is not None:
+                    print("Recipient: " + recipient)
+
+        #if parses["item"].lower() not in self.entityList:
+            #print("I will add %s to KB!" % KBDict["item"])
+            #with open("rules.lp", "a") as KBFile:
+               # KBFile.write("item(%s).\n" % KBDict["item"])
+        #if parses["item"].lower() in self.entityList:
+       # patient = parses["item"]
+        #if self.print_flag and patient is not None:
+           # print ("Patient: " + patient)
+
+
+        #if parses["recipient"].lower() not in self.entityList:
+            #print("I will add %s to KB!" % KBDict["recipient"])
+            #with open("rules.lp", "a") as KBFile:
+                #KBFile.write("recipient(%s).\n" % KBDict["recipient"])
+        #if parses["recipient"].lower() in self.entityList:
+        #recipient = parses["recipient"]
+        #if self.print_flag and recipient is not None:
+            #print ("Recipient: " + recipient)
+
+
+
+
+
+        #for parses in parses_list:
+            #for parse,score in parses:
+                #for word in str(parse).split():
+                    #match = None
                     #print word
-                    match = re.search('\w*(?=:it.*)', word)
-                    if match:
-                        patient = match.group(0)
-                        if self.print_flag:
-                            print "Patient: " + patient
-                    match = None
-                    match = re.search('\w*(?=:pe.*)', word)
-                    if match:
-                        recipient = match.group(0)
-                        if self.print_flag:
-                            print "Recipient: " + recipient
+                   # match = re.search('\w*(?=:it.*)', word)
+                    #if match:
+                        #patient = match.group(0)
+                        #if self.print_flag:
+                           # print "Patient: " + patient
+                    #match = None
+                    #match = re.search('\w*(?=:pe.*)', word)
+                    #if match:
+                        #recipient = match.group(0)
+                        #if self.print_flag:
+                            #print "Recipient: " + recipient
 
         # workaround for experiment only
         utterance = self.resolve_synonym(utterance)
@@ -492,13 +621,13 @@ class Simulator(object):
             if recipient:
                 return recipient
             else:
-                print utterance
+                print (utterance)
                 return utterance
         elif self.actions[self.a] == 'ask_p':
             if patient:
                 return patient
             else:
-                print utterance
+                print (utterance)
                 return utterance
 
 
@@ -522,29 +651,31 @@ class Simulator(object):
 
     
     def add_new(self):
-        print "DEBUG: adding new"
+        print ("DEBUG: adding new")
         #file_init_train = open(os.path.join(self.path_to_experiment,'data','fold0_init_train.ccg'),'a')
-        file_seed = open(os.path.join(self.path_to_experiment,'resources','seed.lex'),'a')
-        file_nplist = open(os.path.join(self.path_to_experiment,'resources','np-list.lex'),'a')
-        file_geo_consts = open(os.path.join(self.path_to_experiment,'resources','geo.consts.ont'),'r')
-        lines = file_geo_consts.readlines()
-        file_geo_consts.close()
-        file_geo_consts_write = open(os.path.join(self.path_to_experiment,'resources','geo.consts.ont'),'w')
-        file_geo_consts_write.writelines([item for item in lines[:-1]])
+        #file_seed = open(os.path.join(self.path_to_experiment,'resources','seed.lex'),'a')
+        #file_nplist = open(os.path.join(self.path_to_experiment,'resources','np-list.lex'),'a')
+        #file_geo_consts = open(os.path.join(self.path_to_experiment,'resources','geo.consts.ont'),'r')
+        #lines = file_geo_consts.readlines()
+        #file_geo_consts.close()
+        #file_geo_consts_write = open(os.path.join(self.path_to_experiment,'resources','geo.consts.ont'),'w')
+        #file_geo_consts_write.writelines([item for item in lines[:-1]])
 
         #if self.actions[self.a] == 'ask_p':
         belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, self.num_recipient+1, self.num_patient+1)
-        print "marginal rn", belief_rn
-        print "marginal pm", belief_pm
+        print ("marginal rn", belief_rn)
+        print ("marginal pm", belief_pm)
         if belief_pm > belief_rn:
             raw_str = self.get_string("It seems I do not know the item you are talking about.  Please write the name of the item so I can learn it.")
             first = raw_str.strip().split()[0]
             self.reinit_belief('p')
             self.num_patient += 1
             self.known_words_to_number[first] = 'p'+str(self.num_patient - 1)
-            file_seed.write(raw_str + " :- NP : " + first + ":it\n")
-            file_nplist.write(raw_str + " :- NP : " + first + ":it\n")            
-            file_geo_consts_write.write(first + ":it\n")
+            with open("rules.lp", "a") as KBFile:
+                KBFile.write("item(%s).\n" % first)
+            #file_seed.write(raw_str + " :- NP : " + first + ":it\n")
+            #file_nplist.write(raw_str + " :- NP : " + first + ":it\n")            
+            #file_geo_consts_write.write(first + ":it\n")
             self.synonym[first] = raw_str
             
         #elif self.actions[self.a] == 'ask_r':
@@ -554,22 +685,24 @@ class Simulator(object):
             self.reinit_belief('r')
             self.num_recipient += 1
             self.known_words_to_number[first] = 'r'+str(self.num_recipient - 1)
-            file_seed.write(raw_str + " :- NP : " + first + ":pe\n")
-            file_nplist.write(raw_str + " :- NP : " + first + ":pe\n")
-            file_geo_consts_write.write(first + ":pe\n")
-            self.synonym[first] = raw_str
+            with open("rules.lp", "a") as KBFile:
+                KBFile.write("recipient(%s).\n" % first)
+            #file_seed.write(raw_str + " :- NP : " + first + ":pe\n")
+            #file_nplist.write(raw_str + " :- NP : " + first + ":pe\n")
+            #file_geo_consts_write.write(first + ":pe\n")
+            #self.synonym[first] = raw_str
             
 
-        file_geo_consts_write.write(")\n")
+        #file_geo_consts_write.write(")\n")
         self.write_known_words_to_number()
 
         file_num_config = open(os.path.join(self.path_to_main,'data','num_config.txt'), 'w+')
         file_num_config.write(str(self.num_task) + " " + str(self.num_patient) + " " + str(self.num_recipient))
         file_num_config.close()
-        file_geo_consts_write.close()
-        file_nplist.close()
-        file_seed.close()
-        self.retrain_parser()
+        #file_geo_consts_write.close()
+        #file_nplist.close()
+        #file_seed.close()
+        #fself.retrain_parser()
 
         #self.num_patient += 1
         #self.num_recipient += 1
@@ -594,7 +727,7 @@ class Simulator(object):
 
         if ind == None:
             if self.print_flag:
-                print "DEBUG: Not found in list of observations"
+                print ("DEBUG: Not found in list of observations")
 
             if 'confirm' in self.actions[self.a]:
                 self.o = self.observations.index(numpy.random.choice(['yes', 'no']))
@@ -659,8 +792,8 @@ class Simulator(object):
         belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, n, m)
 
         if self.print_flag:
-            print "DEBUG: Marginal rn = ",belief_rn
-            print "DEBUG: Marginal pm = ",belief_pm
+            print ("DEBUG: Marginal rn = ",belief_rn)
+            print ("DEBUG: Marginal pm = ",belief_pm)
 
         if belief_rn > self.belief_threshold or belief_pm > self.belief_threshold:
             return True
@@ -671,7 +804,7 @@ class Simulator(object):
     def run(self):
         # seed random for experiments
         numpy.random.seed()
-        self.retrain_parser()
+        #self.retrain_parser()
 
         cost = 0.0
         self.init_belief()
@@ -686,6 +819,8 @@ class Simulator(object):
         old_entropy = float("inf")
         inc_count = 0
         added = False
+
+        self.solveKB()
 
         while True:
             cycletime += 1
@@ -705,8 +840,8 @@ class Simulator(object):
             current_entropy_plus = stats.entropy(self.b_plus)
             
             if self.print_flag:
-                print "DEBUG: Entropy = ",current_entropy
-                print "DEBUG: Entropy_plus = ",current_entropy_plus
+                print ("DEBUG: Entropy = ",current_entropy)
+                print ("DEBUG: Entropy_plus = ",current_entropy_plus)
 
             self.entropy_list.append(current_entropy)
             
@@ -714,7 +849,7 @@ class Simulator(object):
             if (self.sign(current_entropy - old_entropy) != old_sign):
                 inc_count += 1
                 if self.print_flag:
-                    print "DEBUG: entropy fluctuated"
+                    print ("DEBUG: entropy fluctuated")
 
             if (self.entropy_check(current_entropy)):
                 self.get_full_request(cycletime)
@@ -729,13 +864,13 @@ class Simulator(object):
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
                     
-                    print 'num_recipients', self.num_recipient
-                    print 'num_patients', self.num_patient
+                    print ('num_recipients', self.num_recipient)
+                    print ('num_patients', self.num_patient)
 
                 # check entropy increases arbitrary no of times for now
                 if (added == False):
                     if(inc_count > self.ent_threshold or self.belief_check()):
-                        print "--- new item/person ---"
+                        print ("--- new item/person ---")
                         added = True
                         self.added_point = (cycletime-1, current_entropy)
                         self.add_new()
@@ -879,8 +1014,8 @@ class Simulator(object):
             #instead self.s_plus is used to compare 
 
             #self.s_plus = self.states_plus.index(self.states[self.s])
-            print self.states_plus[self.s_plus]
-            print self.states
+            print (self.states_plus[self.s_plus])
+            print (self.states)
             if str(self.states_plus[self.s_plus]) in self.states:
                 is_new = False
             else:
