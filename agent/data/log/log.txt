@@ -305,3 +305,26 @@ USER	teik phone to bob
 USER	phone
 USER	phone
 USER	phone
+USER	deliver coffee to bob
+USER	deliver coffee to bob
+USER	deliver coffee to bob
+USER	deliver coffee to bob
+USER	deliver coffee to bob
+USER	deliver cofee to bob
+USER	deliver coffee to bob
+USER	bob
+USER	coffee
+USER	deliver coffee to shiqi
+USER	deliver coffee to shiqi
+USER	shiqi
+USER	shiqi
+USER	coffee
+USER	shiqi
+USER	deliver coffee to shiqi
+USER	deliver coffee to mr.bob
+USER	mr.bob
+USER	coffee
+USER	deliver coffee to mr.bob
+USER	mr,bob
+USER	mr.bob
+USER	mr.bob

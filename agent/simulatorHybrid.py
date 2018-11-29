@@ -20,6 +20,9 @@ import string
 import ast
 import datetime
 
+from allennlp.predictors.predictor import Predictor
+from clyngor import ASP, solve
+
 numpy.set_printoptions(suppress=True)
 
 class Simulator(object):
@@ -130,6 +133,31 @@ class Simulator(object):
         # to make the screen print simple 
         numpy.set_printoptions(precision=2)
 
+
+
+
+
+
+    #######################################################################
+    def solveKB(self):
+        answers = solve('rules.lp') #Return value is frozenset, thats the reason it is converted to predicate and entity lists.
+
+        self.entityList = list()
+        predicateList = list()
+
+        for answer in answers:
+            for line in answer:
+                predicateList.append(''.join(line[0]))
+                self.entityList.append(''.join(line[1]))
+
+
+        print("Predicate list of KB: ")
+        print(predicateList)
+        print()
+        print("Entity list of KB: ")
+        print(self.entityList)
+        
+
     #######################################################################
     def init_belief(self):
 
@@ -218,7 +246,7 @@ class Simulator(object):
                         else:
                             p = lines[i+j].split(']')[2][1:]
                         s = float(lines[i+j+1].split()[3])
-                        print s #DEBUG
+                        print (s) #DEBUG
                         parses.append((p,s))
                         j += 3
             elif ('EMPTY' in lines[i] and len(lines[i].split()) >= 4 and lines[i].split()[3] == "EMPTY"): #found unmapped word
@@ -273,7 +301,7 @@ class Simulator(object):
     ######################################################################
     # EXPERIMENTAL: Retrain parser:
     def retrain_parser(self):
-        print "PARSER: retraining parser..."
+        print ("PARSER: retraining parser...")
         os.system('java -jar '+self.path_to_spf+' '+os.path.join(self.path_to_experiment,'init_train.exp'))
 
     #######################################################################
@@ -283,8 +311,8 @@ class Simulator(object):
         tmp = question
         if(self.question_list.count(question) >= 1):
             tmp = politeness + question
-        print "QUESTION: " + tmp
-        answer = raw_input().lower()
+        print ("QUESTION: " + tmp)
+        answer = input().lower()
 
         # to log or entropy plot
         self.question_list.append(question)
@@ -295,7 +323,7 @@ class Simulator(object):
 
     def print_message(self, message):
         # this method can be overriden when needed
-        print message
+        print (message)
 
     #######################################################################
     def get_user_input(self, question, useFile=False):
@@ -306,7 +334,7 @@ class Simulator(object):
 
         user_input = user_input.strip().lower()
         user_input = user_input.replace("'s"," s")
-        user_input = user_input.translate(string.maketrans("",""), string.punctuation)
+        #user_input = user_input.translate(string.maketrans("",""), string.punctuation)
 
         self.full_request = user_input
         #log
@@ -378,13 +406,28 @@ class Simulator(object):
 
 
     ######################################################################
-    def get_full_request(self, cycletime):
+    def get_full_request(self, cycletime): #### EDITED
+
+
+        
+        #start_time = time.time()
+        
+        #print("\n--- %s seconds ---\n	" % (time.time() - start_time))	
+
+        KBActionList = ["task", "item", "recipient"]
+        KBDict = dict.fromkeys(KBActionList) #Initialize dict.
+
+
         if self.print_flag:
-            print self.observations # debug
+            print (self.observations) # debug
 
         user_utterances = self.get_user_input("How can I help you?")
         parses_list = []
         unmapped_list = []
+
+        neuralParserInput = user_utterances[0][0]
+        print("DEBUG: Neural Parser Input: ")
+        print(neuralParserInput)
 
         for utterance,score in user_utterances:
             parses,unmapped = self.parse_utterance(utterance)
@@ -395,7 +438,7 @@ class Simulator(object):
         recipient = None
 
         if self.print_flag:
-            print "PARSES LIST: ",parses_list
+            print ("PARSES LIST: ",parses_list)
 
         for parses in parses_list:
             for parse,score in parses:
@@ -406,13 +449,52 @@ class Simulator(object):
                     if match: # Add back up as 'else'
                         patient = match.group(0)
                         if self.print_flag:
-                            print "Patient: " + patient
+                            print ("Patient: " + patient)
                     match = None
                     match = re.search('\w*(?=:pe.*)', word)
                     if match: # Add back up as 'else'
                         recipient = match.group(0)
                         if self.print_flag:
-                            print "Recipient: " + recipient
+                            print ("Recipient: " + recipient)
+    
+
+
+        if patient is None or recipient is None:
+            predictor = Predictor.from_path("./model.gz")
+            print("DEBUG: SPF can not parse utterance, thus neural parser called.\n")
+            predicted = predictor.predict(sentence=neuralParserInput)
+            for key, value in predicted.items(): #Preparation of data for 'POS_Word' dict.
+                print(key, value)
+                if(key == 'words'): #Read space seperated words
+                    valueList = predicted[key]
+                if(key == 'predicted_dependencies'): #Read dependency tags
+                    keyList = predicted[key]
+            depWordList = list(zip(keyList, valueList)) #Zip two list and make another list. (CAN NOT BE DICT BECAUSE SAME POS TAG CAN OCCUR TWICE).
+            print()
+            for key, value in depWordList: #Creation of 'DepTag_Word' dict. (Because of the specific domain, we know POS tags for task, item and recipient.)
+                print(key, value)
+                if key == "root":
+                    KBDict["task"] = value
+                if key == "dobj":
+                    KBDict["item"] = value
+                if key == "pobj" or key == "xcomp":
+                    KBDict["recipient"] = value
+            
+            if patient is None:
+                if KBDict["item"] in self.entityList:
+                    patient = KBDict["item"]
+                    if self.print_flag:
+                        print ("\nPatient(Neural Parser): " + patient)   
+
+            if recipient is None:
+                if KBDict["recipient"] in self.entityList:
+                    recipient = KBDict["recipient"]
+                    if self.print_flag:
+                        print ("\Recipient(Neural Parser): " + recipient)   
+                        
+
+                        
+
 
         if patient:
             # get action from key
@@ -451,7 +533,18 @@ class Simulator(object):
 
         #print "Unmapped: ",unmapped_list
 
-    def get_partial(self, question):
+    def get_partial(self, question): #### EDITED
+
+
+
+        #predictor = Predictor.from_path("./model.gz")
+        #start_time = time.time()
+        
+        #print("\n--- %s seconds ---\n	" % (time.time() - start_time))	
+
+        KBActionList = ["task", "item", "recipient"]
+        KBDict = dict.fromkeys(KBActionList) #Initialize dict.
+
 
         if 'confirm' in self.actions[self.a]:
             raw_str = self.get_string(question)
@@ -462,6 +555,9 @@ class Simulator(object):
         parses_list = []
         unmapped_list = []
 
+        neuralParserInput = user_utterances[0][0]
+        print("DEBUG: Neural Parser Input: " + neuralParserInput)
+
         for utterance,score in user_utterances:
             parses,unmapped = self.parse_utterance(utterance)
             parses_list.append(parses)
@@ -471,7 +567,7 @@ class Simulator(object):
         recipient = None
 
         if self.print_flag:
-            print "PARSES LIST: ",parses_list
+            print ("PARSES LIST: ",parses_list)
 
         for parses in parses_list:
             for parse,score in parses:
@@ -482,13 +578,53 @@ class Simulator(object):
                     if match: # Add back up as 'else'
                         patient = match.group(0)
                         if self.print_flag:
-                            print "Patient: " + patient
+                            print ("Patient: " + patient)
+
                     match = None
                     match = re.search('\w*(?=:pe.*)', word)
                     if match: # Add back up as 'else'
                         recipient = match.group(0)
                         if self.print_flag:
-                            print "Recipient: " + recipient
+                            print ("Recipient: " + recipient)
+
+
+
+        if patient is None or recipient is None:
+            predictor = Predictor.from_path("./model.gz")
+            print("DEBUG: SPF can not parse utterance, thus neural parser called.\n")
+            predicted = predictor.predict(sentence=neuralParserInput)
+            for key, value in predicted.items(): #Preparation of data for 'POS_Word' dict.
+                print(key, value)
+                if(key == 'words'): #Read space seperated words
+                    valueList = predicted[key]
+                if(key == 'predicted_dependencies'): #Read dependency tags
+                    keyList = predicted[key]
+            depWordList = list(zip(keyList, valueList)) #Zip two list and make another list. (CAN NOT BE DICT BECAUSE SAME POS TAG CAN OCCUR TWICE).
+            print()
+            for key, value in depWordList: #Creation of 'DepTag_Word' dict. (Because of the specific domain, we know POS tags for task, item and recipient.)
+                print(key, value)
+                if key == "root": # if input is one work, it parsed as root and patient or recipient values assigned to None, thus overall algorithm stay unchanged.
+                    KBDict["task"] = value
+                if key == "dobj":
+                    KBDict["item"] = value
+                if key == "pobj" or key == "xcomp":
+                    KBDict["recipient"] = value
+            
+            if patient is None:
+                if KBDict["item"] in self.entityList:
+                    patient = KBDict["item"]
+                    if self.print_flag:
+                        print ("\nPatient(Neural Parser): " + patient)   
+
+            if recipient is None:
+                if KBDict["recipient"] in self.entityList:
+                    recipient = KBDict["recipient"]
+                    if self.print_flag:
+                        print ("\nRecipient(Neural Parser): " + recipient)   
+                        
+              
+
+
 
         # workaround for experiment only
         utterance = self.resolve_synonym(utterance)
@@ -497,13 +633,13 @@ class Simulator(object):
             if recipient:
                 return recipient
             else:
-                print utterance
+                print (utterance)
                 return utterance
         elif self.actions[self.a] == 'ask_p':
             if patient:
                 return patient
             else:
-                print utterance
+                print (utterance)
                 return utterance
 
 
@@ -527,7 +663,7 @@ class Simulator(object):
 
     
     def add_new(self):
-        print "DEBUG: adding new"
+        print ("DEBUG: adding new..")
         #file_init_train = open(os.path.join(self.path_to_experiment,'data','fold0_init_train.ccg'),'a')
         file_seed = open(os.path.join(self.path_to_experiment,'resources','seed.lex'),'a')
         file_nplist = open(os.path.join(self.path_to_experiment,'resources','np-list.lex'),'a')
@@ -539,11 +675,13 @@ class Simulator(object):
 
         #if self.actions[self.a] == 'ask_p':
         belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, self.num_recipient+1, self.num_patient+1)
-        print "marginal rn", belief_rn
-        print "marginal pm", belief_pm
+        print ("marginal rn", belief_rn)
+        print ("marginal pm", belief_pm)
         if belief_pm > belief_rn:
             raw_str = self.get_string("It seems I do not know the item you are talking about.  Please write the name of the item so I can learn it.")
             first = raw_str.strip().split()[0]
+            with open("rules.lp", "a") as KBFile:
+                KBFile.write("item(%s).\n" % first)
             self.reinit_belief('p')
             self.num_patient += 1
             self.known_words_to_number[first] = 'p'+str(self.num_patient - 1)
@@ -556,6 +694,8 @@ class Simulator(object):
         else:
             raw_str = self.get_string("It seems I do not know the person you are talking about.  Please write their name so I can learn it.")
             first = raw_str.strip().split()[0]
+            with open("rules.lp", "a") as KBFile:
+                KBFile.write("recipient(%s).\n" % first)
             self.reinit_belief('r')
             self.num_recipient += 1
             self.known_words_to_number[first] = 'r'+str(self.num_recipient - 1)
@@ -599,7 +739,7 @@ class Simulator(object):
 
         if ind == None:
             if self.print_flag:
-                print "DEBUG: Not found in list of observations"
+                print ("DEBUG: Not found in list of observations")
 
             if 'confirm' in self.actions[self.a]:
                 self.o = self.observations.index(numpy.random.choice(['yes', 'no']))
@@ -664,8 +804,8 @@ class Simulator(object):
         belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, n, m)
 
         if self.print_flag:
-            print "DEBUG: Marginal rn = ",belief_rn
-            print "DEBUG: Marginal pm = ",belief_pm
+            print ("DEBUG: Marginal rn = ",belief_rn)
+            print ("DEBUG: Marginal pm = ",belief_pm)
 
         if belief_rn > self.belief_threshold or belief_pm > self.belief_threshold:
             return True
@@ -691,6 +831,7 @@ class Simulator(object):
         old_entropy = float("inf")
         inc_count = 0
         added = False
+        self.solveKB()
 
         while True:
             cycletime += 1
@@ -710,8 +851,8 @@ class Simulator(object):
             current_entropy_plus = stats.entropy(self.b_plus)
             
             if self.print_flag:
-                print "DEBUG: Entropy = ",current_entropy
-                print "DEBUG: Entropy_plus = ",current_entropy_plus
+                print ("DEBUG: Entropy = ",current_entropy)
+                print ("DEBUG: Entropy_plus = ",current_entropy_plus)
 
             self.entropy_list.append(current_entropy)
             
@@ -719,7 +860,7 @@ class Simulator(object):
             if (self.sign(current_entropy - old_entropy) != old_sign):
                 inc_count += 1
                 if self.print_flag:
-                    print "DEBUG: entropy fluctuated"
+                    print ("DEBUG: entropy fluctuated")
 
             if (self.entropy_check(current_entropy)):
                 self.get_full_request(cycletime)
@@ -734,13 +875,13 @@ class Simulator(object):
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
                     
-                    print 'num_recipients', self.num_recipient
-                    print 'num_patients', self.num_patient
+                    print ('num_recipients', self.num_recipient)
+                    print ('num_patients', self.num_patient)
 
                 # check entropy increases arbitrary no of times for now
                 if (added == False):
                     if(inc_count > self.ent_threshold or self.belief_check()):
-                        print "--- new item/person ---"
+                        print ("--- new item/person ---")
                         added = True
                         self.added_point = (cycletime-1, current_entropy)
                         self.add_new()
@@ -884,8 +1025,8 @@ class Simulator(object):
             #instead self.s_plus is used to compare 
 
             #self.s_plus = self.states_plus.index(self.states[self.s])
-            print self.states_plus[self.s_plus]
-            print self.states
+            print (self.states_plus[self.s_plus])
+            print (self.states)
             if str(self.states_plus[self.s_plus]) in self.states:
                 is_new = False
             else:

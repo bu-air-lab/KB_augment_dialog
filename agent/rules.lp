@@ -9,7 +9,6 @@ recipient(alice).
 recipient(shiqi).
 recipient(saeid).
 recipient(cihangir).
-recipient(bob).
 recipient(samet).
 recipient(kishan).
 item(water).
@@ -18,4 +17,4 @@ item(paper).
 recipient(zhang).
 recipient(ellen).
 
-
+recipient(mr.bob).
