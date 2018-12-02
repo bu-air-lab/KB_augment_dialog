@@ -83,7 +83,7 @@ def plotgenerate(df,belieflist,num):
     plt.subplot(141)
     plt.plot(range(2,max(belieflist)+1),df.loc[belieflist[0]:belieflist[-1],'QA Cost'],marker='o',linestyle='-',label='Average of '+str(num)+ ' trials')
     plt.xlim(1.5,max(belieflist)+1)
-    plt.ylim(-25,-14)
+    #plt.ylim(-25,-14)
     plt.ylabel('QA Cost')
     plt.xlabel('Number of EFs')
 
@@ -116,7 +116,7 @@ def plotgenerate(df,belieflist,num):
     g.savefig('Plots/all_'+str(num)+'_trials_entropy_experiment_model_133')
 
 def main():
-    num=500                                        #number of trials
+    num=5                                       #number of trials
     entropylist=[2,3,4,5,6,7,8]
     #filelist = ['133', '144']
     df=pd.DataFrame() 
@@ -128,10 +128,10 @@ def main():
             auto_state = True, 
             auto_observations = True, # was true
             print_flag = False, 
-            policy_file = name+'_new.policy',
-            pomdp_file =  name +'_new.pomdp',
-                pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.pomdp',
-                policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'_new.policy',
+            policy_file = name+'.policy',
+            pomdp_file =  name +'.pomdp',
+                pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.pomdp',
+                policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.policy',
             trials_num = num,
             num_task = int(name[0]), 
             num_patient = int(name[1]), 

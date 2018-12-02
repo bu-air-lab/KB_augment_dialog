@@ -1,10 +1,14 @@
-Bring a pop to Alice
-To Alice
-No
-The pop
-The pop
-To Alice
-To Alice
-No
-No
-No
+p3 r0
+yes
+no
+p3
+no
+p2
+no
+p3
+yes
+yes
+yes
+yes
+p0
+p3

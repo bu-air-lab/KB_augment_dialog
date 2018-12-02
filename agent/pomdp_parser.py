@@ -11,10 +11,10 @@ class Pomdp(object):
     self.filename = filename
     self.print_flag = parsing_print_flag
 
-    try:
-      f = open(self.filename, 'r')
-    except:
-      print('Error: not be able to read ' + filename)
+    #try:
+    f = open(self.filename, 'r')
+    #except:
+      #print('Error: not be able to read ' + filename)
 
     self.s = f.read()
     start_states = self.s.find('states:')

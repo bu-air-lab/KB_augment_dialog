@@ -127,3 +127,204 @@ USER	bring apple to james
 USER	bring coffee
 USER	bring coffee to james
 USER	bring to james
+USER	deliver hamburger to alice
+USER	hamburger
+USER	bring coffee to ellen
+USER	coffee
+USER	bring apple to alice
+USER	apple
+USER	elen
+USER	alice
+USER	bring hamburger to carol
+USER	soda
+USER	carol
+USER	hanburger
+USER	hamburger
+USER	bring hamburger to alice
+USER	alice
+USER	deliver coffee to ellen
+USER	deliver apple to alice
+USER	apple
+USER	deliver apple to alice
+USER	apple
+USER	deliver apple to alice
+USER	apple
+USER	deliver apple to alice
+USER	deliver apple to alice
+USER	alice
+USER	deliver apple to alice
+USER	alice
+USER	deliver apple to matthew
+USER	matthew
+USER	matthew
+USER	matthew
+USER	deliver apple to matthew
+USER	apple
+USER	matthew
+USER	deliver apple to matthew
+USER	apple
+USER	matthew
+USER	matthew
+USER	deliver apple to matthew
+USER	deliver apple to mtthew
+USER	matthew
+USER	deliver apple to matthew
+USER	matthew
+USER	deliver apple to matthew
+USER	matthew
+USER	deliver apple to matthew
+USER	matthew
+USER	deliver apple to alice
+USER	alice
+USER	deliver apple to matthew
+USER	deliver apple to matthew
+USER	matthew
+USER	deliver apple to fatma
+USER	fatma
+USER	fatma
+USER	fatma
+USER	deliver apple to fatma
+USER	deliver apple to fatma
+USER	fatma
+USER	fatma
+USER	fatma
+USER	fatma
+USER	fatma
+USER	deliver apple to jack
+USER	deliver apple to jack
+USER	deliver apple to jack
+USER	deliver apple to jack
+USER	jack
+USER	deliver apple to alice
+USER	deliver apple to alice
+USER	deliver apple to jack
+USER	deliver apple to jack
+USER	deliver apple to alice
+USER	deliver apple to alice
+USER	deliver apple to gungor
+USER	deliver apple to gungor
+USER	gungor
+USER	gungor
+USER	gungor
+USER	gungor
+USER	gungor
+USER	deliver apple to gungor
+USER	deliver apple to ugurcan
+USER	deliver apple to ugurcan
+USER	deliver apple to ugurcan
+USER	deliver apple to ugurcan
+USER	deliver apple to ugurcan
+USER	deliver apple to ugurcan
+USER	deliver apple to ugurcan
+USER	deliver apple to ugurcan
+USER	deliver apple to ugurcan
+USER	deliver apple to ugurcan
+USER	deliver apple to ugurcan
+USER	deliver apple to ugurcan
+USER	deliver apple to gungor
+USER	gungor
+USER	gungor
+USER	deliver apple to gungor
+USER	deliver apple to gungor
+USER	gungor
+USER	gungor
+USER	deliver apple to gungor
+USER	deliver apple to gungor
+USER	gungor
+USER	gungor
+USER	apple
+USER	gungor
+USER	deliver apple to gungor
+USER	gungor
+USER	deliver apple to gungor
+USER	gungor
+USER	bring phone to bob
+USER	phone
+USER	bring phone to bob
+USER	phone
+USER	pen
+USER	bob
+USER	bob
+USER	pen
+USER	bob
+USER	bob
+USER	pen
+USER	pen
+USER	pen
+USER	bob
+USER	please deliver phone to bob brown
+USER	phone
+USER	bob
+USER	please deliver phone to bob brown
+USER	phone
+USER	could you bring phone to bob brown
+USER	phone
+USER	could you bring phone to bob brown?
+USER	phone
+USER	phone
+USER	could you bring the phone for bob
+USER	bob
+USER	could you bring the phone for bob?
+USER	phone
+USER	bob needs a phone
+USER	bob
+USER	bob needs a phone
+USER	bob
+USER	bob
+USER	bob needs a phone
+USER	bob needs a phone
+USER	bob
+USER	bob
+USER	phone
+USER	bob
+USER	
+USER	bring telefono to bob
+USER	bob
+USER	telefono
+USER	telefono
+USER	telefono
+USER	telefono
+USER	bob
+USER	bob
+USER	telefono
+USER	telefono
+USER	telefono
+USER	telefono
+USER	telefono
+USER	bring telefono to bob
+USER	telefono
+USER	teik phone to bob
+USER	bob
+USER	teik phone to bob
+USER	phone
+USER	phone
+USER	phone
+USER	phone
+USER	bob
+USER	teik phone to bob
+USER	phone
+USER	phone
+USER	phone
+USER	deliver coffee to bob
+USER	deliver coffee to bob
+USER	deliver coffee to bob
+USER	deliver coffee to bob
+USER	deliver coffee to bob
+USER	deliver cofee to bob
+USER	deliver coffee to bob
+USER	bob
+USER	coffee
+USER	deliver coffee to shiqi
+USER	deliver coffee to shiqi
+USER	shiqi
+USER	shiqi
+USER	coffee
+USER	shiqi
+USER	deliver coffee to shiqi
+USER	deliver coffee to mr.bob
+USER	mr.bob
+USER	coffee
+USER	deliver coffee to mr.bob
+USER	mr,bob
+USER	mr.bob
+USER	mr.bob

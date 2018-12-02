@@ -1,21 +1,26 @@
 [P1T2] ============ (Job load_and_test started)
 [P1T2] 1 : ==================
-[P1T2] apple
+[P1T2] deliver coffee to ellen
 (lambda $0:e $0)
-[P1T2] Test parsing time 0.01
-[P1T2] no parses
-[P1T2] EXACT stats -- recording no parse
-[P1T2] [EXACT stats]  Record failure.
-[P1T2] EMPTY Parsing time 0.001000
-[P1T2] no parses
-[P1T2] EXACT stats -- recording no parse with skipping
-[P1T2] [EXACT stats]  Record sloppy failure.
+[P1T2] Test parsing time 0.03
+[P1T2] EXACT stats -- recording wrong parse: (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a ellen:pe) (actionpatient:<a,<e,t>> bring:a coffee:it))
+[P1T2] [EXACT stats]  Record incorrect.
+[P1T2] WRONG: (and:<t*,t> (action:<a,t> bring:a) (actionrecipient:<a,<e,t>> bring:a ellen:pe) (actionpatient:<a,<e,t>> bring:a coffee:it))
+[P1T2] [LexEntries and scores:
+[20.022121287328392] deliver :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#31=10.023081866893339(1.0),XEME#20=10.0(1.0),XTMP#65=-0.00960579564945756(0.1)}]
+[20.022121287328392] deliver :- S/PP/NP : (lambda $0:e (lambda $1:<a,t> (and:<t*,t> (action:<a,t> bring:a) ($1 bring:a) (actionpatient:<a,<e,t>> bring:a $0)))) [{LEX#31=10.023081866893339(1.0),XEME#147=10.0(1.0),XTMP#127=-0.00960579564945756(0.1)}]
+[19.96934540336899] coffee :- NP : coffee:it [{LEX#385=10.0(1.0),XEME#180=10.0(1.0),XTMP#19=-0.30654596631007297(0.1)}]
+[12.361224771850207] to :- PP/NP : (lambda $0:e (lambda $1:a (actionrecipient:<a,<e,t>> $1 $0))) [{LEX#266=7.8189591452463105(1.0),XEME#97=4.567170888887524(1.0),XTMP#122=-0.2490526228362712(0.1)}]
+[-6.161573922833259] ellen :- NP : ellen:pe [{LEX#650=-3.0654596631011257(1.0),XEME#221=-3.0654596631011257(1.0),XTMP#19=-0.30654596631007297(0.1)}]
+]
+[P1T2] Had correct parses: false
+[P1T2] Feats: {LEX#266=7.8189591452463105(1.0),LEX#31=10.023081866893339(1.0),LEX#385=10.0(1.0),LEX#650=-3.0654596631011257(1.0),RULE#>apply=-0.06520776525637662(0.2),RULE#>comp=-0.007486921502356428(0.1),RULE#lex=0.2658522648326529(0.4),XEME#147=10.0(0.5),XEME#180=10.0(1.0),XEME#20=10.0(0.5),XEME#221=-3.0654596631011257(1.0),XEME#97=4.567170888887524(1.0),XTMP#122=-0.2490526228362712(0.1),XTMP#127=-0.00960579564945756(0.05),XTMP#19=-0.30654596631007297(0.2),XTMP#65=-0.00960579564945756(0.05)}
 [P1T2] === EXACT statistics:
 Recall: 0.0/1.0 = 0.0
-Precision: 0.0/0.0 = 0.0
+Precision: 0.0/1.0 = 0.0
 F1: 0.0
 SKIP Recall: 0.0/1.0 = 0.0
-SKIP Precision: 0.0/0.0 = 0.0
+SKIP Precision: 0.0/1.0 = 0.0
 SKIP F1: 0.0
-[P1T2] Total run time 0.0110 seconds
+[P1T2] Total run time 0.0300 seconds
 [P1T2] ============ (Job load_and_test completed)
