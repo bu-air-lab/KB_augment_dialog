@@ -116,7 +116,7 @@ def plotgenerate(df,belieflist,num):
     g.savefig('Plots/all_'+str(num)+'_trials_entropy_experiment_model_133')
 
 def main():
-    num=5                                       #number of trials
+    num=500                                      #number of trials
     entropylist=[2,3,4,5,6,7,8]
     #filelist = ['133', '144']
     df=pd.DataFrame() 

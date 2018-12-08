@@ -19,161 +19,7 @@ import ast
 
 class Baseline(Simulator):
 
-
-
-    def run_numbers_of_trials(self, num):
-
-        cost_list = []
-        success_list = []
-        reward_list = []
-        overall_reward_list = []
-        
-        # for new item or person
-        true_positives = 0.0
-        false_positives = 0.0
-        true_negatives = 0.0
-        false_negatives = 0.0
-
-        string_i = ''
-        string_p = ''
-        string_r = ''
-
-        # save initial values to reset before next run
-        initial_num_recipient = self.num_recipient
-        initial_num_patient = self.num_patient
-        initial_states = self.states
-        initial_actions = self.actions
-        initial_observations = self.observations
-        initial_trans_mat = self.trans_mat
-        initial_obs_mat = self.obs_mat
-        initial_reward_mat = self.reward_mat
-        initial_policy = self.policy
-
-        
-        #bar = Bar('Processing', max=self.trials_num)
-
-        print "\n\nTrials num is: " + str(self.trials_num)
-        for i in range(self.trials_num):
-
-            # seed random for experiments
-            #numpy.random.seed(i+20)
-
-            # get a sample as the current state, terminal state exclusive
-            if self.auto_state:
-                # 50% chance fixed to select unknown state
-                unknown_state = numpy.random.choice([True, False])
-                # 100% chance to select unknown
-                #unknown_state = True
-
-                if unknown_state == False:
-                    self.s = numpy.random.randint(low=0, high=len(self.states)-1, size=(1))[0]
-                    tuples = self.states[self.s].split('_')
-                    ids = [int(tuples[0][1]),int(tuples[1][1]),int(tuples[2][1])]
-                    self.s_plus = self.states_plus.index(self.states[self.s])
-                else:
-                    unknown_set = set(self.states_plus) - set(self.states)
-                    unknown_set = list(unknown_set)
-                    selected = numpy.random.choice(unknown_set)
-                    self.s_plus = self.states_plus.index(selected)
-
-            else:
-                self.s_plus = int(input("Please specify the index of state: "))
-
-            '''!!! important note: State self.s not used as goal anymore, since we need new items to be possible as well,
-            instead self.s_plus is used to compare''' 
-
-            #self.s_plus = self.states_plus.index(self.states[self.s])
-            print self.states_plus[self.s_plus]
-            print self.states
-            if str(self.states_plus[self.s_plus]) in self.states:
-                is_new = False
-            else:
-                is_new = True
-
-            # run this episode and save the reward
-            reward, cost, added = self.run(num)
-
-            reward_list.append(reward)
-            cost_list.append(cost)
-
-            # use string based checking of success for now
-            if (str(self.states_plus[self.s_plus]) in self.actions[self.a]) and (is_new == added):
-                success_list.append(1.0)
-            else:
-                success_list.append(0.0)                
-
-            overall_reward = reward
-            overall_reward_list.append(overall_reward)
-
-            if is_new == True and added == True:
-                true_positives += 1
-            elif is_new == True and added == False:
-                false_negatives += 1
-            elif is_new == False and added == True:
-                false_positives += 1
-            elif is_new == False and added == False:
-                true_negatives += 1
-
-            # reset for next run
-
-            self.num_patient = initial_num_patient
-            self.num_recipient = initial_num_recipient
-            self.num_recipient = initial_num_recipient
-            self.num_patient = initial_num_patient
-            self.states = initial_states
-            self.actions = initial_actions
-            self.observations = initial_observations
-            self.trans_mat = initial_trans_mat
-            self.obs_mat = initial_obs_mat
-            self.reward_mat = initial_reward_mat
-            self.policy = initial_policy
-
-            #bar.next()
-
-        #bar.finish()
-
-        cost_arr = numpy.array(cost_list)
-        success_arr = numpy.array(success_list)
-        reward_arr = numpy.array(reward_list)
-        overall_reward_arr = numpy.array(overall_reward_list)
-
-        print('average cost: ' + str(numpy.mean(cost_arr))[1:] + \
-            ' with std ' + str(numpy.std(cost_arr)))
-        print('average success: ' + str(numpy.mean(success_arr)) + \
-            ' with std ' + str(numpy.std(success_arr)))
-        print('average reward: ' + str(numpy.mean(reward_arr)) + \
-            ' with std ' + str(numpy.std(reward_arr)))
-        print('average overall reward: ' + str(numpy.mean(overall_reward_arr)) + \
-            ' with std ' + str(numpy.std(overall_reward_arr)))
-
-        print('True positives:' + str(true_positives))
-        print('False positives:' + str(false_positives))
-        print('True negatives:' + str(true_negatives))
-        print('False negatives:' + str(false_negatives))
-
-        if true_positives + false_positives == 0:
-            precision = 0
-        else:
-            precision = true_positives/(true_positives + false_positives)
-        
-        if true_positives + false_negatives == 0:
-            recall = 0
-        else:        
-            recall = true_positives/(true_positives + false_negatives)
-	try:
-            f1_score = 2 * precision * recall/(precision + recall)
-	except:
-	    f1_score = 0
-        
-        print('Precision:' + str(precision))
-        print('Recall:' + str(recall))
-        print('F1:' + str(f1_score))
-
-        return (numpy.mean(cost_arr), numpy.mean(success_arr), \
-            numpy.mean(overall_reward_arr), precision, recall, f1_score)
-
-
-    def run(self,  N=5):
+    def run(self):
         cost = 0.0
         self.init_belief()
         self.init_belief_plus()
@@ -181,6 +27,7 @@ class Baseline(Simulator):
         reward = 0.0
 
         cycletime = 0
+        added_point = 0
 
         current_entropy = float("inf")
         old_entropy = float("inf")
@@ -241,9 +88,15 @@ class Baseline(Simulator):
                 # check entropy increases arbitrary no of times for now
                 if (added == False):
                     print cycletime
-                    if(cycletime > N): # N equal 1
+                    if(self.belief_check()): #Just look belief threshold
                         print "--- new item/person ---"
+                        self.added_point = (cycletime-1, current_entropy)
                         added = True
+                        self.added_point = (cycletime-1, current_entropy, len(self.states))
+                        f = open('entropy_plot/addedBase.txt', 'a')
+                        f.write("%s\n" % str(self.added_point))
+                        f.close()
+                        added_point = cycletime-1
                         self.add_new()
 
                 if self.auto_observations:
@@ -273,4 +126,5 @@ class Baseline(Simulator):
                 reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
                 break
 
-        return reward, abs(cost), added
+        return added_point, reward, abs(cost), added
+

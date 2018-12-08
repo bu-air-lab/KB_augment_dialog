@@ -289,7 +289,7 @@ class Simulator(object):
 
     def update_plus(self,cycletime):
         #print self.actions_plus[self.a_plus]
-        if self.actions_plus[self.a_plus] == "ask_r" or self.actions_plus[self.a_plus] == "ask_p":
+        if self.actions_plus[self.a_plus] == "ask_r" or self.actions_plus[self.a_plus] == "ask_p": # !!!!!
             return
 
         new_b_plus = numpy.dot(self.b_plus, self.trans_mat_plus[self.actions_plus.index(self.actions[self.a]), :])
@@ -354,6 +354,7 @@ class Simulator(object):
         reward = 0.0
 
         cycletime = 0
+        added_point = 0
 
         current_entropy = float("inf")
         old_entropy = float("inf")
@@ -362,6 +363,7 @@ class Simulator(object):
         added = False
 
         while True:
+            print("\n\n\n")
             cycletime += 1
 	    politeness = "I know I asked it already but could you "
             # print self.b
@@ -434,7 +436,11 @@ class Simulator(object):
                     if(inc_count > self.ent_threshold or self.belief_check()):
                         print "--- new item/person ---"
                         added = True
-                        self.added_point = (cycletime-1, current_entropy)
+                        self.added_point = (cycletime-1, current_entropy, len(self.states))
+                        f = open('entropy_plot/addedOur.txt', 'a')
+                        f.write("%s\n" % str(self.added_point))
+                        f.close()
+                        added_point = cycletime-1
                         self.add_new()
 
                 if self.auto_observations:
@@ -460,11 +466,12 @@ class Simulator(object):
 
             if cycletime == 50:
                 print "REACHED CYCLE TIME 50"
-                reward = cost - 50
+                reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
         #        sys.exit(1)
                 break
 
-        return reward, abs(cost), added
+        
+        return added_point, reward, abs(cost), added
 
     #######################################################################
     def run_numbers_of_trials(self):
@@ -473,6 +480,7 @@ class Simulator(object):
         success_list = []
         reward_list = []
         overall_reward_list = []
+        added_point_list = []
         
         # for new item or person
         true_positives = 0.0
@@ -536,14 +544,19 @@ class Simulator(object):
                 is_new = True
 
             # run this episode and save the reward
-            reward, cost, added = self.run()
+            added_point, reward, cost, added = self.run()
 
             reward_list.append(reward)
             cost_list.append(cost)
 
+            if(added): # If something added to KB, add this added_point_list to calculate the mean at the end. Hypothesis 1
+                added_point_list.append(added_point)
+						   
+
             # use string based checking of success for now
             if (str(self.states_plus[self.s_plus]) in self.actions[self.a]) and (is_new == added):
                 success_list.append(1.0)
+                
             else:
                 success_list.append(0.0)                
 
@@ -581,6 +594,7 @@ class Simulator(object):
         success_arr = numpy.array(success_list)
         reward_arr = numpy.array(reward_list)
         overall_reward_arr = numpy.array(overall_reward_list)
+        added_arr = numpy.array(added_point_list)
 
         print('average cost: ' + str(numpy.mean(cost_arr))[1:] + \
             ' with std ' + str(numpy.std(cost_arr)))
@@ -590,6 +604,9 @@ class Simulator(object):
             ' with std ' + str(numpy.std(reward_arr)))
         print('average overall reward: ' + str(numpy.mean(overall_reward_arr)) + \
             ' with std ' + str(numpy.std(overall_reward_arr)))
+        print('average added point: ' + str(numpy.mean(added_arr)) + \
+            ' with std ' + str(numpy.std(added_arr)))
+
 
         print('True positives:' + str(true_positives))
         print('False positives:' + str(false_positives))
@@ -615,7 +632,7 @@ class Simulator(object):
         print('F1:' + str(f1_score))
 
         return (numpy.mean(cost_arr), numpy.mean(success_arr), \
-            numpy.mean(overall_reward_arr), precision, recall, f1_score)
+            numpy.mean(overall_reward_arr), precision, recall, f1_score, numpy.mean(added_arr))
 
 
     def plot_entropy(self):
@@ -635,7 +652,7 @@ class Simulator(object):
             f.write("%s\n" % str(item))
         f.close()
 
-        f = open('entropy_plot/added.txt', 'w')
+        f = open('entropy_plot/addedOur.txt', 'a')
         f.write("%s\n" % str(self.added_point))
         f.close()
 
@@ -669,7 +686,8 @@ def run_one():
     #Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
     a,b,c,p,r,f=s.run_numbers_of_trials()
     print s.question_list
-    s.plot_entropy()
+    #s.plot_entropy()
 
 if __name__ == '__main__':
     run_one()
+

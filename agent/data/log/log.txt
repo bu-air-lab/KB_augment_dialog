@@ -328,3 +328,27 @@ USER	deliver coffee to mr.bob
 USER	mr,bob
 USER	mr.bob
 USER	mr.bob
+USER	deliver apple to alice
+USER	alice
+USER	deliver apple to carol
+USER	carol
+USER	deliver apple to alice
+USER	apple
+USER	deliver apple to alice
+USER	alice
+USER	deliver apple to alice
+USER	alice
+USER	deliver apple to alice
+USER	deliver coffee to alice
+USER	coffee
+USER	deliver coffee to alice
+USER	alice
+USER	coffee
+USER	deliver coffee to alice
+USER	alice
+USER	deliver coffee to bob
+USER	coffee
+USER	bob
+USER	deliver coffee to bob
+USER	bob
+USER	coffee

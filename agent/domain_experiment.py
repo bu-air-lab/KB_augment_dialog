@@ -1,3 +1,4 @@
+from __future__ import division
 from simulator_noparser import Simulator
 from simulator_baseline import Baseline
 import pandas as pd
@@ -6,6 +7,7 @@ import matplotlib
 #matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import csv
+
 # abs(cost) makes cost values positive
 def plotgenerate(df1,df2,filelist,num):
 	######################################### Uncomment: Plot all 5 in one figure ###############################################################33
@@ -110,14 +112,27 @@ def plotgenerate(df1,df2,filelist,num):
 	#plt.ylim(-30, 30)
 	
 
-	plt.subplot(133)
+
+
+        plt.subplot(133)
 	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
 	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline Learning Agent')
 	plt.xlim(8,40)
 	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
 	plt.tick_params(labelsize=font_size)
 	plt.ylabel('Overall Success', fontsize = font_size)
-	plt.xlabel('KB Size', fontsize = font_size)
+        plt.xlabel('KB Size', fontsize = font_size)
+
+
+
+	#plt.subplot(133)
+	#plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'KB Augmentation Point'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	#plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'KB Augmentation Point'],marker='o',linestyle='--',label='Baseline Learning Agent')
+	#plt.xlim(8,40)
+	#matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
+	#plt.tick_params(labelsize=font_size)
+	#plt.ylabel('Augmentation Point', fontsize = font_size)
+	#plt.xlabel('KB Size', fontsize = font_size)
 
 	'''
 	plt.subplot(234)
@@ -147,10 +162,10 @@ def plotgenerate(df1,df2,filelist,num):
 def main():
 
 
-	num=500                                      #number of trials
+	num=500                                    #number of trials
 	filelist=['133','144','155','166']                     #list of pomdp files
 	#filelist=['144']
-	entlist=[5,5,5,5]
+	#entlist=[5,5,5,5]
 	belieflist=[0.35,0.20,0.18,0.15]
 	i=0
 	#filelist = ['133', '144']
@@ -166,14 +181,14 @@ def main():
 			print_flag = False,
 			policy_file = name+'.policy',
 			pomdp_file =  name +'.pomdp',
-				pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.pomdp',
-				policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.policy',
+			pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.pomdp',
+			policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.policy',
 			trials_num = num,
 			num_task = int(name[0]), 
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
 			belief_threshold = 0.45, 
-			ent_threshold = 5) 
+			ent_threshold = int(round(((int(name[2]) * int(name[2])) + 1) * 0.1) + 3)         ) # (KB size * 0.1) + 3
 	 
 		if not s.uniform_init_belief:   
 			print('note that initial belief is not uniform\n')
@@ -185,13 +200,13 @@ def main():
 			print_flag = False,
 			policy_file = name+'.policy',
 			pomdp_file =  name +'.pomdp',
-				pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.pomdp',
-				policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.policy',
+		        pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.pomdp',
+			policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.policy',
 			trials_num = num,
 			num_task = int(name[0]), 
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
-			belief_threshold = 999,
+			belief_threshold = 0.45,
 			ent_threshold = 999)
 	 
 		if not base.uniform_init_belief:   
@@ -200,28 +215,30 @@ def main():
 		###Saving results in a dataframe and passing data frame to plot generate_function
 
 		#Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
-		a,b,c,p,r,f=s.run_numbers_of_trials() #f to solve too many values to unpack err.
-		ab,bb,cb,pb,rb,fb= base.run_numbers_of_trials()
+		a,b,c,p,r,f, ap=s.run_numbers_of_trials() #f to solve too many values to unpack err. (Best N from experiments)
+		ab,bb,cb,pb,rb,fb, apb= base.run_numbers_of_trials()
 		
 		df1.at[iterator,'QA Cost']= a
 		df1.at[iterator,'Overall Success']= b
 		df1.at[iterator,'Dialog Reward']= c
 		df1.at[iterator,'Precision']= p
 		df1.at[iterator,'Recall']= r
+                df1.at[iterator,'KB Augmentation Point']= ap
 
 		df2.at[iterator,'QA Cost']= ab
 		df2.at[iterator,'Overall Success']= bb
 		df2.at[iterator,'Dialog Reward']= cb
 		df2.at[iterator,'Precision']= pb
 		df2.at[iterator,'Recall']= rb
+                df2.at[iterator,'KB Augmentation Point']= apb
 	df1.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_5_belief_0.45_pomdpdual.csv", encoding='utf-8', index=True)
 	df2.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_5_belief_0.45_baseline.csv", encoding='utf-8', index=True)
 	df1.sort_values(by=['QA Cost'])
 	df2.sort_values(by=['QA Cost'])
-	print 'Dual Track POMDP results'
-	print df1
-	print 'Baseline Results'
-	print df2
+	print ('Dual Track POMDP results')
+	print (df1)
+	print ('Baseline Results')
+	print (df2)
 	plotgenerate(df1,df2,filelist,num)
 	i+=1
 
