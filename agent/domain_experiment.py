@@ -9,6 +9,66 @@ import matplotlib.pyplot as plt
 import csv
 
 # abs(cost) makes cost values positive
+
+
+
+def hypo2(df1, df2,filelist,num):
+        
+        
+        
+
+
+        plt.subplot(133)
+	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'F1 Score'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'F1 Score'],marker='o',linestyle='--',label='Baseline Learning Agent')
+        plt.ylim(0,1.5)
+        plt.ylabel('F1 Score')
+	plt.xlabel('KB Size')
+
+
+        plt.subplot(132)
+	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Precision'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Precision'],marker='o',linestyle='--',label='Baseline Learning Agent')
+        plt.ylim(0,1.2)
+        plt.ylabel('Precision')
+	plt.xlabel('KB Size')
+
+
+        plt.subplot(131)
+	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Recall'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Recall'],marker='o',linestyle='--',label='Baseline Learning Agent')
+        plt.ylim(0,1.5)
+        plt.ylabel('Recall')
+	plt.xlabel('KB Size')
+
+
+        plt.legend(loc='upper center')
+
+        plt.show()
+
+
+
+def plotgenerateF1Our(df1,filelist,num):
+        
+        
+        plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'F1 Score'],marker='o',linestyle='-',label='F1 Score')
+        plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Precision'],marker='^',linestyle='--',label='Precision')
+        plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Recall'],marker='+',linestyle=':',label='Recall')
+
+        #plt.xlim(1.5,max(belieflist)+1)
+        plt.ylim(0,1.5)
+        #plt.ylabel('Baseline Learning Agent')
+        #plt.xlabel('KB Size')
+        plt.legend(loc=0)
+        #plt.xlim(1.5,max(belieflist)+1)
+        #plt.ylim(0,1)
+        plt.ylabel('Dual-track POMDP Manager')
+        plt.xlabel('KB Size')
+        plt.legend(loc=0)
+        plt.show()	 	
+
+
+
 def plotgenerate(df1,df2,filelist,num):
 	######################################### Uncomment: Plot all 5 in one figure ###############################################################33
 	'''
@@ -101,7 +161,7 @@ def plotgenerate(df1,df2,filelist,num):
 	plt.ylabel('QA Cost', fontsize = font_size)
 	plt.xlabel('KB Size', fontsize = font_size)
 
-	ax=plt.subplot(132)
+	plt.subplot(132)
 	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Dialog Reward'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
 	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Dialog Reward'],marker='o',linestyle='--',label='Baseline Learning Agent')
 	plt.xlim(8,40)
@@ -109,30 +169,30 @@ def plotgenerate(df1,df2,filelist,num):
 	plt.tick_params(labelsize=font_size)
 	plt.ylabel('Dialog Reward', fontsize = font_size)
 	plt.xlabel('KB Size', fontsize = font_size)
-	#plt.ylim(-30, 30)
+	plt.ylim(-30, 30)
 	
 
 
 
-        plt.subplot(133)
-	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline Learning Agent')
-	plt.xlim(8,40)
-	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
-	plt.tick_params(labelsize=font_size)
-	plt.ylabel('Overall Success', fontsize = font_size)
-        plt.xlabel('KB Size', fontsize = font_size)
-
-
-
-	#plt.subplot(133)
-	#plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'KB Augmentation Point'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	#plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'KB Augmentation Point'],marker='o',linestyle='--',label='Baseline Learning Agent')
+        #plt.subplot(133)
+	#plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	#plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline Learning Agent')
 	#plt.xlim(8,40)
 	#matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
 	#plt.tick_params(labelsize=font_size)
-	#plt.ylabel('Augmentation Point', fontsize = font_size)
-	#plt.xlabel('KB Size', fontsize = font_size)
+	#plt.ylabel('Overall Success', fontsize = font_size)
+        #plt.xlabel('KB Size', fontsize = font_size)
+
+
+
+	plt.subplot(133)
+	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'KB Augmentation Point'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'KB Augmentation Point'],marker='o',linestyle='--',label='Baseline Learning Agent')
+	plt.xlim(8,40)
+	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
+	plt.tick_params(labelsize=font_size)
+	plt.ylabel('Augmentation Point', fontsize = font_size)
+	plt.xlabel('KB Size', fontsize = font_size)
 
 	'''
 	plt.subplot(234)
@@ -153,7 +213,7 @@ def plotgenerate(df1,df2,filelist,num):
 	plt.ylabel('Recall')
 	plt.xlabel('Knowledge size')
 	'''
-	ax.legend(loc='upper left', bbox_to_anchor=(-1, 1.2),  shadow=True, ncol=2, fontsize=font_size)
+	plt.legend(loc='upper center', bbox_to_anchor=(-1, 1.2),  shadow=True, ncol=2, fontsize=font_size)
 	#g.tight_layout()
 	plt.show()
 	g.savefig('Plots/all_'+str(num)+'_trials_domain_experiment_entropy_5_belief_0_45_N_1')
@@ -162,7 +222,7 @@ def plotgenerate(df1,df2,filelist,num):
 def main():
 
 
-	num=500                                    #number of trials
+	num=500                                  #number of trials
 	filelist=['133','144','155','166']                     #list of pomdp files
 	#filelist=['144']
 	#entlist=[5,5,5,5]
@@ -223,14 +283,18 @@ def main():
 		df1.at[iterator,'Dialog Reward']= c
 		df1.at[iterator,'Precision']= p
 		df1.at[iterator,'Recall']= r
+                df1.at[iterator,'F1 Score'] = f
                 df1.at[iterator,'KB Augmentation Point']= ap
+                
 
 		df2.at[iterator,'QA Cost']= ab
 		df2.at[iterator,'Overall Success']= bb
 		df2.at[iterator,'Dialog Reward']= cb
 		df2.at[iterator,'Precision']= pb
 		df2.at[iterator,'Recall']= rb
+                df2.at[iterator,'F1 Score'] = fb
                 df2.at[iterator,'KB Augmentation Point']= apb
+
 	df1.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_5_belief_0.45_pomdpdual.csv", encoding='utf-8', index=True)
 	df2.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_5_belief_0.45_baseline.csv", encoding='utf-8', index=True)
 	df1.sort_values(by=['QA Cost'])
@@ -240,6 +304,8 @@ def main():
 	print ('Baseline Results')
 	print (df2)
 	plotgenerate(df1,df2,filelist,num)
+        #hypo2(df1,df2,filelist,num)
+        #plotgenerateF1Base(df2,filelist,num)
 	i+=1
 
 if __name__ == '__main__':

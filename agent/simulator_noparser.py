@@ -549,7 +549,7 @@ class Simulator(object):
             reward_list.append(reward)
             cost_list.append(cost)
 
-            if(added): # If something added to KB, add this added_point_list to calculate the mean at the end. Hypothesis 1
+            if(added and is_new): # We augment and is needed
                 added_point_list.append(added_point)
 						   
 
@@ -630,7 +630,9 @@ class Simulator(object):
         print('Precision:' + str(precision))
         print('Recall:' + str(recall))
         print('F1:' + str(f1_score))
-
+       
+        #if(len(added_point_list) == 0): # To stop return NaN
+            #added_arr = numpy.zeros(1)
         return (numpy.mean(cost_arr), numpy.mean(success_arr), \
             numpy.mean(overall_reward_arr), precision, recall, f1_score, numpy.mean(added_arr))
 
