@@ -549,7 +549,7 @@ class Simulator(object):
             reward_list.append(reward)
             cost_list.append(cost)
 
-            if(added and is_new): # We augment and is needed
+            if(added): # When we augment the KB 
                 added_point_list.append(added_point)
 						   
 
@@ -613,6 +613,9 @@ class Simulator(object):
         print('True negatives:' + str(true_negatives))
         print('False negatives:' + str(false_negatives))
 
+        accuracyH1 = (true_positives + true_negatives) / self.trials_num
+        print('Accuracy is ' + str(accuracyH1))
+
         if true_positives + false_positives == 0:
             precision = 0
         else:
@@ -634,7 +637,7 @@ class Simulator(object):
         #if(len(added_point_list) == 0): # To stop return NaN
             #added_arr = numpy.zeros(1)
         return (numpy.mean(cost_arr), numpy.mean(success_arr), \
-            numpy.mean(overall_reward_arr), precision, recall, f1_score, numpy.mean(added_arr))
+            numpy.mean(overall_reward_arr), precision, recall, f1_score, numpy.mean(added_arr), accuracyH1)
 
 
     def plot_entropy(self):

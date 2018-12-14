@@ -4,9 +4,11 @@ from simulator_baseline import Baseline
 import pandas as pd
 import ast
 import matplotlib
+import math
 #matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import csv
+from mpl_toolkits.mplot3d import Axes3D
 
 # abs(cost) makes cost values positive
 
@@ -47,6 +49,38 @@ def hypo2(df1, df2,filelist,num):
         plt.show()
 
 
+def hypo1(df1, df2, filelist, num):
+
+        #threed = plt.figure()
+        #ax = threed.add_subplot(111, projection='3d')
+
+        print(df1.loc[filelist[0]:filelist[-1],'Efficiency'])
+        
+        plt.scatter(df1.loc[filelist[0]:filelist[-1],'Efficiency'], df1.loc[filelist[0]:filelist[-1],'Accuracy'], marker= 'o', label='Dual-track POMDP Manager')
+        plt.scatter(df2.loc[filelist[0]:filelist[-1],'Efficiency'], df2.loc[filelist[0]:filelist[-1],'Accuracy'], marker = '^', label='Baseline Learning Agent')
+
+        for index,row in df1.iterrows():
+            plt.annotate(index, (row['Efficiency'], row['Accuracy']))
+ 
+        for index,row in df2.iterrows():
+            plt.annotate(index, (row['Efficiency'], row['Accuracy']))
+        
+        plt.xlabel('Efficiency')
+        plt.ylabel('Accuracy')
+
+        plt.legend(loc='upper left', bbox_to_anchor=(0.5, -0.1),  shadow=True, ncol=2)
+        plt.show()
+        #plt.plot(df1.loc[filelist[0]:filelist[-1],'Efficiency'], ???? ,marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	#plt.plot(df2.loc[filelist[0]:filelist[-1],'Efficiency'], ??? ,'Efficiency'],marker='o',linestyle='--',label='Baseline Learning Agent')
+	#plt.xlim(8,40)
+	#matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
+	#plt.tick_params(labelsize=font_size)
+	#plt.ylabel('Accuracy', fontsize = font_size)
+	#plt.xlabel('Efficiency', fontsize = font_size)
+
+
+
+
 
 def plotgenerateF1Our(df1,filelist,num):
         
@@ -64,6 +98,7 @@ def plotgenerateF1Our(df1,filelist,num):
         #plt.ylim(0,1)
         plt.ylabel('Dual-track POMDP Manager')
         plt.xlabel('KB Size')
+
         plt.legend(loc=0)
         plt.show()	 	
 
@@ -174,25 +209,19 @@ def plotgenerate(df1,df2,filelist,num):
 
 
 
-        #plt.subplot(133)
-	#plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	#plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline Learning Agent')
-	#plt.xlim(8,40)
-	#matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
-	#plt.tick_params(labelsize=font_size)
-	#plt.ylabel('Overall Success', fontsize = font_size)
-        #plt.xlabel('KB Size', fontsize = font_size)
-
-
-
-	plt.subplot(133)
-	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'KB Augmentation Point'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'KB Augmentation Point'],marker='o',linestyle='--',label='Baseline Learning Agent')
+        plt.subplot(133)
+	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline Learning Agent')
 	plt.xlim(8,40)
 	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
 	plt.tick_params(labelsize=font_size)
-	plt.ylabel('Augmentation Point', fontsize = font_size)
-	plt.xlabel('KB Size', fontsize = font_size)
+	plt.ylabel('Overall Success', fontsize = font_size)
+        plt.xlabel('KB Size', fontsize = font_size)
+
+
+
+	#plt.subplot(133)
+
 
 	'''
 	plt.subplot(234)
@@ -222,7 +251,7 @@ def plotgenerate(df1,df2,filelist,num):
 def main():
 
 
-	num=500                                  #number of trials
+	num = 500                          #number of trials
 	filelist=['133','144','155','166']                     #list of pomdp files
 	#filelist=['144']
 	#entlist=[5,5,5,5]
@@ -266,8 +295,8 @@ def main():
 			num_task = int(name[0]), 
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
-			belief_threshold = 0.45,
-			ent_threshold = 999)
+			belief_threshold = 999,
+			ent_threshold = int(round(((int(name[2]) * int(name[2])) + 1) * 0.1) + 3) )
 	 
 		if not base.uniform_init_belief:   
 			print('note that initial belief is not uniform\n')
@@ -275,8 +304,8 @@ def main():
 		###Saving results in a dataframe and passing data frame to plot generate_function
 
 		#Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
-		a,b,c,p,r,f, ap=s.run_numbers_of_trials() #f to solve too many values to unpack err. (Best N from experiments)
-		ab,bb,cb,pb,rb,fb, apb= base.run_numbers_of_trials()
+		a,b,c,p,r,f,ap,sh1=s.run_numbers_of_trials() #f to solve too many values to unpack err. (Best N from experiments)
+		ab,bb,cb,pb,rb,fb,apb,bh1= base.run_numbers_of_trials()
 		
 		df1.at[iterator,'QA Cost']= a
 		df1.at[iterator,'Overall Success']= b
@@ -284,7 +313,8 @@ def main():
 		df1.at[iterator,'Precision']= p
 		df1.at[iterator,'Recall']= r
                 df1.at[iterator,'F1 Score'] = f
-                df1.at[iterator,'KB Augmentation Point']= ap
+                df1.at[iterator,'Efficiency']= ap
+                df1.at[iterator,'Accuracy']= sh1
                 
 
 		df2.at[iterator,'QA Cost']= ab
@@ -293,7 +323,10 @@ def main():
 		df2.at[iterator,'Precision']= pb
 		df2.at[iterator,'Recall']= rb
                 df2.at[iterator,'F1 Score'] = fb
-                df2.at[iterator,'KB Augmentation Point']= apb
+                if(math.isnan(apb)): # For last KB, this value becomes NaN, because agent did not augment KB at all, with this assignment, figure will make sense
+                    apb = 50.0
+                df2.at[iterator,'Efficiency']= apb
+                df2.at[iterator,'Accuracy']= bh1
 
 	df1.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_5_belief_0.45_pomdpdual.csv", encoding='utf-8', index=True)
 	df2.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_5_belief_0.45_baseline.csv", encoding='utf-8', index=True)
@@ -306,6 +339,7 @@ def main():
 	plotgenerate(df1,df2,filelist,num)
         #hypo2(df1,df2,filelist,num)
         #plotgenerateF1Base(df2,filelist,num)
+        #hypo1(df1,df2,filelist,num)
 	i+=1
 
 if __name__ == '__main__':

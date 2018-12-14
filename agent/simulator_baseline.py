@@ -88,7 +88,7 @@ class Baseline(Simulator):
                 # check entropy increases arbitrary no of times for now
                 if (added == False):
                     print cycletime
-                    if(self.belief_check()): #Just look belief threshold
+                    if(inc_count > self.ent_threshold): #Just look EF
                         print "--- new item/person ---"
                         self.added_point = (cycletime-1, current_entropy)
                         added = True
