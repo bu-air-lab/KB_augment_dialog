@@ -49,8 +49,8 @@ class Baseline(Simulator):
             current_entropy = stats.entropy(self.b)
             current_entropy_plus = stats.entropy(self.b_plus)
             if self.print_flag:
-                print "DEBUG: Entropy = ",current_entropy
-                print "DEBUG: Entropy_plus = ",current_entropy_plus
+                print ("DEBUG: Entropy = ",current_entropy)
+                print ("DEBUG: Entropy_plus = ",current_entropy_plus)
             # check if entropy increased
             if (old_entropy < current_entropy):
                 inc_count += 1
@@ -68,8 +68,8 @@ class Baseline(Simulator):
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
 
-                    print 'num_recipients', self.num_recipient
-                    print 'num_patients', self.num_patient
+                    print ('num_recipients', self.num_recipient)
+                    print ('num_patients', self.num_patient)
 
                 question = self.action_to_text(self.actions[self.a])
                 if question:
@@ -87,9 +87,9 @@ class Baseline(Simulator):
 
                 # check entropy increases arbitrary no of times for now
                 if (added == False):
-                    print cycletime
-                    if(inc_count > self.ent_threshold): #Just look EF
-                        print "--- new item/person ---"
+                    print (cycletime)
+                    if(self.belief_check()): #Just look EF
+                        print ("--- new item/person ---")
                         self.added_point = (cycletime-1, current_entropy)
                         added = True
                         self.added_point = (cycletime-1, current_entropy, len(self.states))
@@ -121,7 +121,7 @@ class Baseline(Simulator):
                 cost += self.reward_mat_plus[self.a_plus, self.s_plus]
 
             if cycletime == 50:
-                print "BASELINE: REACHED CYCLE TIME 50"
+                print ("BASELINE: REACHED CYCLE TIME 50")
             #    sys.exit(1)
                 reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
                 break

@@ -162,8 +162,8 @@ class Simulator(object):
     
     ######################################################################
     def get_full_request(self, cycletime):
-        print self.observations # debug
-        print "DEBUG: Full request here"
+        print (self.observations) # debug
+        print ("DEBUG: Full request here")
         self.question_list.append("Full request")
 
 
@@ -230,7 +230,7 @@ class Simulator(object):
 
     
     def add_new(self):
-        print "DEBUG: adding new"
+        print ("DEBUG: adding new")
         self.num_patient += 1
         self.num_recipient += 1
         self.b = self.b_plus
@@ -263,7 +263,7 @@ class Simulator(object):
 
     def observe(self, ind):
         self.o = None
-        print "OBSERVE:",ind
+        print ("OBSERVE:",ind)
 
         for i in range(len(self.observations)):
             if self.observations[i] == ind:
@@ -330,8 +330,8 @@ class Simulator(object):
 
         belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, n, m)
 
-        print "DEBUG: Marginal rn = ",belief_rn
-        print "DEBUG: Marginal pm = ",belief_pm
+        print ("DEBUG: Marginal rn = ",belief_rn)
+        print ("DEBUG: Marginal pm = ",belief_pm)
 
         if belief_rn > self.belief_threshold or belief_pm > self.belief_threshold:
             return True
@@ -365,7 +365,7 @@ class Simulator(object):
         while True:
             print("\n\n\n")
             cycletime += 1
-	    politeness = "I know I asked it already but could you "
+            politeness = "I know I asked it already but could you "
             # print self.b
 
             if self.print_flag:
@@ -380,8 +380,8 @@ class Simulator(object):
             current_entropy_plus = stats.entropy(self.b_plus)
             
             if self.print_flag:
-                print "DEBUG: Entropy = ",current_entropy
-                print "DEBUG: Entropy_plus = ",current_entropy_plus
+                print ("DEBUG: Entropy = ",current_entropy)
+                print ("DEBUG: Entropy_plus = ",current_entropy_plus)
             # check if entropy increased
 
             self.entropy_list.append(current_entropy)
@@ -390,7 +390,7 @@ class Simulator(object):
             if (self.sign(current_entropy - old_entropy) != old_sign):
                 if old_entropy != float("inf"):
                     inc_count += 1
-                    print "DEBUG: entropy fluctuated"
+                    print ("DEBUG: entropy fluctuated")
 
             if(self.entropy_check(current_entropy)):
                 self.get_full_request(cycletime)
@@ -407,17 +407,17 @@ class Simulator(object):
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
 
-                    print 'num_recipients', self.num_recipient
-                    print 'num_patients', self.num_patient
+                    print ('num_recipients', self.num_recipient)
+                    print ('num_patients', self.num_patient)
 		# Count questio occurence, if it is > 1, add politeness word to head
                 question = self.action_to_text(self.actions[self.a])
-	        self.question_list.append(self.actions[self.a])
+                self.question_list.append(self.actions[self.a])
                 tmp = question
                 if question:
                     if(self.question_list.count(question) >= 1):
-		        tmp = politeness + question
-                    print('		QUESTION: ' + tmp)
-                    self.question_list.append(question)
+                        tmp = politeness + question
+                        print('		QUESTION: ' + tmp)
+                        self.question_list.append(question)
                 elif ('go' in self.actions[self.a]):
                     print('EXECUTE: ' + self.actions[self.a])
                     if self.print_flag:
@@ -434,7 +434,7 @@ class Simulator(object):
                 # check entropy increases arbitrary no of times for now
                 if (added == False):
                     if(inc_count > self.ent_threshold or self.belief_check()):
-                        print "--- new item/person ---"
+                        print ("--- new item/person ---")
                         added = True
                         self.added_point = (cycletime-1, current_entropy, len(self.states))
                         f = open('entropy_plot/addedOur.txt', 'a')
@@ -465,7 +465,7 @@ class Simulator(object):
                 cost += self.reward_mat_plus[self.a_plus, self.s_plus]
 
             if cycletime == 50:
-                print "REACHED CYCLE TIME 50"
+                print ("REACHED CYCLE TIME 50")
                 reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
         #        sys.exit(1)
                 break
@@ -536,8 +536,8 @@ class Simulator(object):
             instead self.s_plus is used to compare''' 
 
             #self.s_plus = self.states_plus.index(self.states[self.s])
-            print self.states_plus[self.s_plus]
-            print self.states
+            print (self.states_plus[self.s_plus])
+            print (self.states)
             if str(self.states_plus[self.s_plus]) in self.states:
                 is_new = False
             else:
@@ -625,10 +625,10 @@ class Simulator(object):
             recall = 0
         else:        
             recall = true_positives/(true_positives + false_negatives)
-	try:
+        try:
             f1_score = 2 * precision * recall/(precision + recall)
-	except:
-	    f1_score = 0
+        except:
+            f1_score = 0
         
         print('Precision:' + str(precision))
         print('Recall:' + str(recall))
@@ -690,7 +690,7 @@ def run_one():
 
     #Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
     a,b,c,p,r,f=s.run_numbers_of_trials()
-    print s.question_list
+    print (s.question_list)
     #s.plot_entropy()
 
 if __name__ == '__main__':
