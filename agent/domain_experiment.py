@@ -15,42 +15,51 @@ from mpl_toolkits.mplot3d import Axes3D
 
 def hypo2(df1,df2,df3,filelist,num):
         
-	plt.subplot(133)
-	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'F1 Score'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'F1 Score'],marker='o',linestyle='--',label='Baseline Belief')
-	plt.plot([10,17,26,37],df3.loc[filelist[0]:filelist[-1],'F1 Score'],marker='v',linestyle='-.',label='Baseline EF')
-	plt.ylim(0,1.5)
+	#plt.subplot(132)
+	plt.plot([17,26,37],df1.loc[filelist[0]:filelist[-1],'F1 Score'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([17,26,37],df2.loc[filelist[0]:filelist[-1],'F1 Score'],marker='o',linestyle='--',label='Baseline Belief')
+	plt.plot([17,26,37],df3.loc[filelist[0]:filelist[-1],'F1 Score'],marker='v',linestyle='-.',label='Baseline EF')
+	plt.ylim(0.2,0.8)
 	plt.ylabel('F1 Score')
 	plt.xlabel('KB Size')
+	axes = plt.gca()
+	xleft , xright =axes.get_xlim()
+	ybottom , ytop = axes.get_ylim()
+	axes.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)  
+
+	#plt.subplot(132)
+	#plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Precision'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	#plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Precision'],marker='o',linestyle='--',label='Baseline Belief')
+	#plt.plot([10,17,26,37],df3.loc[filelist[0]:filelist[-1],'Precision'],marker='v',linestyle='-.',label='Baseline EF')
+	#plt.ylim(0,1.2)
+	#plt.ylabel('Precision')
+	#plt.xlabel('KB Size')
+	#axes = plt.gca()
+	#xleft , xright =axes.get_xlim()
+	#ybottom , ytop = axes.get_ylim()
+	#axes.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)  
 
 
-	plt.subplot(132)
-	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Precision'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Precision'],marker='o',linestyle='--',label='Baseline Belief')
-	plt.plot([10,17,26,37],df3.loc[filelist[0]:filelist[-1],'Precision'],marker='v',linestyle='-.',label='Baseline EF')
-	plt.ylim(0,1.2)
-	plt.ylabel('Precision')
-	plt.xlabel('KB Size')
+	#plt.subplot(131)
+	#plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Recall'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	#plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Recall'],marker='o',linestyle='--',label='Baseline Belief')
+	#plt.plot([10,17,26,37],df3.loc[filelist[0]:filelist[-1],'Recall'],marker='v',linestyle='-.',label='Baseline EF')
+	#plt.ylim(0,1.5)
+	#plt.ylabel('Recall')
+	#plt.xlabel('KB Size')
 
-
-	plt.subplot(131)
-	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Recall'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Recall'],marker='o',linestyle='--',label='Baseline Belief')
-	plt.plot([10,17,26,37],df3.loc[filelist[0]:filelist[-1],'Recall'],marker='v',linestyle='-.',label='Baseline EF')
-	plt.ylim(0,1.5)
-	plt.ylabel('Recall')
-	plt.xlabel('KB Size')
-
-
-	plt.legend(loc='upper center')
+	axes = plt.gca()
+	xleft , xright =axes.get_xlim()
+	ybottom , ytop = axes.get_ylim()
+	axes.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)  
+	
+	plt.legend(loc='upper center', fancybox=True, framealpha=0.5)
 	
 	plt.show()
 
 
 def hypo1(df1, df2, df3, filelist, num):
 
-   
-        print(df1.loc[filelist[0]:filelist[-1],'Efficiency'])
         
         plt.scatter(df1.loc[filelist[0]:filelist[-1],'Efficiency'], df1.loc[filelist[0]:filelist[-1],'Accuracy'], marker= 'o', label='Dual-track POMDP Manager')
         plt.scatter(df2.loc[filelist[0]:filelist[-1],'Efficiency'], df2.loc[filelist[0]:filelist[-1],'Accuracy'], marker = '^', label='Baseline Belief')
@@ -65,6 +74,7 @@ def hypo1(df1, df2, df3, filelist, num):
 
         for index,row in df3.iterrows():
             plt.annotate(index, (row['Efficiency'], row['Accuracy']))
+
         
         plt.xlabel('Efficiency')
         plt.ylabel('Accuracy')
@@ -82,53 +92,69 @@ def hypo3(df1,df2,df3,filelist,num):
 	font_size = 20
 
 	plt.subplot(131)
-	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'QA Cost'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'QA Cost'],marker='o',linestyle='--',label='Baseline Belief')
-	plt.plot([10,17,26,37],df3.loc[filelist[0]:filelist[-1],'QA Cost'],marker='v',linestyle='-.',label='Baseline EF')
+	plt.plot([17,26,37],df1.loc[filelist[0]:filelist[-1],'QA Cost'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([17,26,37],df2.loc[filelist[0]:filelist[-1],'QA Cost'],marker='o',linestyle='--',label='Baseline Belief')
+	plt.plot([17,26,37],df3.loc[filelist[0]:filelist[-1],'QA Cost'],marker='v',linestyle='-.',label='Baseline EF')
 	plt.xlim(8,40)
 	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
 	plt.tick_params(labelsize=font_size)
 	plt.ylabel('QA Cost', fontsize = font_size)
 	plt.xlabel('KB Size', fontsize = font_size)
-
+	axes = plt.gca()
+	xleft , xright =axes.get_xlim()
+	ybottom , ytop = axes.get_ylim()
+	axes.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)  
 
 	plt.subplot(132)
-	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Dialog Reward'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Dialog Reward'],marker='o',linestyle='--',label='Baseline Belief')
-	plt.plot([10,17,26,37],df3.loc[filelist[0]:filelist[-1],'Dialog Reward'],marker='v',linestyle='-.',label='Baseline EF')
+	plt.plot([17,26,37],df1.loc[filelist[0]:filelist[-1],'Dialog Reward'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([17,26,37],df2.loc[filelist[0]:filelist[-1],'Dialog Reward'],marker='o',linestyle='--',label='Baseline Belief')
+	plt.plot([17,26,37],df3.loc[filelist[0]:filelist[-1],'Dialog Reward'],marker='v',linestyle='-.',label='Baseline EF')
 	plt.xlim(8,40)
-	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)	
+	matplotlib.pyplot.xticks([17,26,37], fontsize = font_size)	
 	plt.tick_params(labelsize=font_size)
 	plt.ylabel('Dialog Reward', fontsize = font_size)
 	plt.xlabel('KB Size', fontsize = font_size)
-	plt.ylim(-30, 30)
-	
+	plt.ylim(-30, -12)
+	axes = plt.gca()
+	xleft , xright =axes.get_xlim()
+	ybottom , ytop = axes.get_ylim()
+	axes.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)  
 
 
 	plt.subplot(133)
-	plt.plot([10,17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	plt.plot([10,17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline Belief')
-	plt.plot([10,17,26,37],df3.loc[filelist[0]:filelist[-1],'Overall Success'],marker='v',linestyle='-.',label='Baseline EF')
+	plt.plot([17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline Belief')
+	plt.plot([17,26,37],df3.loc[filelist[0]:filelist[-1],'Overall Success'],marker='v',linestyle='-.',label='Baseline EF')
 	plt.xlim(8,40)
+	plt.ylim(0.2, 0.5)
 	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
 	plt.tick_params(labelsize=font_size)
 	plt.ylabel('Overall Success', fontsize = font_size)
 	plt.xlabel('KB Size', fontsize = font_size)
-
+	axes = plt.gca()
+	xleft , xright =axes.get_xlim()
+	ybottom , ytop = axes.get_ylim()
+	axes.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)  
 
 
 	plt.legend(loc='upper center', bbox_to_anchor=(-1, 1.2),  shadow=True, ncol=2, fontsize=font_size)
 	plt.show()
 	g.savefig('Plots/all_'+str(num)+'_trials_domain_experiment_entropy_5_belief_0_45_N_1')
 
+def sigmoid(x,i):
+  consList = [0.25, 0.21, 0.18]
+  return 1 / (1 + math.exp(-x)) + consList[i]
+
+
 
 def main():
 
 
-	num = 500                        #number of trials
-	filelist=['133','144','155','166']                     #list of pomdp files
+	num = 2000                    #number of trials
+	filelist=['144','155','166']                     #list of pomdp files
 
 	belieflist=[0.35,0.20,0.18,0.15]
+	addList = [0.1, 0.01, -0.06]
 	i=0
 	
 	df1=pd.DataFrame()
@@ -151,10 +177,16 @@ def main():
 			num_task = int(name[0]), 
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
-			belief_threshold = 0.33, 
-			ent_threshold = int(round(((int(name[2]) * int(name[2])) + 1) * 0.15) + int(name[2])) ) # (KB size * 0.15) + Num_Patient
-			# int(round(((int(name[2]) * int(name[2])) + 1) * 0.15) + int(name[2])
-			# 0.33
+			belief_threshold = sigmoid(-1 * int(name[2]), i), #Sigmoid
+			ent_threshold =  max(0,int(name[2])) )
+			
+
+
+		# abs(math.log(int(name[2])/10 + addList[i] , (int(name[2])**2)))
+		#belief = ( 0.8 / ( (int(name[2]) ** 2 ) + 1 ) ) * (((int(name[2]) ** 2 ) + 1)/2) - (1.0/((int(name[2])**2)+1))
+		#ent = int(round(((int(name[2]) * int(name[2])) + 1) * int(name[2])/85) + int(name[2])
+		#int(round(((int(name[2]) * int(name[2])) + 1) * 0.15) + int(name[2])
+		#0.33
 	 
 		if not s.uniform_init_belief:   
 			print('note that initial belief is not uniform\n')
@@ -172,7 +204,7 @@ def main():
 			num_task = int(name[0]), 
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
-			belief_threshold = 0.33,
+			belief_threshold = sigmoid(-1 * int(name[2]), i), # ((0.8 / KB size) * (KB size/2)) - (1/Recipient*5)
 			ent_threshold =999 )
 	 
 		if not base.uniform_init_belief:   
@@ -187,25 +219,30 @@ def main():
 			print_flag = False,
 			policy_file = name+'.policy',
 			pomdp_file =  name +'.pomdp',
-		        pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.pomdp',
+		    pomdp_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.pomdp',
 			policy_file_plus=list(name)[0]+str(int(list(name)[1])+1)+str(int(list(name)[2])+1)+'.policy',
 			trials_num = num,
 			num_task = int(name[0]), 
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
 			belief_threshold = 999,
-			ent_threshold =int(round(((int(name[2]) * int(name[2])) + 1) * 0.15) + int(name[2])) )
+			ent_threshold = max(0,int(name[2]))) #ReLU
 	 
 		if not base2.uniform_init_belief:   
 			print('note that initial belief is not uniform\n')
 		base2.read_model_plus()
+
+		# int((0.4 -  1/((int(name[2])**2)+1)) / (1/((int(name[2])**2))))
+
+
 
 
 
 		###Saving results in a dataframe and passing data frame to plot generate_function
 
 		#Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
-		a,b,c,p,r,f,ap,sh1=s.run_numbers_of_trials() #f to solve too many values to unpack err. (Best N from experiments)
+		
+		a,b,c,p,r,f,ap,sh1=s.run_numbers_of_trials() 	#	f to solve too many values to unpack err. (Best N from experiments)
 		ab,bb,cb,pb,rb,fb,apb,bh1= base.run_numbers_of_trials()
 		ab2,bb2,cb2,pb2,rb2,fb2,apb2,bh1_2= base2.run_numbers_of_trials()
 		
@@ -248,6 +285,9 @@ def main():
 		df3.at[iterator,'Efficiency']= apb2
 		df3.at[iterator,'Accuracy']= bh1_2
 
+		i += 1
+
+
 	df1.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_5_belief_0.35_entropyheuristic_pomdpdual.csv", encoding='utf-8', index=True)
 	df2.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_5_justbelief_0.35_baseline1.csv", encoding='utf-8', index=True)
 	df3.to_csv("Plots_data/all_"+str(num)+"_trials_domain_experiment_entropy_5_justentropyheuristic_baseline2.csv", encoding='utf-8', index=True)
@@ -263,9 +303,9 @@ def main():
 	print ('Baseline EF')
 	print (df3)
 	
-	hypo1(df1,df2,df3,filelist,num)
-	hypo2(df1,df2,df3,filelist,num)
-	hypo3(df1,df2,df3,filelist,num)
+	hypo1(df1,df2, df3,filelist,num)
+	hypo2(df1,df2, df3,filelist,num)
+	hypo3(df1,df2, df3,filelist,num)
 	
 	
 	i+=1

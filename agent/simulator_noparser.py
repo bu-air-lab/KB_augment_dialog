@@ -20,7 +20,6 @@ import ast
 
 import matplotlib.pyplot as plt
 
-
 numpy.set_printoptions(suppress=True)
 
 class Simulator(object):
@@ -174,6 +173,7 @@ class Simulator(object):
 
         # if auto observe, get initial request
         if self.auto_observations:
+            #numpy.random.seed(self.trials_num+20)
             rand = numpy.random.random_sample()
             acc = 0.0
             for i in range(len(self.observations_plus)):
@@ -203,6 +203,7 @@ class Simulator(object):
         self.a_plus = self.get_action_plus('ask_r')
 
         if self.auto_observations:
+            #numpy.random.seed(self.trials_num+20)
             rand = numpy.random.random_sample()
             acc = 0.0
             for i in range(len(self.observations_plus)):
@@ -244,7 +245,9 @@ class Simulator(object):
         self.policy = self.policy_plus
 
     #######################################################################
-    def auto_observe(self):
+    def auto_observe(self,cycletime): # Kendi iclerinde farkli ama KB ler arasinda ayni
+        numpy.random.seed(cycletime)
+
         rand = numpy.random.random_sample()
         acc = 0.0
         for i in range(len(self.observations_plus)):
@@ -274,6 +277,7 @@ class Simulator(object):
 
             domain = [self.observations.index(o) for o in self.observations if q_type in o]
             #print domain
+            #numpy.random.seed(self.trials_num+20)
             self.o = numpy.random.choice(domain)
             #print self.o
 
@@ -346,7 +350,7 @@ class Simulator(object):
         return n/abs(n)
 
 
-    def run(self):
+    def run(self, counteR):
         cost = 0.0
         self.init_belief()
         self.init_belief_plus()
@@ -432,8 +436,9 @@ class Simulator(object):
                     break
 
                 # check entropy increases arbitrary no of times for now
+
                 if (added == False):
-                    if(inc_count > self.ent_threshold or self.belief_check()):
+                    if( self.belief_check() or inc_count > self.ent_threshold):
                         print ("--- new item/person ---")
                         added = True
                         self.added_point = (cycletime-1, current_entropy, len(self.states))
@@ -442,9 +447,10 @@ class Simulator(object):
                         f.close()
                         added_point = cycletime-1
                         self.add_new()
+          
 
                 if self.auto_observations:
-                    raw_str = self.auto_observe()
+                    raw_str = self.auto_observe(counteR)
                 else:
                     raw_str = raw_input("Input observation: ")
 
@@ -471,7 +477,7 @@ class Simulator(object):
                 break
 
         
-        return added_point, reward, abs(cost), added
+        return cycletime-1, added_point, reward, abs(cost), added
 
     #######################################################################
     def run_numbers_of_trials(self):
@@ -509,12 +515,17 @@ class Simulator(object):
         for i in range(self.trials_num):
 
             # seed random for experiments
-            #numpy.random.seed(i+20)
+            numpy.random.seed(i+20)
 
             # get a sample as the current state, terminal state exclusive
             if self.auto_state:
                 # 50% chance fixed to select unknown state
                 unknown_state = numpy.random.choice([True, False])
+
+                print("\n\nseed is " + str(i+20))
+                print("\n\nstate is " + str(unknown_state))
+                print()
+
                 # 100% chance to select unknown
                 #unknown_state = True
 
@@ -544,13 +555,13 @@ class Simulator(object):
                 is_new = True
 
             # run this episode and save the reward
-            added_point, reward, cost, added = self.run()
+            turn, added_point, reward, cost, added = self.run(i)
 
             reward_list.append(reward)
             cost_list.append(cost)
 
-            if(added): # When we augment the KB 
-                added_point_list.append(added_point)
+            #if(added): # When we augment the KB  (True negative case inde accuracy artiyo ama efficiency etkilenmiyo, ?replace(efficiency,QA cost)? )
+                #added_point_list.append(added_point)
 						   
 
             # use string based checking of success for now
@@ -565,12 +576,14 @@ class Simulator(object):
 
             if is_new == True and added == True:
                 true_positives += 1
+                added_point_list.append(added_point)
             elif is_new == True and added == False:
                 false_negatives += 1
             elif is_new == False and added == True:
                 false_positives += 1
             elif is_new == False and added == False:
                 true_negatives += 1
+                added_point_list.append(turn)
 
             # reset for next run
 

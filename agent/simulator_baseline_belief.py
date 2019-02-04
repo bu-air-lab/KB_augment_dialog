@@ -19,7 +19,7 @@ import ast
 
 class Baseline(Simulator):
 
-    def run(self):
+    def run(self,counteR):
         cost = 0.0
         self.init_belief()
         self.init_belief_plus()
@@ -31,12 +31,14 @@ class Baseline(Simulator):
 
         current_entropy = float("inf")
         old_entropy = float("inf")
+        old_sign = 1
         inc_count = 0
         added = False
 
         while True:
+            print("\n\n\n")
             cycletime += 1
-
+            politeness = "I know I asked it already but could you "
             # print self.b
 
             if self.print_flag:
@@ -45,20 +47,30 @@ class Baseline(Simulator):
 
             # select action
             # entropy
+            old_sign = self.sign(current_entropy - old_entropy)
             old_entropy = current_entropy
             current_entropy = stats.entropy(self.b)
             current_entropy_plus = stats.entropy(self.b_plus)
+            
             if self.print_flag:
                 print ("DEBUG: Entropy = ",current_entropy)
                 print ("DEBUG: Entropy_plus = ",current_entropy_plus)
             # check if entropy increased
-            if (old_entropy < current_entropy):
-                inc_count += 1
+
+            self.entropy_list.append(current_entropy)
+
+            # if(old_entropy < current_entropy):
+            if (self.sign(current_entropy - old_entropy) != old_sign):
+                if old_entropy != float("inf"):
+                    inc_count += 1
+                    print ("DEBUG: entropy fluctuated")
 
             if(self.entropy_check(current_entropy)):
                 self.get_full_request(cycletime)
                 if self.print_flag:
                     print('\n\tbelief:\t\t' + str(self.b))
+
+                if self.print_flag:
                     print('\n\tbelief_plus:\t' + str(self.b_plus))
             else:
                 done = False
@@ -70,15 +82,22 @@ class Baseline(Simulator):
 
                     print ('num_recipients', self.num_recipient)
                     print ('num_patients', self.num_patient)
-
+        # Count questio occurence, if it is > 1, add politeness word to head
                 question = self.action_to_text(self.actions[self.a])
+                self.question_list.append(self.actions[self.a])
+                tmp = question
                 if question:
-                    print('QUESTION: ' + question)
+                    if(self.question_list.count(question) >= 1):
+                        tmp = politeness + question
+                        print('     QUESTION: ' + tmp)
+                        self.question_list.append(question)
                 elif ('go' in self.actions[self.a]):
                     print('EXECUTE: ' + self.actions[self.a])
-                    if self.print_flag is True:
+                    if self.print_flag:
                         print('\treward: ' + str(self.reward_mat_plus[self.a_plus, self.s_plus]))
-                    reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
+                    
+                    
+                    reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]     
                     done = True
 
 
@@ -87,20 +106,18 @@ class Baseline(Simulator):
 
                 # check entropy increases arbitrary no of times for now
                 if (added == False):
-                    print (cycletime)
-                    if(self.belief_check()): #Just look EF
+                    if(self.belief_check()):
                         print ("--- new item/person ---")
-                        self.added_point = (cycletime-1, current_entropy)
                         added = True
                         self.added_point = (cycletime-1, current_entropy, len(self.states))
-                        f = open('entropy_plot/addedBase.txt', 'a')
+                        f = open('entropy_plot/addedOur.txt', 'a')
                         f.write("%s\n" % str(self.added_point))
                         f.close()
                         added_point = cycletime-1
                         self.add_new()
 
                 if self.auto_observations:
-                    raw_str = self.auto_observe()
+                    raw_str = self.auto_observe(counteR)
                 else:
                     raw_str = raw_input("Input observation: ")
 
@@ -121,10 +138,10 @@ class Baseline(Simulator):
                 cost += self.reward_mat_plus[self.a_plus, self.s_plus]
 
             if cycletime == 50:
-                print ("BASELINE: REACHED CYCLE TIME 50")
-            #    sys.exit(1)
+                print ("REACHED CYCLE TIME 50")
                 reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
+        #        sys.exit(1)
                 break
 
-        return added_point, reward, abs(cost), added
-
+        
+        return cycletime-1,added_point, reward, abs(cost), added

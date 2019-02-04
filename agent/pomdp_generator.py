@@ -338,7 +338,7 @@ class PomdpGenerator(object):
 
         # the larger, the more unreliable for the wh-questions. 
         self.magic_number = 0.3
-        self.polar_tp_rate = 0.8
+        self.polar_tp_rate = 0.8 #### Is this noise ????
         self.polar_tn_rate = 0.8
 
 
