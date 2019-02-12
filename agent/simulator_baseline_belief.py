@@ -117,7 +117,7 @@ class Baseline(Simulator):
                         self.add_new()
 
                 if self.auto_observations:
-                    raw_str = self.auto_observe(counteR)
+                    raw_str = self.auto_observe(counteR,cycletime)
                 else:
                     raw_str = raw_input("Input observation: ")
 

@@ -16,9 +16,9 @@ from mpl_toolkits.mplot3d import Axes3D
 def hypo2(df1,df2,df3,filelist,num):
         
 	#plt.subplot(132)
-	plt.plot([17,26,37],df1.loc[filelist[0]:filelist[-1],'F1 Score'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	plt.plot([17,26,37],df2.loc[filelist[0]:filelist[-1],'F1 Score'],marker='o',linestyle='--',label='Baseline Belief')
-	plt.plot([17,26,37],df3.loc[filelist[0]:filelist[-1],'F1 Score'],marker='v',linestyle='-.',label='Baseline EF')
+	plt.plot([17,26,37],df1.loc[filelist[0]:filelist[-1],'F1 Score'],marker='*', color='y',linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([17,26,37],df2.loc[filelist[0]:filelist[-1],'F1 Score'],marker='o', color='k',linestyle='--',label='Baseline Belief')
+	plt.plot([17,26,37],df3.loc[filelist[0]:filelist[-1],'F1 Score'],marker='v', color='r',linestyle='-.',label='Baseline EF')
 	plt.ylim(0.2,0.8)
 	plt.ylabel('F1 Score')
 	plt.xlabel('KB Size')
@@ -61,9 +61,9 @@ def hypo2(df1,df2,df3,filelist,num):
 def hypo1(df1, df2, df3, filelist, num):
 
         
-        plt.scatter(df1.loc[filelist[0]:filelist[-1],'Efficiency'], df1.loc[filelist[0]:filelist[-1],'Accuracy'], marker= 'o', label='Dual-track POMDP Manager')
-        plt.scatter(df2.loc[filelist[0]:filelist[-1],'Efficiency'], df2.loc[filelist[0]:filelist[-1],'Accuracy'], marker = '^', label='Baseline Belief')
-        plt.scatter(df3.loc[filelist[0]:filelist[-1],'Efficiency'], df3.loc[filelist[0]:filelist[-1],'Accuracy'], marker = 'v', label='Baseline EF')
+        plt.scatter(df1.loc[filelist[0]:filelist[-1],'Efficiency'], df1.loc[filelist[0]:filelist[-1],'Accuracy'], marker= 'o', color='y', label='Dual-track POMDP Manager')
+        plt.scatter(df2.loc[filelist[0]:filelist[-1],'Efficiency'], df2.loc[filelist[0]:filelist[-1],'Accuracy'], marker = '^', color='k', label='Baseline Belief')
+        plt.scatter(df3.loc[filelist[0]:filelist[-1],'Efficiency'], df3.loc[filelist[0]:filelist[-1],'Accuracy'], marker = 'v', color='r', label='Baseline EF')
 
         for index,row in df1.iterrows():
             plt.annotate(index, (row['Efficiency'], row['Accuracy']))
@@ -126,7 +126,7 @@ def hypo3(df1,df2,df3,filelist,num):
 	plt.plot([17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',color='k',   linestyle='--',label='Baseline Belief')
 	plt.plot([17,26,37],df3.loc[filelist[0]:filelist[-1],'Overall Success'],marker='v',color='r',  linestyle='-.',label='Baseline EF')
 	plt.xlim(8,40)
-	plt.ylim(0.2, 0.5)
+	plt.ylim(0.3, 0.8)
 	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
 	plt.tick_params(labelsize=font_size)
 	plt.ylabel('Overall Success', fontsize = font_size)
@@ -142,15 +142,15 @@ def hypo3(df1,df2,df3,filelist,num):
 	g.savefig('Plots/all_'+str(num)+'_trials_domain_experiment_entropy_5_belief_0_45_N_1')
 
 def sigmoid(x,i):
-  consList = [0.182, 0.1733, 0.1475]
-  return (1 / (1 + math.exp(-x))) + 1/-x
+  consList = [-0.06, -0.02, -0.02]
+  return ((1 / (1 + math.exp(-x))) + 1/-x)
 
 
 
 def main():
 
 
-	num = 3000                 #number of trials
+	num = 2000                 #number of trials
 	filelist=['144','155','166']                     #list of pomdp files
 
 	belieflist=[0.35,0.20,0.18,0.15]
@@ -178,7 +178,7 @@ def main():
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
 			belief_threshold = sigmoid(-1 * int(name[2]), i), #Sigmoid
-			ent_threshold =  max(7,int(name[2])) ) #ReLU
+			ent_threshold =  max(6,int(name[2])) ) #ReLU
 			
 
 
@@ -226,7 +226,7 @@ def main():
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
 			belief_threshold = 999,
-			ent_threshold = max(7,int(name[2]))) #ReLU
+			ent_threshold = max(6,int(name[2]))) #ReLU
 	 
 		if not base2.uniform_init_belief:   
 			print('note that initial belief is not uniform\n')

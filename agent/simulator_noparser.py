@@ -245,8 +245,8 @@ class Simulator(object):
         self.policy = self.policy_plus
 
     #######################################################################
-    def auto_observe(self,cycletime): # Kendi iclerinde farkli ama KB ler arasinda ayni
-        numpy.random.seed(cycletime + self.num_patient)
+    def auto_observe(self,cycletime, ctr): # Kendi iclerinde farkli ama KB ler arasinda ayni
+        numpy.random.seed(cycletime + self.num_recipient+ctr)
 
         rand = numpy.random.random_sample()
         acc = 0.0
@@ -365,6 +365,7 @@ class Simulator(object):
         old_sign = 1
         inc_count = 0
         added = False
+        ctrObs = 0
 
         while True:
             print("\n\n\n")
@@ -450,7 +451,7 @@ class Simulator(object):
           
 
                 if self.auto_observations:
-                    raw_str = self.auto_observe(counteR)
+                    raw_str = self.auto_observe(counteR,cycletime)
                 else:
                     raw_str = raw_input("Input observation: ")
 
@@ -515,7 +516,7 @@ class Simulator(object):
         for i in range(self.trials_num):
 
             # seed random for experiments
-            numpy.random.seed(5+i)
+            numpy.random.seed(i + 20)
 
             # get a sample as the current state, terminal state exclusive
             if self.auto_state:
