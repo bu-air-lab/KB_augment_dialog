@@ -13,6 +13,8 @@ from mpl_toolkits.mplot3d import Axes3D
 
 
 def hypo2(df1,df2,df3,filelist,num):
+
+        g=plt.figure(figsize=(10,5))
         
 	#plt.subplot(132)
 	plt.plot([17,26,37],df1.loc[filelist[0]:filelist[-1],'F1 Score'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
@@ -155,11 +157,11 @@ def main():
 	num = 5000                    #number of trials
 	filelist=['144','155','166']
 
-	df1 = pd.read_csv("Plots_data/all_5000_trials_domain_experiment_entropy_5_belief_0.35_entropyheuristic_pomdpdual.csv", encoding='utf-8')
+	df1 = pd.read_csv("Plots_data/all_5000_pomdpdual.csv", encoding='utf-8')
 
-	df2 = pd.read_csv("Plots_data/all_5000_trials_domain_experiment_entropy_5_justbelief_0.35_baseline1.csv", encoding='utf-8')
+	df2 = pd.read_csv("Plots_data/all_5000_baseline1.csv", encoding='utf-8')
 
-	df3 = pd.read_csv("Plots_data/all_5000_trials_domain_experiment_entropy_5_justentropyheuristic_baseline2.csv", encoding='utf-8')
+	df3 = pd.read_csv("Plots_data/all_5000_baseline2.csv", encoding='utf-8')
 
 
 	print ('Dual Track POMDP results')	

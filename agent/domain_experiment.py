@@ -92,9 +92,9 @@ def hypo3(df1,df2,df3,filelist,num):
 	font_size = 20
 
 	plt.subplot(131)
-	plt.plot([17,26,37],df1.loc[filelist[0]:filelist[-1],'QA Cost'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	plt.plot([17,26,37],df2.loc[filelist[0]:filelist[-1],'QA Cost'],marker='o',linestyle='--',label='Baseline Belief')
-	plt.plot([17,26,37],df3.loc[filelist[0]:filelist[-1],'QA Cost'],marker='v',linestyle='-.',label='Baseline EF')
+	plt.errorbar([17,26,37],df1.loc[filelist[0]:filelist[-1],'QA Cost'], yerr=df1['QACostStd'].tolist(), color='y', capsize=5, marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.errorbar([17,26,37],df2.loc[filelist[0]:filelist[-1],'QA Cost'], yerr=df2['QACostStd'].tolist(),  marker='o', color='k', capsize=5, linestyle='--',label='Baseline Belief')
+	plt.errorbar([17,26,37],df3.loc[filelist[0]:filelist[-1],'QA Cost'], yerr=df3['QACostStd'].tolist(),  marker='v', color = 'r', capsize=5, linestyle='-.',label='Baseline EF')
 	plt.xlim(8,40)
 	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
 	plt.tick_params(labelsize=font_size)
@@ -106,15 +106,15 @@ def hypo3(df1,df2,df3,filelist,num):
 	axes.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)  
 
 	plt.subplot(132)
-	plt.plot([17,26,37],df1.loc[filelist[0]:filelist[-1],'Dialog Reward'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	plt.plot([17,26,37],df2.loc[filelist[0]:filelist[-1],'Dialog Reward'],marker='o',linestyle='--',label='Baseline Belief')
-	plt.plot([17,26,37],df3.loc[filelist[0]:filelist[-1],'Dialog Reward'],marker='v',linestyle='-.',label='Baseline EF')
+	plt.errorbar([17,26,37],df1.loc[filelist[0]:filelist[-1],'Dialog Reward'], yerr=df1['RewardStd'].tolist(), color='y', capsize=5, marker='*',linestyle='-',label='Dual-track POMDP Manager')
+	plt.errorbar([17,26,37],df2.loc[filelist[0]:filelist[-1],'Dialog Reward'], yerr=df2['RewardStd'].tolist(), color='k', capsize=5, marker='o',linestyle='--',label='Baseline Belief')
+	plt.errorbar([17,26,37],df3.loc[filelist[0]:filelist[-1],'Dialog Reward'], yerr=df3['RewardStd'].tolist(), color='r', capsize=5, marker='v',linestyle='-.',label='Baseline EF')
 	plt.xlim(8,40)
 	matplotlib.pyplot.xticks([17,26,37], fontsize = font_size)	
 	plt.tick_params(labelsize=font_size)
 	plt.ylabel('Dialog Reward', fontsize = font_size)
 	plt.xlabel('KB Size', fontsize = font_size)
-	plt.ylim(-30, -12)
+	#plt.ylim(-30, -8)
 	axes = plt.gca()
 	xleft , xright =axes.get_xlim()
 	ybottom , ytop = axes.get_ylim()
@@ -122,9 +122,9 @@ def hypo3(df1,df2,df3,filelist,num):
 
 
 	plt.subplot(133)
-	plt.plot([17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*',linestyle='-',label='Dual-track POMDP Manager')
-	plt.plot([17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',linestyle='--',label='Baseline Belief')
-	plt.plot([17,26,37],df3.loc[filelist[0]:filelist[-1],'Overall Success'],marker='v',linestyle='-.',label='Baseline EF')
+	plt.plot([17,26,37],df1.loc[filelist[0]:filelist[-1],'Overall Success'],marker='*', color='y',  linestyle='-',label='Dual-track POMDP Manager')
+	plt.plot([17,26,37],df2.loc[filelist[0]:filelist[-1],'Overall Success'],marker='o',color='k',   linestyle='--',label='Baseline Belief')
+	plt.plot([17,26,37],df3.loc[filelist[0]:filelist[-1],'Overall Success'],marker='v',color='r',  linestyle='-.',label='Baseline EF')
 	plt.xlim(8,40)
 	plt.ylim(0.2, 0.5)
 	matplotlib.pyplot.xticks([10,17,26,37], fontsize = font_size)
@@ -137,20 +137,20 @@ def hypo3(df1,df2,df3,filelist,num):
 	axes.set_aspect(aspect=abs((xright-xleft)/(ybottom-ytop)), adjustable=None, anchor=None)  
 
 
-	plt.legend(loc='upper center', bbox_to_anchor=(-1, 1.2),  shadow=True, ncol=2, fontsize=font_size)
+	plt.legend(loc='upper center', bbox_to_anchor=(-1, 1.4),  shadow=True, ncol=2, fontsize=font_size)
 	plt.show()
 	g.savefig('Plots/all_'+str(num)+'_trials_domain_experiment_entropy_5_belief_0_45_N_1')
 
 def sigmoid(x,i):
-  consList = [0.25, 0.21, 0.18]
-  return 1 / (1 + math.exp(-x)) + consList[i]
+  consList = [0.182, 0.1733, 0.1475]
+  return (1 / (1 + math.exp(-x))) + 1/-x
 
 
 
 def main():
 
 
-	num = 2000                    #number of trials
+	num = 3000                 #number of trials
 	filelist=['144','155','166']                     #list of pomdp files
 
 	belieflist=[0.35,0.20,0.18,0.15]
@@ -178,7 +178,7 @@ def main():
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
 			belief_threshold = sigmoid(-1 * int(name[2]), i), #Sigmoid
-			ent_threshold =  max(0,int(name[2])) )
+			ent_threshold =  max(7,int(name[2])) ) #ReLU
 			
 
 
@@ -226,7 +226,7 @@ def main():
 			num_patient = int(name[1]), 
 			num_recipient = int(name[2]),
 			belief_threshold = 999,
-			ent_threshold = max(0,int(name[2]))) #ReLU
+			ent_threshold = max(7,int(name[2]))) #ReLU
 	 
 		if not base2.uniform_init_belief:   
 			print('note that initial belief is not uniform\n')
@@ -242,9 +242,9 @@ def main():
 
 		#Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
 		
-		a,b,c,p,r,f,ap,sh1=s.run_numbers_of_trials() 	#	f to solve too many values to unpack err. (Best N from experiments)
-		ab,bb,cb,pb,rb,fb,apb,bh1= base.run_numbers_of_trials()
-		ab2,bb2,cb2,pb2,rb2,fb2,apb2,bh1_2= base2.run_numbers_of_trials()
+		a,b,c,p,r,f,ap,sh1, stdCost1, stdRew1=s.run_numbers_of_trials() 	#	f to solve too many values to unpack err. (Best N from experiments)
+		ab,bb,cb,pb,rb,fb,apb,bh1, stdCost2, stdRew2= base.run_numbers_of_trials()
+		ab2,bb2,cb2,pb2,rb2,fb2,apb2,bh1_2, stdCost3, stdRew3= base2.run_numbers_of_trials()
 		
 		df1.at[iterator,'QA Cost']= a
 		df1.at[iterator,'Overall Success']= b
@@ -252,6 +252,8 @@ def main():
 		df1.at[iterator,'Precision']= p
 		df1.at[iterator,'Recall']= r
 		df1.at[iterator,'F1 Score'] = f
+		df1.at[iterator, 'QACostStd'] = stdCost1
+                df1.at[iterator, 'RewardStd'] = stdRew1
 
 		if(math.isnan(ap)): # For last KB, this value becomes NaN, because agent did not augment KB at all, with this assignment, figure will make sense
 			ap = 50.0
@@ -265,6 +267,8 @@ def main():
 		df2.at[iterator,'Precision']= pb
 		df2.at[iterator,'Recall']= rb
 		df2.at[iterator,'F1 Score'] = fb
+                df2.at[iterator, 'QACostStd'] = stdCost2
+                df2.at[iterator, 'RewardStd'] = stdRew2
 
 		if(math.isnan(apb)): # For last KB, this value becomes NaN, because agent did not augment KB at all, with this assignment, figure will make sense
 			apb = 50.0
@@ -279,6 +283,8 @@ def main():
 		df3.at[iterator,'Precision']= pb2
 		df3.at[iterator,'Recall']= rb2
 		df3.at[iterator,'F1 Score'] = fb2
+                df3.at[iterator, 'QACostStd'] = stdCost3
+                df3.at[iterator, 'RewardStd'] = stdRew3
 		
 		if(math.isnan(apb2)): # For last KB, this value becomes NaN, because agent did not augment KB at all, with this assignment, figure will make sense
 			apb2 = 50.0

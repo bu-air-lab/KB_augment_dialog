@@ -1,4 +1,4 @@
-,QA Cost,Overall Success,Dialog Reward,Precision,Recall,F1 Score,Efficiency,Accuracy
-144,20.4,1.0,19.6,1.0,1.0,1.0,14.6,1.0
-155,9.9,0.8,14.1,0.0,0.0,0.0,7.0,0.8
-166,11.1,0.4,-3.1,0.3333333333333333,1.0,0.5,4.0,0.6
+,QA Cost,Overall Success,Dialog Reward,Precision,Recall,F1 Score,QACostStd,RewardStd,Efficiency,Accuracy
+144,10.0,0.8,50.0,1.0,1.0,1.0,3.06594194335,82.7611019743,7.2,1.0
+155,19.2,0.8,60.5,1.0,1.0,1.0,21.1957542918,61.7656862667,6.2,1.0
+166,7.9,0.8,52.1,0.0,0.0,0.0,1.82756668825,80.8167061937,6.0,0.8

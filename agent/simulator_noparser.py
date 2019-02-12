@@ -173,7 +173,7 @@ class Simulator(object):
 
         # if auto observe, get initial request
         if self.auto_observations:
-            #numpy.random.seed(self.trials_num+20)
+            #numpy.random.seed(counter+ 20)
             rand = numpy.random.random_sample()
             acc = 0.0
             for i in range(len(self.observations_plus)):
@@ -246,7 +246,7 @@ class Simulator(object):
 
     #######################################################################
     def auto_observe(self,cycletime): # Kendi iclerinde farkli ama KB ler arasinda ayni
-        numpy.random.seed(cycletime)
+        numpy.random.seed(cycletime + self.num_patient)
 
         rand = numpy.random.random_sample()
         acc = 0.0
@@ -515,7 +515,7 @@ class Simulator(object):
         for i in range(self.trials_num):
 
             # seed random for experiments
-            numpy.random.seed(i+20)
+            numpy.random.seed(5+i)
 
             # get a sample as the current state, terminal state exclusive
             if self.auto_state:
@@ -604,12 +604,17 @@ class Simulator(object):
         #bar.finish()
 
         cost_arr = numpy.array(cost_list)
+        print("QA Cost and Reward MAX MIN: ")
+        print(cost_arr)
+        print(numpy.min(cost_arr))
         success_arr = numpy.array(success_list)
         reward_arr = numpy.array(reward_list)
         overall_reward_arr = numpy.array(overall_reward_list)
+        print(numpy.max(overall_reward_arr))
+        print(numpy.min(overall_reward_arr))
         added_arr = numpy.array(added_point_list)
 
-        print('average cost: ' + str(numpy.mean(cost_arr))[1:] + \
+        print('average cost: ' + str(numpy.mean(cost_arr)) + \
             ' with std ' + str(numpy.std(cost_arr)))
         print('average success: ' + str(numpy.mean(success_arr)) + \
             ' with std ' + str(numpy.std(success_arr)))
@@ -650,7 +655,7 @@ class Simulator(object):
         #if(len(added_point_list) == 0): # To stop return NaN
             #added_arr = numpy.zeros(1)
         return (numpy.mean(cost_arr), numpy.mean(success_arr), \
-            numpy.mean(overall_reward_arr), precision, recall, f1_score, numpy.mean(added_arr), accuracyH1)
+            numpy.mean(overall_reward_arr), precision, recall, f1_score, numpy.mean(added_arr), accuracyH1, numpy.std(cost_arr, dtype=numpy.float64), numpy.std(overall_reward_arr, dtype=numpy.float64))
 
 
     def plot_entropy(self):
