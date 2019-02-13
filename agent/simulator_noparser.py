@@ -245,8 +245,8 @@ class Simulator(object):
         self.policy = self.policy_plus
 
     #######################################################################
-    def auto_observe(self,cycletime, ctr): # Kendi iclerinde farkli ama KB ler arasinda ayni
-        numpy.random.seed(cycletime + self.num_recipient+ctr)
+    def auto_observe(self,cycletime): # Kendi iclerinde farkli ama KB ler arasinda ayni
+        numpy.random.seed(cycletime + self.num_recipient)
 
         rand = numpy.random.random_sample()
         acc = 0.0
@@ -451,7 +451,7 @@ class Simulator(object):
           
 
                 if self.auto_observations:
-                    raw_str = self.auto_observe(counteR,cycletime)
+                    raw_str = self.auto_observe(counteR)
                 else:
                     raw_str = raw_input("Input observation: ")
 
