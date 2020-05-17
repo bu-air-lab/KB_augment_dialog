@@ -338,7 +338,7 @@ class PomdpGenerator(object):
 
         # the larger, the more unreliable for the wh-questions. 
         self.magic_number = 0.3
-        self.polar_tp_rate = 0.8
+        self.polar_tp_rate = 0.8 #### Is this noise ????
         self.polar_tn_rate = 0.8
 
 
@@ -862,13 +862,13 @@ class PomdpGenerator(object):
 
 def main():
 
-    r_max = 100.0
-    r_min = -100.0
+    r_max = 40.0
+    r_min = -40.0
 
     wh_cost = -1.5
     yesno_cost = -1.0
 
-    for i in range(3,8):
+    for i in range(4,8):
         num_task = 1
         num_patient = i
         num_recipient = i
@@ -883,7 +883,7 @@ def main():
         pomdpfile=strategy+'.pomdp'
         policyfile=strategy+'.policy' #policyfile added - Cihangir
         pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-                            wh_cost, yesno_cost,pomdpfile,policyfile,timeout=40, is_plus=False )
+                            wh_cost, yesno_cost,pomdpfile,policyfile,timeout=50, is_plus=False )
 
         #print("Generating 'Plus' files...")
         #pg = PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \

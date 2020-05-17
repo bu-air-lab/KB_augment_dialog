@@ -249,7 +249,7 @@ class Simulator(object):
         yesno_cost = -1.0
         strategy=str(num_task)+str(num_patient)+str(num_recipient)
         pg = pomdp_generator.PomdpGenerator(num_task, num_patient, num_recipient, r_max, r_min, strategy, \
-            wh_cost, yesno_cost,pomdpfile = file_name,policyfile=policy_file,timeout=50, is_plus=is_plus)
+            wh_cost, yesno_cost,pomdpfile = file_name,policyfile=policy_file,timeout=65, is_plus=is_plus)
 
         # to read the learned policy
         ##############################Saeid commented lines below ###################################

@@ -20,7 +20,6 @@ import ast
 
 import matplotlib.pyplot as plt
 
-
 numpy.set_printoptions(suppress=True)
 
 class Simulator(object):
@@ -162,8 +161,8 @@ class Simulator(object):
     
     ######################################################################
     def get_full_request(self, cycletime):
-        print self.observations # debug
-        print "DEBUG: Full request here"
+        print (self.observations) # debug
+        print ("DEBUG: Full request here")
         self.question_list.append("Full request")
 
 
@@ -174,6 +173,7 @@ class Simulator(object):
 
         # if auto observe, get initial request
         if self.auto_observations:
+            #numpy.random.seed(counter+ 20)
             rand = numpy.random.random_sample()
             acc = 0.0
             for i in range(len(self.observations_plus)):
@@ -203,6 +203,7 @@ class Simulator(object):
         self.a_plus = self.get_action_plus('ask_r')
 
         if self.auto_observations:
+            #numpy.random.seed(self.trials_num+20)
             rand = numpy.random.random_sample()
             acc = 0.0
             for i in range(len(self.observations_plus)):
@@ -230,7 +231,7 @@ class Simulator(object):
 
     
     def add_new(self):
-        print "DEBUG: adding new"
+        print ("DEBUG: adding new")
         self.num_patient += 1
         self.num_recipient += 1
         self.b = self.b_plus
@@ -244,7 +245,9 @@ class Simulator(object):
         self.policy = self.policy_plus
 
     #######################################################################
-    def auto_observe(self):
+    def auto_observe(self,cycletime): # Kendi iclerinde farkli ama KB ler arasinda ayni
+        numpy.random.seed(cycletime + self.num_recipient)
+
         rand = numpy.random.random_sample()
         acc = 0.0
         for i in range(len(self.observations_plus)):
@@ -263,7 +266,7 @@ class Simulator(object):
 
     def observe(self, ind):
         self.o = None
-        print "OBSERVE:",ind
+        print ("OBSERVE:",ind)
 
         for i in range(len(self.observations)):
             if self.observations[i] == ind:
@@ -274,6 +277,7 @@ class Simulator(object):
 
             domain = [self.observations.index(o) for o in self.observations if q_type in o]
             #print domain
+            #numpy.random.seed(self.trials_num+20)
             self.o = numpy.random.choice(domain)
             #print self.o
 
@@ -289,7 +293,7 @@ class Simulator(object):
 
     def update_plus(self,cycletime):
         #print self.actions_plus[self.a_plus]
-        if self.actions_plus[self.a_plus] == "ask_r" or self.actions_plus[self.a_plus] == "ask_p":
+        if self.actions_plus[self.a_plus] == "ask_r" or self.actions_plus[self.a_plus] == "ask_p": # !!!!!
             return
 
         new_b_plus = numpy.dot(self.b_plus, self.trans_mat_plus[self.actions_plus.index(self.actions[self.a]), :])
@@ -330,8 +334,8 @@ class Simulator(object):
 
         belief_rn, belief_pm = self.get_marginal_edges(self.b_plus, n, m)
 
-        print "DEBUG: Marginal rn = ",belief_rn
-        print "DEBUG: Marginal pm = ",belief_pm
+        print ("DEBUG: Marginal rn = ",belief_rn)
+        print ("DEBUG: Marginal pm = ",belief_pm)
 
         if belief_rn > self.belief_threshold or belief_pm > self.belief_threshold:
             return True
@@ -346,7 +350,7 @@ class Simulator(object):
         return n/abs(n)
 
 
-    def run(self):
+    def run(self, counteR):
         cost = 0.0
         self.init_belief()
         self.init_belief_plus()
@@ -354,16 +358,19 @@ class Simulator(object):
         reward = 0.0
 
         cycletime = 0
+        added_point = 0
 
         current_entropy = float("inf")
         old_entropy = float("inf")
         old_sign = 1
         inc_count = 0
         added = False
+        ctrObs = 0
 
         while True:
+            print("\n\n\n")
             cycletime += 1
-	    politeness = "I know I asked it already but could you "
+            politeness = "I know I asked it already but could you "
             # print self.b
 
             if self.print_flag:
@@ -378,8 +385,8 @@ class Simulator(object):
             current_entropy_plus = stats.entropy(self.b_plus)
             
             if self.print_flag:
-                print "DEBUG: Entropy = ",current_entropy
-                print "DEBUG: Entropy_plus = ",current_entropy_plus
+                print ("DEBUG: Entropy = ",current_entropy)
+                print ("DEBUG: Entropy_plus = ",current_entropy_plus)
             # check if entropy increased
 
             self.entropy_list.append(current_entropy)
@@ -388,7 +395,7 @@ class Simulator(object):
             if (self.sign(current_entropy - old_entropy) != old_sign):
                 if old_entropy != float("inf"):
                     inc_count += 1
-                    print "DEBUG: entropy fluctuated"
+                    print ("DEBUG: entropy fluctuated")
 
             if(self.entropy_check(current_entropy)):
                 self.get_full_request(cycletime)
@@ -405,17 +412,17 @@ class Simulator(object):
                 if self.print_flag:
                     print('\taction:\t' + self.actions[self.a] + ' ' + str(self.a))
 
-                    print 'num_recipients', self.num_recipient
-                    print 'num_patients', self.num_patient
+                    print ('num_recipients', self.num_recipient)
+                    print ('num_patients', self.num_patient)
 		# Count questio occurence, if it is > 1, add politeness word to head
                 question = self.action_to_text(self.actions[self.a])
-	        self.question_list.append(self.actions[self.a])
+                self.question_list.append(self.actions[self.a])
                 tmp = question
                 if question:
                     if(self.question_list.count(question) >= 1):
-		        tmp = politeness + question
-                    print('		QUESTION: ' + tmp)
-                    self.question_list.append(question)
+                        tmp = politeness + question
+                        print('		QUESTION: ' + tmp)
+                        self.question_list.append(question)
                 elif ('go' in self.actions[self.a]):
                     print('EXECUTE: ' + self.actions[self.a])
                     if self.print_flag:
@@ -430,15 +437,21 @@ class Simulator(object):
                     break
 
                 # check entropy increases arbitrary no of times for now
+
                 if (added == False):
-                    if(inc_count > self.ent_threshold or self.belief_check()):
-                        print "--- new item/person ---"
+                    if( self.belief_check() or inc_count > self.ent_threshold):
+                        print ("--- new item/person ---")
                         added = True
-                        self.added_point = (cycletime-1, current_entropy)
+                        self.added_point = (cycletime-1, current_entropy, len(self.states))
+                        f = open('entropy_plot/addedOur.txt', 'a')
+                        f.write("%s\n" % str(self.added_point))
+                        f.close()
+                        added_point = cycletime-1
                         self.add_new()
+          
 
                 if self.auto_observations:
-                    raw_str = self.auto_observe()
+                    raw_str = self.auto_observe(counteR)
                 else:
                     raw_str = raw_input("Input observation: ")
 
@@ -459,12 +472,13 @@ class Simulator(object):
                 cost += self.reward_mat_plus[self.a_plus, self.s_plus]
 
             if cycletime == 50:
-                print "REACHED CYCLE TIME 50"
-                reward = cost - 50
+                print ("REACHED CYCLE TIME 50")
+                reward = cost + self.reward_mat_plus[self.a_plus, self.s_plus]
         #        sys.exit(1)
                 break
 
-        return reward, abs(cost), added
+        
+        return cycletime-1, added_point, reward, abs(cost), added
 
     #######################################################################
     def run_numbers_of_trials(self):
@@ -473,6 +487,7 @@ class Simulator(object):
         success_list = []
         reward_list = []
         overall_reward_list = []
+        added_point_list = []
         
         # for new item or person
         true_positives = 0.0
@@ -501,12 +516,17 @@ class Simulator(object):
         for i in range(self.trials_num):
 
             # seed random for experiments
-            #numpy.random.seed(i+20)
+            numpy.random.seed(i + 20)
 
             # get a sample as the current state, terminal state exclusive
             if self.auto_state:
                 # 50% chance fixed to select unknown state
                 unknown_state = numpy.random.choice([True, False])
+
+                print("\n\nseed is " + str(i+20))
+                print("\n\nstate is " + str(unknown_state))
+                print()
+
                 # 100% chance to select unknown
                 #unknown_state = True
 
@@ -528,22 +548,27 @@ class Simulator(object):
             instead self.s_plus is used to compare''' 
 
             #self.s_plus = self.states_plus.index(self.states[self.s])
-            print self.states_plus[self.s_plus]
-            print self.states
+            print (self.states_plus[self.s_plus])
+            print (self.states)
             if str(self.states_plus[self.s_plus]) in self.states:
                 is_new = False
             else:
                 is_new = True
 
             # run this episode and save the reward
-            reward, cost, added = self.run()
+            turn, added_point, reward, cost, added = self.run(i)
 
             reward_list.append(reward)
             cost_list.append(cost)
 
+            #if(added): # When we augment the KB  (True negative case inde accuracy artiyo ama efficiency etkilenmiyo, ?replace(efficiency,QA cost)? )
+                #added_point_list.append(added_point)
+						   
+
             # use string based checking of success for now
             if (str(self.states_plus[self.s_plus]) in self.actions[self.a]) and (is_new == added):
                 success_list.append(1.0)
+                
             else:
                 success_list.append(0.0)                
 
@@ -552,12 +577,14 @@ class Simulator(object):
 
             if is_new == True and added == True:
                 true_positives += 1
+                added_point_list.append(added_point)
             elif is_new == True and added == False:
                 false_negatives += 1
             elif is_new == False and added == True:
                 false_positives += 1
             elif is_new == False and added == False:
                 true_negatives += 1
+                added_point_list.append(turn)
 
             # reset for next run
 
@@ -578,11 +605,17 @@ class Simulator(object):
         #bar.finish()
 
         cost_arr = numpy.array(cost_list)
+        print("QA Cost and Reward MAX MIN: ")
+        print(cost_arr)
+        print(numpy.min(cost_arr))
         success_arr = numpy.array(success_list)
         reward_arr = numpy.array(reward_list)
         overall_reward_arr = numpy.array(overall_reward_list)
+        print(numpy.max(overall_reward_arr))
+        print(numpy.min(overall_reward_arr))
+        added_arr = numpy.array(added_point_list)
 
-        print('average cost: ' + str(numpy.mean(cost_arr))[1:] + \
+        print('average cost: ' + str(numpy.mean(cost_arr)) + \
             ' with std ' + str(numpy.std(cost_arr)))
         print('average success: ' + str(numpy.mean(success_arr)) + \
             ' with std ' + str(numpy.std(success_arr)))
@@ -590,11 +623,17 @@ class Simulator(object):
             ' with std ' + str(numpy.std(reward_arr)))
         print('average overall reward: ' + str(numpy.mean(overall_reward_arr)) + \
             ' with std ' + str(numpy.std(overall_reward_arr)))
+        print('average added point: ' + str(numpy.mean(added_arr)) + \
+            ' with std ' + str(numpy.std(added_arr)))
+
 
         print('True positives:' + str(true_positives))
         print('False positives:' + str(false_positives))
         print('True negatives:' + str(true_negatives))
         print('False negatives:' + str(false_negatives))
+
+        accuracyH1 = (true_positives + true_negatives) / self.trials_num
+        print('Accuracy is ' + str(accuracyH1))
 
         if true_positives + false_positives == 0:
             precision = 0
@@ -605,17 +644,19 @@ class Simulator(object):
             recall = 0
         else:        
             recall = true_positives/(true_positives + false_negatives)
-	try:
+        try:
             f1_score = 2 * precision * recall/(precision + recall)
-	except:
-	    f1_score = 0
+        except:
+            f1_score = 0
         
         print('Precision:' + str(precision))
         print('Recall:' + str(recall))
         print('F1:' + str(f1_score))
-
+       
+        #if(len(added_point_list) == 0): # To stop return NaN
+            #added_arr = numpy.zeros(1)
         return (numpy.mean(cost_arr), numpy.mean(success_arr), \
-            numpy.mean(overall_reward_arr), precision, recall, f1_score)
+            numpy.mean(overall_reward_arr), precision, recall, f1_score, numpy.mean(added_arr), accuracyH1, numpy.std(cost_arr, dtype=numpy.float64), numpy.std(overall_reward_arr, dtype=numpy.float64))
 
 
     def plot_entropy(self):
@@ -635,7 +676,7 @@ class Simulator(object):
             f.write("%s\n" % str(item))
         f.close()
 
-        f = open('entropy_plot/added.txt', 'w')
+        f = open('entropy_plot/addedOur.txt', 'a')
         f.write("%s\n" % str(self.added_point))
         f.close()
 
@@ -668,8 +709,9 @@ def run_one():
 
     #Put i or name or whatever the name of the iterator is, below in df.at[i, e.g. "Overall Cost"]
     a,b,c,p,r,f=s.run_numbers_of_trials()
-    print s.question_list
-    s.plot_entropy()
+    print (s.question_list)
+    #s.plot_entropy()
 
 if __name__ == '__main__':
     run_one()
+

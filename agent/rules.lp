@@ -17,4 +17,3 @@ item(paper).
 recipient(zhang).
 recipient(ellen).
 
-recipient(mr.bob).
